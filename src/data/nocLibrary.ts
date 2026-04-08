@@ -48,6 +48,148 @@ function getFamilyZh(entry: NocStructureEntry, curatedFamily?: string) {
   return curatedFamily || broadCategoryZh[getTopCode(entry)] || "NOC 职业分类";
 }
 
+const titleOverrides: Record<string, string> = {
+  "Legislative and senior management occupations": "立法与高级管理职业",
+  "Legislative and senior managers": "立法与高级管理人员",
+  "Business, finance and administration occupations": "商业、金融与行政职业",
+  "Specialized middle management occupations in administrative services, financial and business services and communication (except broadcasting)":
+    "行政、金融、商业与通讯领域专业中层管理职业",
+  "Specialized middle management occupations in business, finance, and administration": "商业、金融与行政领域专业中层管理职业",
+  "Professional occupations in finance and business": "金融与商业专业职业",
+  "Professional occupations in business management consulting": "商业管理咨询专业职业",
+  "Administrative and financial supervisors and specialized administrative occupations": "行政与财务主管及专门行政职业",
+  "Administrative occupations and transportation logistics occupations": "行政职业与运输物流职业",
+  "Administrative and financial support and supply chain logistics occupations": "行政与财务支持及供应链物流职业",
+  "Natural and applied sciences and related occupations": "自然与应用科学及相关职业",
+  "Health occupations": "医疗职业",
+  "Occupations in education, law and social, community and government services": "教育、法律、社会、社区与政府服务职业",
+  "Arts and culture occupations": "艺术与文化职业",
+  "Sales and service occupations": "销售与服务职业",
+  "Trades, transport and equipment operators and related occupations": "技工、运输与设备操作职业",
+  "Natural resources, agriculture and related production occupations": "自然资源、农业及相关生产职业",
+  "Occupations in manufacturing and utilities": "制造与公用事业职业",
+  "Construction managers": "建筑经理 / 施工经理",
+  "Home building and renovation managers": "住宅建造与翻新经理",
+  "Construction estimators": "建筑估算师",
+  "Construction millwrights and industrial mechanics": "建筑装配工和工业机械工",
+  "Welders and related machine operators": "焊工及相关机械操作员",
+  "Electricians (except industrial and power system)": "电工（非工业及电力系统）",
+  "Industrial electricians": "工业电工",
+  "Plumbers": "管道工",
+  "Gas fitters": "燃气安装工",
+  "Carpenters": "木匠",
+  "Cabinetmakers": "橱柜制造工",
+  "Bricklayers": "砌砖工",
+  "Heavy-duty equipment mechanics": "重型设备机械师",
+  "Heating, refrigeration and air conditioning mechanics": "供暖、制冷和空调机械师",
+  "Electrical mechanics": "电机维修工",
+  "Water well drillers": "水井钻井工",
+  "Other technical trades and related occupations": "其他技术工种及相关职业",
+  "Concrete finishers": "混凝土收尾工",
+  "Roofers and shinglers": "屋顶工和瓦片工",
+  "Painters and decorators (except interior decorators)": "油漆工和装饰工（不含室内装潢）",
+  "Floor covering installers": "地板铺装工",
+  "Transport truck drivers": "卡车司机",
+  "Bus drivers, subway operators and other transit operators": "公交车司机、地铁运营员及其他公共交通运营员",
+  "Contractors and supervisors, oil and gas drilling and services": "油气钻井及服务承包商与主管",
+};
+
+function normalizeWords(value: string) {
+  return value
+    .replace(/\s+/g, " ")
+    .replace(/\s-\s/g, " - ")
+    .trim();
+}
+
+function translateTitleEn(titleEn: string, entry: NocStructureEntry) {
+  const direct = titleOverrides[titleEn];
+  if (direct) return direct;
+
+  const text = normalizeWords(titleEn);
+  const phraseRules: Array<[RegExp, string]> = [
+    [/\boccupations\b/gi, "职业"],
+    [/\boccupation\b/gi, "职业"],
+    [/\bmanagers\b/gi, "管理人员"],
+    [/\bmanager\b/gi, "经理"],
+    [/\bsupervisors\b/gi, "主管"],
+    [/\bsupervisor\b/gi, "主管"],
+    [/\bspecialists\b/gi, "专员"],
+    [/\bspecialist\b/gi, "专员"],
+    [/\btechnologists\b/gi, "技术师"],
+    [/\btechnologist\b/gi, "技术师"],
+    [/\btechnicians\b/gi, "技术员"],
+    [/\btechnician\b/gi, "技术员"],
+    [/\bassistants\b/gi, "助理"],
+    [/\bassistant\b/gi, "助理"],
+    [/\bworkers\b/gi, "工人"],
+    [/\bworker\b/gi, "工人"],
+    [/\boperators\b/gi, "操作员"],
+    [/\boperator\b/gi, "操作员"],
+    [/\binspectors\b/gi, "检验员"],
+    [/\binspector\b/gi, "检验员"],
+    [/\bengineers\b/gi, "工程师"],
+    [/\bengineer\b/gi, "工程师"],
+    [/\bplanners\b/gi, "规划师"],
+    [/\bplanner\b/gi, "规划师"],
+    [/\badministrative\b/gi, "行政"],
+    [/\badministration\b/gi, "行政"],
+    [/\bfinancial\b/gi, "金融"],
+    [/\bbusiness\b/gi, "商业"],
+    [/\bcommunication\b/gi, "通讯"],
+    [/\bcommunications\b/gi, "通讯"],
+    [/\bhealth\b/gi, "医疗"],
+    [/\beducation\b/gi, "教育"],
+    [/\bsocial\b/gi, "社会"],
+    [/\bcommunity\b/gi, "社区"],
+    [/\bgovernment\b/gi, "政府"],
+    [/\barts\b/gi, "艺术"],
+    [/\bculture\b/gi, "文化"],
+    [/\bsales\b/gi, "销售"],
+    [/\bservice\b/gi, "服务"],
+    [/\btransport\b/gi, "运输"],
+    [/\bequipment\b/gi, "设备"],
+    [/\btrades\b/gi, "技工"],
+    [/\bagriculture\b/gi, "农业"],
+    [/\bnatural resources\b/gi, "自然资源"],
+    [/\bmanufacturing\b/gi, "制造"],
+    [/\butilities\b/gi, "公用事业"],
+    [/\bconstruction\b/gi, "建筑"],
+    [/\bproduction\b/gi, "生产"],
+    [/\bproduction and utilities\b/gi, "生产和公用事业"],
+    [/\btransportation\b/gi, "运输"],
+    [/\brelated\b/gi, "相关"],
+    [/\bexcept\b/gi, "不含"],
+  ];
+
+  let translated = text;
+  phraseRules.forEach(([pattern, replacement]) => {
+    translated = translated.replace(pattern, replacement);
+  });
+
+  translated = translated
+    .replace(/\bthe\b/gi, "")
+    .replace(/\bof\b/gi, "的")
+    .replace(/\band\b/gi, "与")
+    .replace(/\s+/g, " ")
+    .replace(/\s-\s/g, " - ")
+    .trim();
+
+  if (entry.level === 1) {
+    return broadCategoryZh[getTopCode(entry)] || translated || titleEn;
+  }
+
+  if (entry.level === 2 || entry.level === 3 || entry.level === 4) {
+    const familyZh = broadCategoryZh[getTopCode(entry)] || "NOC 职业分类";
+    const labelZh = levelLabelZh[entry.level];
+    if (translated && translated !== titleEn) {
+      return translated;
+    }
+    return `${familyZh} · ${labelZh}`;
+  }
+
+  return translated || titleEn;
+}
+
 function buildSummary(entry: NocStructureEntry, titleZh: string, familyZh: string) {
   switch (entry.level) {
     case 1:
@@ -271,7 +413,7 @@ function buildSearchBlob(entry: NocStructureEntry, titleZh: string, titleEn: str
 export const nocLibrary: NocLibraryEntry[] = nocStructure.map((entry) => {
   const curated = curatedByCode.get(entry.code);
   const titleEn = curated?.titleEn || entry.titleEn;
-  const titleZh = curated?.titleZh || entry.titleEn;
+  const titleZh = curated?.titleZh || translateTitleEn(entry.titleEn, entry);
   const family = getFamilyZh(entry, curated?.family);
   const summary = curated?.summary || buildSummary(entry, titleZh, family);
   const chineseExplanation = curated?.summary
