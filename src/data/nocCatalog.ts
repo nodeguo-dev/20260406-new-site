@@ -22,13 +22,13 @@ export type NocEntry = {
 const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   {
     "code": "00012",
-    "titleZh": "高级管理人员 - 金融、通信及其他商业服务",
+    "titleZh": "金融、通信及商业服务高级管理人员",
     "titleEn": "Senior managers - financial, communications and other business services",
     "teer": "0",
     "family": "高管与管理",
     "summary": "这类岗位偏管理与团队统筹，Job Bank 广告要把团队规模、预算、责任范围和决策权限写清楚。",
     "commonTitles": [
-      "高级管理人员 - 金融、通信及其他商业服务",
+      "金融、通信及商业服务高级管理人员",
       "Senior managers - financial, communications and other business services"
     ],
     "employerTips": [
@@ -74,13 +74,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "00013",
-    "titleZh": "高级管理人员 - 医疗、教育、社会与社区服务及会员组织",
+    "titleZh": "医疗、教育与社会服务高级管理人员",
     "titleEn": "Senior managers - health, education, social and community services and membership organizations",
     "teer": "0",
     "family": "高管与管理",
     "summary": "这类岗位偏管理与团队统筹，Job Bank 广告要把团队规模、预算、责任范围和决策权限写清楚。",
     "commonTitles": [
-      "高级管理人员 - 医疗、教育、社会与社区服务及会员组织",
+      "医疗、教育、社会与社区服务及会员组织高级管理人员",
       "Senior managers - health, education, social and community services and membership organizations"
     ],
     "employerTips": [
@@ -126,13 +126,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "00014",
-    "titleZh": "高级管理人员 - 贸易、广播及其他服务",
+    "titleZh": "贸易、广播及其他服务高级管理人员",
     "titleEn": "Senior managers - trade, broadcasting and other services",
     "teer": "0",
     "family": "高管与管理",
     "summary": "这类岗位偏管理与团队统筹，Job Bank 广告要把团队规模、预算、责任范围和决策权限写清楚。",
     "commonTitles": [
-      "高级管理人员 - 贸易、广播及其他服务",
+      "贸易、广播及其他服务高级管理人员",
       "Senior managers - trade, broadcasting and other services"
     ],
     "employerTips": [
@@ -178,13 +178,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "00015",
-    "titleZh": "高级管理人员 - 建筑、运输、生产和公用事业",
+    "titleZh": "建筑、运输、生产和公用事业高级管理人员",
     "titleEn": "Senior managers - construction, transportation, production and utilities",
     "teer": "0",
     "family": "高管与管理",
     "summary": "这类岗位偏管理与团队统筹，Job Bank 广告要把团队规模、预算、责任范围和决策权限写清楚。",
     "commonTitles": [
-      "高级管理人员 - 建筑、运输、生产和公用事业",
+      "建筑、运输、生产和公用事业高级管理人员",
       "Senior managers - construction, transportation, production and utilities"
     ],
     "employerTips": [
@@ -282,13 +282,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "21221",
-    "titleZh": "商业系统专家",
+    "titleZh": "商业系统分析师",
     "titleEn": "Business systems specialists",
     "teer": "1",
     "family": "自然与应用科学",
     "summary": "这类岗位偏专业知识与技术交付，适合把资格证书、软件/工具栈、项目成果和行业关键词写清楚。",
     "commonTitles": [
-      "商业系统专家",
+      "商业系统分析师",
       "Business systems specialists"
     ],
     "employerTips": [
@@ -334,13 +334,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "21222",
-    "titleZh": "信息系统专家",
+    "titleZh": "信息系统分析师",
     "titleEn": "Information systems specialists",
     "teer": "1",
     "family": "自然与应用科学",
     "summary": "这类岗位偏专业知识与技术交付，适合把资格证书、软件/工具栈、项目成果和行业关键词写清楚。",
     "commonTitles": [
-      "信息系统专家",
+      "信息系统分析师",
       "Information systems specialists"
     ],
     "employerTips": [
@@ -386,13 +386,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "21231",
-    "titleZh": "软件工程师和设计师",
+    "titleZh": "软件工程师与设计师",
     "titleEn": "Software engineers and designers",
     "teer": "1",
     "family": "自然与应用科学",
     "summary": "这类岗位偏专业知识与技术交付，适合把资格证书、软件/工具栈、项目成果和行业关键词写清楚。",
     "commonTitles": [
-      "软件工程师和设计师",
+      "软件工程师与设计师",
       "Software engineers and designers"
     ],
     "employerTips": [
@@ -438,13 +438,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "21232",
-    "titleZh": "软件开发人员和程序员",
+    "titleZh": "软件开发工程师与程序员",
     "titleEn": "Software developers and programmers",
     "teer": "1",
     "family": "自然与应用科学",
     "summary": "这类岗位偏专业知识与技术交付，适合把资格证书、软件/工具栈、项目成果和行业关键词写清楚。",
     "commonTitles": [
-      "软件开发人员和程序员",
+      "软件开发工程师与程序员",
       "Software developers and programmers",
       "software developer",
       "programmer",
@@ -550,13 +550,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "22303",
-    "titleZh": "施工估算师",
+    "titleZh": "施工预算员",
     "titleEn": "Construction estimators",
     "teer": "2",
     "family": "自然与应用科学",
     "summary": "这类岗位偏专业知识与技术交付，适合把资格证书、软件/工具栈、项目成果和行业关键词写清楚。",
     "commonTitles": [
-      "施工估算师",
+      "施工预算员",
       "建筑估算师",
       "Construction estimators"
     ],
@@ -603,13 +603,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "31100",
-    "titleZh": "临床与实验室医学专科医生",
+    "titleZh": "临床与检验医学专科医生",
     "titleEn": "Specialists in clinical and laboratory medicine",
     "teer": "1",
     "family": "医疗健康",
     "summary": "这类岗位多与医疗执照、监管和患者安全相关，广告和申请材料都要注意执照、监管与工作范围。",
     "commonTitles": [
-      "临床与实验室医学专科医生",
+      "临床与检验医学专科医生",
       "Specialists in clinical and laboratory medicine"
     ],
     "employerTips": [
@@ -707,13 +707,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "31102",
-    "titleZh": "全科医生和家庭医生",
+    "titleZh": "全科及家庭医生",
     "titleEn": "General practitioners and family physicians",
     "teer": "1",
     "family": "医疗健康",
     "summary": "这类岗位多与医疗执照、监管和患者安全相关，广告和申请材料都要注意执照、监管与工作范围。",
     "commonTitles": [
-      "全科医生和家庭医生",
+      "全科及家庭医生",
       "General practitioners and family physicians"
     ],
     "employerTips": [
@@ -759,16 +759,16 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "31120",
-    "titleZh": "药剂师",
+    "titleZh": "药师",
     "titleEn": "Pharmacists",
     "teer": "1",
     "family": "医疗健康",
     "summary": "这类岗位多与医疗执照、监管和患者安全相关，广告和申请材料都要注意执照、监管与工作范围。",
     "commonTitles": [
-      "药剂师",
+      "药师",
       "Pharmacists",
       "pharmacist",
-      "药剂师"
+      "药师"
     ],
     "employerTips": [
       "把执照、注册和监管要求写清楚，避免吸引到不合规候选人。",
@@ -803,7 +803,7 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
       {
         "href": "/blog/ee-category-what-does-it-screen/",
         "label": "医护定向怎么筛",
-        "desc": "药剂师路径"
+        "desc": "药师路径"
       }
     ],
     "tags": [
@@ -818,13 +818,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "31301",
-    "titleZh": "注册护士和注册精神科护士",
+    "titleZh": "注册护士与精神科护士",
     "titleEn": "Registered nurses and registered psychiatric nurses",
     "teer": "1",
     "family": "医疗健康",
     "summary": "这类岗位多与医疗执照、监管和患者安全相关，广告和申请材料都要注意执照、监管与工作范围。",
     "commonTitles": [
-      "注册护士和注册精神科护士",
+      "注册护士与精神科护士",
       "Registered nurses and registered psychiatric nurses"
     ],
     "employerTips": [
@@ -922,13 +922,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "32101",
-    "titleZh": "持证执业护士",
+    "titleZh": "实用护士",
     "titleEn": "Licensed practical nurses",
     "teer": "2",
     "family": "医疗健康",
     "summary": "这类岗位多与医疗执照、监管和患者安全相关，广告和申请材料都要注意执照、监管与工作范围。",
     "commonTitles": [
-      "持证执业护士",
+      "实用护士",
       "Licensed practical nurses"
     ],
     "employerTips": [
@@ -1078,13 +1078,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "32120",
-    "titleZh": "医学实验室技术员",
+    "titleZh": "医学检验技师",
     "titleEn": "Medical laboratory technologists",
     "teer": "2",
     "family": "医疗健康",
     "summary": "这类岗位多与医疗执照、监管和患者安全相关，广告和申请材料都要注意执照、监管与工作范围。",
     "commonTitles": [
-      "医学实验室技术员",
+      "医学检验技师",
       "Medical laboratory technologists"
     ],
     "employerTips": [
@@ -1130,13 +1130,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "32121",
-    "titleZh": "医学放射技术员",
+    "titleZh": "医学放射技师",
     "titleEn": "Medical radiation technologists",
     "teer": "2",
     "family": "医疗健康",
     "summary": "这类岗位多与医疗执照、监管和患者安全相关，广告和申请材料都要注意执照、监管与工作范围。",
     "commonTitles": [
-      "医学放射技术员",
+      "医学放射技师",
       "Medical radiation technologists"
     ],
     "employerTips": [
@@ -1182,13 +1182,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "32124",
-    "titleZh": "药房技术员",
+    "titleZh": "药房技师",
     "titleEn": "Pharmacy technicians",
     "teer": "2",
     "family": "医疗健康",
     "summary": "这类岗位多与医疗执照、监管和患者安全相关，广告和申请材料都要注意执照、监管与工作范围。",
     "commonTitles": [
-      "药房技术员",
+      "药房技师",
       "Pharmacy technicians"
     ],
     "employerTips": [
@@ -1286,13 +1286,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "33101",
-    "titleZh": "医学实验室助理及相关技术职业",
+    "titleZh": "医学检验助理",
     "titleEn": "Medical laboratory assistants and related technical occupations",
     "teer": "3",
     "family": "医疗健康",
     "summary": "这类岗位多与医疗执照、监管和患者安全相关，广告和申请材料都要注意执照、监管与工作范围。",
     "commonTitles": [
-      "医学实验室助理及相关技术职业",
+      "医学检验助理及相关技术职业",
       "Medical laboratory assistants and related technical occupations"
     ],
     "employerTips": [
@@ -1338,13 +1338,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "33102",
-    "titleZh": "护理助理、护工和患者服务助理",
+    "titleZh": "护理助理、护工及患者服务助理",
     "titleEn": "Nurse aides, orderlies and patient service associates",
     "teer": "3",
     "family": "医疗健康",
     "summary": "这类岗位多与医疗执照、监管和患者安全相关，广告和申请材料都要注意执照、监管与工作范围。",
     "commonTitles": [
-      "护理助理、护工和患者服务助理",
+      "护理助理、护工及患者服务助理",
       "Nurse aides, orderlies and patient service associates"
     ],
     "employerTips": [
@@ -1390,13 +1390,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "41200",
-    "titleZh": "大学教授和讲师",
+    "titleZh": "大学教授与讲师",
     "titleEn": "University professors and lecturers",
     "teer": "1",
     "family": "教育、法律与社区服务",
     "summary": "这类岗位常与教育、社服、培训和社区服务相关，职责描述要写清楚对象、场景与专业边界。",
     "commonTitles": [
-      "大学教授和讲师",
+      "大学教授与讲师",
       "University professors and lecturers"
     ],
     "employerTips": [
@@ -1494,13 +1494,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "41210",
-    "titleZh": "学院及其他职业培训讲师",
+    "titleZh": "学院及职业培训讲师",
     "titleEn": "College and other vocational instructors",
     "teer": "1",
     "family": "教育、法律与社区服务",
     "summary": "这类岗位常与教育、社服、培训和社区服务相关，职责描述要写清楚对象、场景与专业边界。",
     "commonTitles": [
-      "学院及其他职业培训讲师",
+      "学院及职业培训讲师",
       "College and other vocational instructors"
     ],
     "employerTips": [
@@ -1605,13 +1605,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "41221",
-    "titleZh": "小学和幼儿园教师",
+    "titleZh": "小学及幼儿园教师",
     "titleEn": "Elementary school and kindergarten teachers",
     "teer": "1",
     "family": "教育、法律与社区服务",
     "summary": "这类岗位常与教育、社服、培训和社区服务相关，职责描述要写清楚对象、场景与专业边界。",
     "commonTitles": [
-      "小学和幼儿园教师",
+      "小学及幼儿园教师",
       "Elementary school and kindergarten teachers"
     ],
     "employerTips": [
@@ -1709,13 +1709,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "41301",
-    "titleZh": "咨询及相关专科治疗师",
+    "titleZh": "咨询及专科治疗师",
     "titleEn": "Therapists in counselling and related specialized therapies",
     "teer": "1",
     "family": "教育、法律与社区服务",
     "summary": "这类岗位常与教育、社服、培训和社区服务相关，职责描述要写清楚对象、场景与专业边界。",
     "commonTitles": [
-      "咨询及相关专科治疗师",
+      "咨询治疗师及相关专科治疗师",
       "Therapists in counselling and related specialized therapies"
     ],
     "employerTips": [
@@ -1813,13 +1813,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "42201",
-    "titleZh": "社区与社会服务工作者",
+    "titleZh": "社区及社会服务工作者",
     "titleEn": "Social and community service workers",
     "teer": "2",
     "family": "教育、法律与社区服务",
     "summary": "这类岗位常与教育、社服、培训和社区服务相关，职责描述要写清楚对象、场景与专业边界。",
     "commonTitles": [
-      "社区与社会服务工作者",
+      "社区及社会服务工作者",
       "Social and community service workers"
     ],
     "employerTips": [
@@ -2120,13 +2120,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "63201",
-    "titleZh": "零售和批发屠夫",
+    "titleZh": "肉类切割工",
     "titleEn": "Butchers - retail and wholesale",
     "teer": "3",
     "family": "销售与服务",
     "summary": "这类岗位强调服务流程、沟通、客户体验和现场执行，广告要把轮班、语言要求和岗位边界写明。",
     "commonTitles": [
-      "零售和批发屠夫",
+      "零售及批发肉类切割工",
       "Butchers - retail and wholesale"
     ],
     "employerTips": [
@@ -2242,13 +2242,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "70011",
-    "titleZh": "住宅建造与翻新经理",
+    "titleZh": "住宅建造及翻新经理",
     "titleEn": "Home building and renovation managers",
     "teer": "0",
     "family": "技工、运输与设备操作",
     "summary": "这类岗位属于技工、运输和设备操作，最关键的是 NOC 职责、工时、雇主信和 Job Bank 岗位写法。",
     "commonTitles": [
-      "住宅建造与翻新经理",
+      "住宅建造及翻新经理",
       "Home building and renovation managers"
     ],
     "employerTips": [
@@ -2305,13 +2305,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "72100",
-    "titleZh": "机械工及机加工和工具检验员",
+    "titleZh": "机加工与工具检验员",
     "titleEn": "Machinists and machining and tooling inspectors",
     "teer": "2",
     "family": "技工、运输与设备操作",
     "summary": "这类岗位属于技工、运输和设备操作，最关键的是 NOC 职责、工时、雇主信和 Job Bank 岗位写法。",
     "commonTitles": [
-      "机械工及机加工和工具检验员",
+      "机加工及工具检验员",
       "Machinists and machining and tooling inspectors"
     ],
     "employerTips": [
@@ -2431,7 +2431,7 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "72106",
-    "titleZh": "焊工及相关机械操作员",
+    "titleZh": "焊工与焊接设备操作员",
     "titleEn": "Welders and related machine operators",
     "teer": "2",
     "family": "技工、运输与设备操作",
@@ -2494,7 +2494,7 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "72200",
-    "titleZh": "电工（非工业及电力系统）",
+    "titleZh": "一般电工",
     "titleEn": "Electricians (except industrial and power system)",
     "teer": "2",
     "family": "技工、运输与设备操作",
@@ -2962,7 +2962,7 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "72400",
-    "titleZh": "建筑装配工和工业机械工",
+    "titleZh": "机械装配工与工业机械师",
     "titleEn": "Construction millwrights and industrial mechanics",
     "teer": "2",
     "family": "技工、运输与设备操作",
@@ -3151,13 +3151,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "72422",
-    "titleZh": "电机维修工",
+    "titleZh": "电机维修技师",
     "titleEn": "Electrical mechanics",
     "teer": "2",
     "family": "技工、运输与设备操作",
     "summary": "这类岗位属于技工、运输和设备操作，最关键的是 NOC 职责、工时、雇主信和 Job Bank 岗位写法。",
     "commonTitles": [
-      "电机维修工",
+      "电机维修技师",
       "Electrical mechanics"
     ],
     "employerTips": [
@@ -3277,13 +3277,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "72999",
-    "titleZh": "其他技术工种及相关职业",
+    "titleZh": "其他技工职业",
     "titleEn": "Other technical trades and related occupations",
     "teer": "2",
     "family": "技工、运输与设备操作",
     "summary": "这类岗位属于技工、运输和设备操作，最关键的是 NOC 职责、工时、雇主信和 Job Bank 岗位写法。",
     "commonTitles": [
-      "其他技术工种及相关职业",
+      "其他技工及相关职业",
       "Other technical trades and related occupations"
     ],
     "employerTips": [
@@ -3340,13 +3340,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "73100",
-    "titleZh": "混凝土收尾工",
+    "titleZh": "混凝土收面工",
     "titleEn": "Concrete finishers",
     "teer": "3",
     "family": "技工、运输与设备操作",
     "summary": "这类岗位属于技工、运输和设备操作，最关键的是 NOC 职责、工时、雇主信和 Job Bank 岗位写法。",
     "commonTitles": [
-      "混凝土收尾工",
+      "混凝土收面工",
       "Concrete finishers"
     ],
     "employerTips": [
@@ -3403,13 +3403,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "73110",
-    "titleZh": "屋顶工和瓦片工",
+    "titleZh": "屋顶工与瓦片工",
     "titleEn": "Roofers and shinglers",
     "teer": "3",
     "family": "技工、运输与设备操作",
     "summary": "这类岗位属于技工、运输和设备操作，最关键的是 NOC 职责、工时、雇主信和 Job Bank 岗位写法。",
     "commonTitles": [
-      "屋顶工和瓦片工",
+      "屋顶工与瓦片工",
       "Roofers and shinglers",
       "roofer",
       "屋顶工"
@@ -3473,13 +3473,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "73112",
-    "titleZh": "油漆工和装饰工（不含室内装潢）",
+    "titleZh": "油漆工与装饰工",
     "titleEn": "Painters and decorators (except interior decorators)",
     "teer": "3",
     "family": "技工、运输与设备操作",
     "summary": "这类岗位属于技工、运输和设备操作，最关键的是 NOC 职责、工时、雇主信和 Job Bank 岗位写法。",
     "commonTitles": [
-      "油漆工和装饰工（不含室内装潢）",
+      "油漆工与装饰工（不含室内装潢）",
       "Painters and decorators (except interior decorators)"
     ],
     "employerTips": [
@@ -3536,13 +3536,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "73113",
-    "titleZh": "地板铺装工",
+    "titleZh": "地板安装工",
     "titleEn": "Floor covering installers",
     "teer": "3",
     "family": "技工、运输与设备操作",
     "summary": "这类岗位属于技工、运输和设备操作，最关键的是 NOC 职责、工时、雇主信和 Job Bank 岗位写法。",
     "commonTitles": [
-      "地板铺装工",
+      "地板安装工",
       "Floor covering installers"
     ],
     "employerTips": [
@@ -3599,16 +3599,16 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "73300",
-    "titleZh": "卡车司机",
+    "titleZh": "货车司机",
     "titleEn": "Transport truck drivers",
     "teer": "3",
     "family": "技工、运输与设备操作",
     "summary": "这类岗位属于技工、运输和设备操作，最关键的是 NOC 职责、工时、雇主信和 Job Bank 岗位写法。",
     "commonTitles": [
-      "卡车司机",
+      "货车司机",
       "Transport truck drivers",
       "truck driver",
-      "卡车司机"
+      "货车司机"
     ],
     "employerTips": [
       "标题和职责尽量贴近 NOC，别只写 helper 或 general labour。",
@@ -3669,13 +3669,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "73301",
-    "titleZh": "公交车司机、地铁运营员及其他公共交通运营员",
+    "titleZh": "公交司机、地铁司机及其他公共交通司机",
     "titleEn": "Bus drivers, subway operators and other transit operators",
     "teer": "3",
     "family": "技工、运输与设备操作",
     "summary": "这类岗位属于技工、运输和设备操作，最关键的是 NOC 职责、工时、雇主信和 Job Bank 岗位写法。",
     "commonTitles": [
-      "公交车司机、地铁运营员及其他公共交通运营员",
+      "公交司机、地铁司机及其他公共交通运营员",
       "Bus drivers, subway operators and other transit operators"
     ],
     "employerTips": [
@@ -3732,13 +3732,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "82021",
-    "titleZh": "油气钻井及服务承包商与主管",
+    "titleZh": "油气钻井与服务承包主管",
     "titleEn": "Contractors and supervisors, oil and gas drilling and services",
     "teer": "2",
     "family": "自然资源、农业与生产",
     "summary": "这类岗位常与资源开采、农林和生产现场相关，广告要写清楚现场条件、安全要求和经验边界。",
     "commonTitles": [
-      "油气钻井及服务承包商与主管",
+      "油气钻井与服务承包主管",
       "Contractors and supervisors, oil and gas drilling and services"
     ],
     "employerTips": [
