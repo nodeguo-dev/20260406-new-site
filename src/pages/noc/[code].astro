@@ -2,6 +2,7 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import ContactCard from "@/components/ContactCard.astro";
 import RelatedToolsCard from "@/components/RelatedToolsCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
 import { getNocAncestors, getNocLibraryEntry, getNocLevelLabel, nocLibrary, nocLibraryChildren } from "@/data/nocLibrary";
 import { nocOfficialSections } from "@/data/nocOfficialSections";
 import { withSiteTitle } from "@/utils/seo";
@@ -53,6 +54,9 @@ const childEntries = (nocLibraryChildren[entry.code] || [])
   <div class="grid">
     <main class="card">
       <div class="card-inner noc-detail">
+        <div class="page-share noc-share">
+          <ShareBar url={`https://cachinavisa.com/noc/${entry.code}/`} title={`NOC ${entry.code} ${entry.titleZh} | 加拿大 NOC 职业库`} />
+        </div>
         <div class="noc-detail-top">
           <div>
             <div class="kicker">NOC {entry.code}</div>
@@ -264,6 +268,7 @@ const childEntries = (nocLibraryChildren[entry.code] || [])
 
 <style>
   .noc-detail { display: grid; gap: 18px; }
+  .noc-share { margin-bottom: 6px; }
   .noc-hero-panel {
     padding: 18px;
     border-radius: 18px;

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import ContactCard from "@/components/ContactCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
 import { withSiteTitle } from "@/utils/seo";
 ---
 
@@ -12,6 +13,9 @@ import { withSiteTitle } from "@/utils/seo";
   <div class="grid">
     <main class="card">
       <div class="card-inner prose">
+        <div class="page-share noc-share">
+          <ShareBar url="https://cachinavisa.com/noc/job-bank-ad-guide/" title="NOC Job Bank 广告怎么写 | 雇主版" />
+        </div>
         <div class="kicker">雇主指南</div>
         <h1 class="h1">NOC Job Bank 广告怎么写</h1>
         <p class="lead">
@@ -48,4 +52,3 @@ import { withSiteTitle } from "@/utils/seo";
     </aside>
   </div>
 </BaseLayout>
-
