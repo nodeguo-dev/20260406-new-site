@@ -1,4 +1,5 @@
 import { getCollection, type CollectionEntry } from "astro:content";
+import { mergeContentTags } from "@/utils/contentTags";
 
 type BlogEntry = CollectionEntry<"blog">;
 type ServiceEntry = CollectionEntry<"services">;
@@ -69,7 +70,14 @@ export function getAllCategories(posts: BlogEntry[]): string[] {
 
 export function getAllTags(posts: BlogEntry[]): string[] {
   const tags = new Set<string>();
-  for (const post of posts) for (const tag of post.data.tags ?? []) tags.add(tag);
+  for (const post of posts) for (const tag of mergeContentTags({
+    title: post.data.title,
+    slug: post.slug,
+    category: post.data.category,
+    description: post.data.description,
+    excerpt: post.data.excerpt,
+    tags: post.data.tags ?? [],
+  })) tags.add(tag);
   return Array.from(tags).sort((a, b) => a.localeCompare(b, "zh-CN"));
 }
 
@@ -91,6 +99,14 @@ export function getRelatedPosts(
   limit = 6,
 ): BlogEntry[] {
   const relatedSlugs = current.data.relatedPosts ?? [];
+  const currentTags = mergeContentTags({
+    title: current.data.title,
+    slug: current.slug,
+    category: current.data.category,
+    description: current.data.description,
+    excerpt: current.data.excerpt,
+    tags: current.data.tags ?? [],
+  });
   const byExplicit = relatedSlugs
     .map((slug) => posts.find((p) => p.slug === slug))
     .filter((p): p is BlogEntry => Boolean(p))
@@ -100,9 +116,14 @@ export function getRelatedPosts(
     .filter((p) => p.slug !== current.slug)
     .map((p) => {
       const sameCategory = p.data.category === current.data.category ? 3 : 0;
-      const sharedTags = (p.data.tags ?? []).filter((t) =>
-        (current.data.tags ?? []).includes(t),
-      ).length;
+      const sharedTags = mergeContentTags({
+        title: p.data.title,
+        slug: p.slug,
+        category: p.data.category,
+        description: p.data.description,
+        excerpt: p.data.excerpt,
+        tags: p.data.tags ?? [],
+      }).filter((t) => currentTags.includes(t)).length;
       return { post: p, score: sameCategory + sharedTags };
     })
     .sort((a, b) => {

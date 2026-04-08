@@ -16,6 +16,7 @@ import {
   getAllPublishedSchools,
   getAllPublishedServices,
 } from "@/utils/content";
+import { mergeContentTags } from "@/utils/contentTags";
 import { nocLibrary } from "@/data/nocLibrary";
 import { withSiteTitle } from "@/utils/seo";
 
@@ -45,7 +46,14 @@ const contentItems: DiscoveryContent[] = [
     kind: "博客",
     category: categoryMeta[p.data.category]?.title ?? p.data.category,
     description: p.data.description ?? p.data.excerpt ?? "",
-    tags: p.data.tags ?? [],
+    tags: mergeContentTags({
+      title: p.data.title,
+      slug: p.slug,
+      category: p.data.category,
+      description: p.data.description,
+      excerpt: p.data.excerpt,
+      tags: p.data.tags ?? [],
+    }),
     searchBlob: [
       p.data.title,
       p.data.description,
@@ -63,7 +71,14 @@ const contentItems: DiscoveryContent[] = [
     kind: "服务",
     category: "服务",
     description: p.data.description ?? p.data.excerpt ?? "",
-    tags: p.data.tags ?? [],
+    tags: mergeContentTags({
+      title: p.data.title,
+      slug: p.slug,
+      category: p.data.category,
+      description: p.data.description,
+      excerpt: p.data.excerpt,
+      tags: p.data.tags ?? [],
+    }),
     searchBlob: [
       p.data.title,
       p.data.description,
@@ -81,7 +96,14 @@ const contentItems: DiscoveryContent[] = [
     kind: "项目",
     category: "项目",
     description: p.data.description ?? p.data.excerpt ?? "",
-    tags: p.data.tags ?? [],
+    tags: mergeContentTags({
+      title: p.data.title,
+      slug: p.slug,
+      category: p.data.category,
+      description: p.data.description,
+      excerpt: p.data.excerpt,
+      tags: p.data.tags ?? [],
+    }),
     searchBlob: [
       p.data.title,
       p.data.description,
@@ -99,7 +121,14 @@ const contentItems: DiscoveryContent[] = [
     kind: "百科",
     category: "百科",
     description: p.data.description ?? p.data.excerpt ?? "",
-    tags: p.data.tags ?? [],
+    tags: mergeContentTags({
+      title: p.data.title,
+      slug: p.slug,
+      category: p.data.category,
+      description: p.data.description,
+      excerpt: p.data.excerpt,
+      tags: p.data.tags ?? [],
+    }),
     searchBlob: [
       p.data.title,
       p.data.description,
@@ -117,7 +146,14 @@ const contentItems: DiscoveryContent[] = [
     kind: "院校",
     category: "院校",
     description: p.data.description ?? p.data.excerpt ?? "",
-    tags: p.data.tags ?? [],
+    tags: mergeContentTags({
+      title: p.data.title,
+      slug: p.slug,
+      category: p.data.category,
+      description: p.data.description,
+      excerpt: p.data.excerpt,
+      tags: p.data.tags ?? [],
+    }),
     searchBlob: [
       p.data.title,
       p.data.description,
@@ -135,7 +171,13 @@ const contentItems: DiscoveryContent[] = [
     kind: "职业库",
     category: "NOC 职业库",
     description: entry.summary,
-    tags: entry.tags,
+    tags: mergeContentTags({
+      title: entry.titleZh,
+      slug: entry.code,
+      category: "NOC 职业库",
+      description: entry.summary,
+      tags: entry.tags,
+    }),
     searchBlob: [
       `noc ${entry.code}`,
       entry.titleZh,
@@ -164,7 +206,13 @@ const { tagHints, categoryHints } = buildFaqDiscoveryHints(
         title: `NOC ${entry.code} ${entry.titleZh}`,
         excerpt: entry.summary,
         description: entry.summary,
-        tags: entry.tags,
+        tags: mergeContentTags({
+          title: entry.titleZh,
+          slug: entry.code,
+          category: "NOC 职业库",
+          description: entry.summary,
+          tags: entry.tags,
+        }),
         category: "NOC 职业库",
       },
     })),
