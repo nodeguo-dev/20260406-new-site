@@ -2,6 +2,7 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import ContactCard from "@/components/ContactCard.astro";
 import RelatedToolsCard from "@/components/RelatedToolsCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
 import { getNocAncestors, getNocLibraryEntry, getNocLevelLabel, nocLibrary, nocLibraryChildren } from "@/data/nocLibrary";
 import { nocOfficialSections } from "@/data/nocOfficialSections";
 import { withSiteTitle } from "@/utils/seo";
@@ -232,6 +233,10 @@ const childEntries = (nocLibraryChildren[entry.code] || [])
             ))}
           </div>
         </section>
+
+        <div class="page-share noc-share noc-share--bottom">
+          <ShareBar url={`https://cachinavisa.com/noc/${entry.code}/`} title={`NOC ${entry.code} ${entry.titleZh} | 加拿大 NOC 职业库`} />
+        </div>
       </div>
     </main>
 
@@ -264,6 +269,7 @@ const childEntries = (nocLibraryChildren[entry.code] || [])
 
 <style>
   .noc-detail { display: grid; gap: 18px; }
+  .noc-share { margin-bottom: 6px; }
   .noc-hero-panel {
     padding: 18px;
     border-radius: 18px;
@@ -388,6 +394,8 @@ const childEntries = (nocLibraryChildren[entry.code] || [])
   }
   .nd-badge.red { background: rgba(217,45,32,0.08); color: #d92d20; }
   .nd-badge.navy { background: rgba(26,86,196,0.08); color: #1a56c4; }
+  .noc-share { margin-top: 24px; }
+  .noc-share--bottom { margin-bottom: 4px; }
   .noc-detail-links {
     display: flex;
     flex-wrap: wrap;

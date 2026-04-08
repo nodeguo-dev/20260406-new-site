@@ -2,6 +2,7 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import ContactCard from "@/components/ContactCard.astro";
 import RelatedToolsCard from "@/components/RelatedToolsCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
 import { nocLibrary, getNocLevelLabel } from "@/data/nocLibrary";
 import { nocStructure } from "@/data/nocStructure";
 import { withSiteTitle } from "@/utils/seo";
@@ -108,6 +109,10 @@ const levelSections = levelOrder.map((level) => ({
             </section>
           ))}
         </div>
+
+        <div class="page-share noc-share noc-share--bottom">
+          <ShareBar url="https://cachinavisa.com/noc/" title="加拿大 NOC 职业库 | 职业分类、Job Bank 与 EE 对照" />
+        </div>
       </div>
     </main>
 
@@ -195,6 +200,8 @@ const levelSections = levelOrder.map((level) => ({
 
 <style>
   .noc-hero { display: grid; gap: 14px; }
+  .noc-share { margin-top: 24px; }
+  .noc-share--bottom { margin-bottom: 4px; }
   .noc-search {
     position: relative;
     margin-top: 8px;
