@@ -1,0 +1,219 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "加拿大签证", href: "/visa/" },
+  { name: "法语流动工签（Mobilité francophone）", href: "/visa/french-mobility-work-permit/" },
+];
+
+const faqItems = [
+  {
+    q: "法语流动工签还需要 LMIA 吗？",
+    a: "在符合 IRCC 公布的「法语流动 / Mobilité francophone」全部条件时，属于国际流动项目（IMP）下的 LMIA 豁免：雇主在雇主门户（Employer Portal）用豁免代码 C16 提交聘用意向并缴纳合规费后，申请人凭 offer 编号等递交工签。若岗位 TEER、工作地点（须在魁北克以外）、法语听说证明等不符合当时有效标准，则不能适用本类别。",
+  },
+  {
+    q: "是不是任何魁省以外的雇主都可以？还必须落在「法语社区」吗？",
+    a: "对工作地的要求：您将在魁北克省以外的加拿大某省或地区工作与居住（联邦层面表述为 9 省 + 3 地区）。这与部分「必须到指定社区定居」的移民试点不是同一套规则。政策宗旨是壮大魁北克以外的法语人口，但 IRCC 对 2023 年 6 月 15 日及以后递交的常见资格说明中，强调的是「魁省外 + 符合 TEER 的岗位 + 法语听说达到中等水平」等，并不要求岗位日常工作语言必须是法语。具体以官网 eligibility 页面与您的递交日期为准。",
+  },
+  {
+    q: "对法语水平到底怎么要求？一定要考 TEF/TCF 吗？",
+    a: "以 2023 年 6 月 15 日及以后递交为例，IRCC 要求您能证明口语与听力达到加拿大法语等级 NCLC 5 或以上（相当于中等水平）。通常接受 TEF Canada、TCF Canada 等认可考试；也可能接受其他符合指引的证明材料。是否仅需成绩、是否还需补充说明，以当时 IRCC 清单与签证官个案为准。2023 年 6 月 15 日之前递交曾适用更高语言与更窄 TEER 等旧规，与新规不同。",
+  },
+  {
+    q: "和封闭式 LMIA 工签相比有什么利弊？",
+    a: "优势是雇主可省去 LMIA 周期与 LMIA 相关成本，对符合条件的聘用是较快路径。限制是：必须严格满足当时有效的法语流动全部条件（含魁省外工作地、岗位 TEER、法语听说证明、初级农业 TEER 4/5 例外等），工签通常与特定雇主绑定，换雇主须重新评估是否仍符合 C16。",
+  },
+];
+
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((i) => ({
+    "@type": "Question",
+    name: i.q,
+    acceptedAnswer: { "@type": "Answer", text: i.a },
+  })),
+};
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("法语流动工签（Mobilité francophone）| LMIA 豁免 · 魁北克以外")}
+  description="加拿大法语流动工签（IMP / C16）：魁北克省以外工作、岗位符合 TEER 要求、法语听说达 NCLC 5+ 等条件下可免 LMIA。IRCC 说明工作语言不必为法语（新规适用日期以官网为准）。流程与材料要点。"
+  canonical="https://cachinavisa.com/visa/french-mobility-work-permit/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={faqLd} />
+  <Breadcrumbs items={breadcrumbs} />
+  <div class="grid" style="margin-top:16px">
+    <article class="content-card">
+      <div class="page-header">
+        <div class="page-kicker">国际流动项目 · IMP · LMIA 豁免</div>
+        <h1 class="page-h1">法语流动工签（Mobilité francophone）</h1>
+        <p class="page-intro">
+          「法语流动」是联邦<strong>国际流动项目（IMP）</strong>下、豁免代码 <strong>C16</strong> 对应的<strong>无需 LMIA</strong>工签路径，政策目标是促进<strong>魁北克省以外</strong>的法语移民与劳动力。对近年最常见的<strong>2023 年 6 月 15 日及以后</strong>递交，IRCC 公开说明包括：工作地在魁北克以外；岗位多属 NOC TEER 0–5（<strong>初级农业</strong>项下 TEER 4/5 有例外）；申请人须证明<strong>法语口语与听力</strong>不低于<strong>NCLC 5</strong>；且官方面向审批人员的指引中写明<strong>工作语言不必是法语</strong>（与旧版「岗位须以法语为主」的表述不同）。雇主须通过<strong>雇主门户</strong>提交聘用并缴纳合规费。以下为方便理解的框架，正式递交前请以
+          <a href="https://www.canada.ca/en/immigration-refugees-citizenship/services/work-canada/permit/francophone-mobility.html" target="_blank" rel="noopener noreferrer">IRCC：Francophone Mobility</a>
+          与
+          <a href="https://www.canada.ca/en/immigration-refugees-citizenship/services/work-canada/special-instructions/francophone-mobility/eligibility.html" target="_blank" rel="noopener noreferrer">资格说明（Eligibility）</a>
+          为准。
+        </p>
+      </div>
+
+      <div class="content-sections">
+        <div class="section-block">
+          <h2>核心适用条件（概念框架）</h2>
+          <ul class="req-list">
+            <li><strong>工作地点</strong>——将在<strong>魁北克省以外</strong>的加拿大某省或地区工作与居住；不要求必须属于某一「指定法语社区」名单（与部分联邦定居类试点不同）。</li>
+            <li><strong>职业等级（TEER）</strong>——以<strong>2023-06-15 及以后</strong>常见规则为参考：多数 TEER 0–5 岗位可符合；<strong>初级农业 primary agriculture</strong> 中的 TEER 4、5 有排除，申请前请对照 IRCC 原文。</li>
+            <li><strong>法语能力（个人）</strong>——须能证明<strong>口语与听力</strong>达到<strong>NCLC 5 或以上</strong>；认可考试与材料以 IRCC 清单为准。</li>
+            <li><strong>工作语言（岗位）</strong>——IRCC 对<strong>新规适用案件</strong>说明<strong>岗位日常工作语言不必是法语</strong>；但仍须满足上述个人法语听说要求及其他条件。</li>
+            <li><strong>雇主义务</strong>——雇主在 Employer Portal 使用 <strong>C16 / Mobilité francophone</strong> 提交聘用，并缴纳雇主合规费，向申请人提供 offer 编号等信息。</li>
+            <li><strong>申请人</strong>——满足工签一般资格（身份、安全、健康等），材料与 offer 一致。</li>
+          </ul>
+          <div class="tip-box"><strong>旧规提示：</strong>若在 <strong>2023 年 6 月 15 日之前</strong>递交，曾适用更窄的 TEER（多为 0–3）、更高的法语门槛等；与当前页面侧重的新规不同，请以您递交日当时 IRCC 说明为准。若岗位、地点或法语证明明显不符合当时标准，应改走 LMIA 或其他 IMP 类别。</div>
+        </div>
+
+        <div class="section-block">
+          <h2>申请流程概览</h2>
+          <ol class="step-list">
+            <li><span class="step-text"><strong>雇主确认资格</strong>——核对魁省外工作地、岗位 TEER（及农业例外）、豁免代码 C16 与合规费流程是否就绪。</span></li>
+            <li><span class="step-text"><strong>雇主门户</strong>——提交聘用信息，取得可用于工签申请的豁免依据（及合规费记录）。</span></li>
+            <li><span class="step-text"><strong>准备申请人材料</strong>——护照、聘用文件、<strong>法语听说 NCLC 5+</strong> 等证明、学历与经历、无犯罪及体检（如需）等。</span></li>
+            <li><span class="step-text"><strong>递交工签申请</strong>——境外或境内（视身份与类别规则），在表格与说明中正确引用 IMP / 法语流动对应代码。</span></li>
+            <li><span class="step-text"><strong>边境或使馆签发</strong>——获批后按指引领取或入境办理。</span></li>
+          </ol>
+        </div>
+
+        <div class="section-block">
+          <h2>与 EE 法语定向、魁省工签的区别</h2>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-card-label">EE 法语定向</div>
+              <div class="info-card-value">属永久居民邀请类别，与「工签豁免 LMIA」是不同赛道；可并行规划。</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">魁北克省</div>
+              <div class="info-card-value">魁省工签与 CSQ/CAQ 等规则由魁省与联邦共同管理，不适用本条「魁北克以外」法语流动。</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">普通 LMIA 工签</div>
+              <div class="info-card-value">无法语流动条件时，雇主通常需先申请 LMIA，再走封闭式工签。</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">C11 重大利益</div>
+              <div class="info-card-value">面向显著经济/文化利益等个案，与「魁省外 + 法语听说 + C16」逻辑不同，见 <a href="/visa/c11-work-permit/">C11 工签专题</a>。</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2>常见问题（FAQ）</h2>
+          {faqItems.map((item) => (
+            <details class="faq-item">
+              <summary class="faq-q">{item.q}</summary>
+              <p class="faq-a">{item.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+
+      <div class="page-share">
+        <ShareBar
+          url="https://cachinavisa.com/visa/french-mobility-work-permit/"
+          title={"法语流动工签（Mobilité francophone）| LMIA 豁免 · C16"}
+        />
+      </div>
+
+      <div class="cta-inline">
+        <div class="cta-text">不确定岗位 TEER、工作地或法语材料是否满足 C16？可把 offer 与计划工作省份发来初评。</div>
+        <a class="cta-btn" href="/contact/">免费咨询 →</a>
+      </div>
+    </article>
+
+    <aside class="sidebar-stack">
+      <ContactCard title="工签与雇主方案" />
+      <div class="sidebar-nav-card">
+        <div class="snc-title">签证子栏目</div>
+        <div class="snc-links">
+          <a class="snc-link" href="/visa/visitor/">访问签 / 旅游签</a>
+          <a class="snc-link" href="/visa/family-visit/">探亲签证</a>
+          <a class="snc-link" href="/visa/super-visa/">超级签证（父母/祖父母）</a>
+          <a class="snc-link" href="/visa/study-permit/">学习许可（学签）</a>
+          <a class="snc-link" href="/visa/work-permit/">工作签证（工签）总览</a>
+          <a class="snc-link active" href="/visa/french-mobility-work-permit/">法语流动工签</a>
+          <a class="snc-link" href="/visa/c11-work-permit/">C11 重大利益工签</a>
+          <a class="snc-link" href="/visa/extend/">续签 / 延期 / 境内转换</a>
+        </div>
+      </div>
+      <div class="sidebar-nav-card">
+        <div class="snc-title">相关移民内容</div>
+        <div class="snc-links">
+          <a class="snc-link" href="/projects/ee-french/">EE 法语定向</a>
+          <a class="snc-link" href="/projects/lmia-exemptions/">LMIA 豁免总览</a>
+          <a class="snc-link" href="/projects/lmia-overview/">LMIA 雇主担保</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+  .grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+  @media (min-width: 920px) { .grid { grid-template-columns: 1fr 300px; align-items: start; } }
+  .content-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 16px; overflow: hidden; }
+  .page-header { padding: 28px 28px 24px; border-bottom: 1px solid rgba(26,29,35,0.08); background: linear-gradient(135deg, #fafbff, #fff); }
+  .page-kicker { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #1a56c4; margin-bottom: 8px; }
+  .page-h1 { font-size: clamp(22px, 4vw, 30px); font-weight: 800; color: #1a1d23; margin: 0 0 12px; letter-spacing: -0.02em; }
+  .page-intro { font-size: 15px; color: rgba(26,29,35,0.62); line-height: 1.7; margin: 0; }
+  .page-intro a { color: #1a56c4; font-weight: 600; }
+  .content-sections { padding: 24px 28px; display: grid; gap: 32px; }
+  .section-block h2 { font-size: 18px; font-weight: 750; color: #1a1d23; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 2px solid rgba(26,86,196,0.15); }
+  .req-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  .req-list li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; background: rgba(26,29,35,0.025); border-radius: 10px; font-size: 14px; color: rgba(26,29,35,0.75); line-height: 1.55; }
+  .req-list li::before { content: "✓"; color: #1a56c4; font-weight: 700; flex-shrink: 0; }
+  .step-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; counter-reset: steps; }
+  .step-list li { display: flex; gap: 14px; align-items: flex-start; counter-increment: steps; }
+  .step-list li::before { content: counter(steps); display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #1a56c4; color: #fff; font-weight: 700; font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+  .step-text { font-size: 14px; color: rgba(26,29,35,0.75); line-height: 1.6; padding-top: 3px; }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .info-card { padding: 14px 16px; background: rgba(26,29,35,0.03); border-radius: 12px; border: 1px solid rgba(26,29,35,0.07); }
+  .info-card-label { font-size: 12px; color: rgba(26,29,35,0.45); margin-bottom: 4px; }
+  .info-card-value { font-size: 13px; font-weight: 600; color: #1a1d23; line-height: 1.5; }
+  .info-card-value a { color: #1a56c4; }
+  .tip-box { padding: 14px 16px; background: rgba(26,86,196,0.06); border-left: 3px solid #1a56c4; border-radius: 0 10px 10px 0; font-size: 13px; color: rgba(26,29,35,0.7); line-height: 1.65; margin-top: 12px; }
+  .faq-item { border: 1px solid rgba(26,29,35,0.09); border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+  .faq-q { padding: 13px 16px; font-weight: 650; font-size: 14px; cursor: pointer; list-style: none; display: flex; justify-content: space-between; color: #1a1d23; }
+  .faq-q::after { content: "+"; font-size: 18px; color: rgba(26,29,35,0.4); }
+  details[open] .faq-q::after { content: "−"; }
+  .faq-q::-webkit-details-marker { display: none; }
+  .faq-a { padding: 0 16px 13px; font-size: 13.5px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0; }
+  .cta-inline { margin: 0 28px 28px; padding: 20px 24px; background: linear-gradient(135deg, #0a1628, #0f1f38); border-radius: 14px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .cta-text { font-size: 15px; font-weight: 700; color: #fff; }
+  .cta-btn { display: inline-flex; padding: 10px 20px; border-radius: 10px; background: #1a56c4; color: #fff; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; }
+  .cta-btn:hover { background: #1647a3; text-decoration: none; }
+  .sidebar-stack { display: grid; gap: 16px; position: sticky; top: 80px; }
+  .sidebar-nav-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 14px; padding: 18px 20px; }
+  .snc-title { font-size: 14px; font-weight: 700; color: #1a1d23; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(26,29,35,0.08); }
+  .snc-links { display: flex; flex-direction: column; gap: 2px; }
+  .snc-link { display: block; padding: 8px 10px; font-size: 13.5px; color: #374151; text-decoration: none; border-radius: 8px; }
+  .snc-link:hover { background: rgba(26,86,196,0.08); color: #1a56c4; text-decoration: none; }
+  .snc-link.active { background: rgba(26,86,196,0.1); color: #1a56c4; font-weight: 600; }
+  .page-share { padding: 0 28px 16px; }
+</style>

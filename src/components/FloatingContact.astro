@@ -1,0 +1,335 @@
+---
+import { site } from "@/config/site";
+---
+
+<!-- Floating contact button (bottom-right) -->
+<div class="fc-root" id="fc-root">
+  <!-- Expanded panel -->
+  <div class="fc-panel" id="fc-panel" aria-hidden="true">
+    <div class="fc-panel-header">
+      <span class="fc-panel-title">联系我们</span>
+      <div class="fc-panel-subtitle">专业顾问在线，快速响应</div>
+    </div>
+    <div class="fc-panel-body">
+      <!-- WeChat -->
+      <button class="fc-row" type="button" id="fc-wechat-btn">
+        <span class="fc-row-icon">💬</span>
+        <div class="fc-row-text">
+          <div class="fc-row-label">微信咨询</div>
+          <div class="fc-row-val">{site.contact.wechat}</div>
+        </div>
+        <span class="fc-row-action">点击复制</span>
+      </button>
+      <!-- Phone CA -->
+      <a class="fc-row" href={`tel:${site.contact.phoneCA.replace(/[^+0-9]/g,"")}`}>
+        <span class="fc-row-icon">📞</span>
+        <div class="fc-row-text">
+          <div class="fc-row-label">加拿大热线</div>
+          <div class="fc-row-val">{site.contact.phoneCA}</div>
+        </div>
+        <span class="fc-row-action">拨打</span>
+      </a>
+      <!-- Phone CN -->
+      <a class="fc-row" href={`tel:${site.contact.phoneCNPlain}`}>
+        <span class="fc-row-icon">🇨🇳</span>
+        <div class="fc-row-text">
+          <div class="fc-row-label">国内热线</div>
+          <div class="fc-row-val">{site.contact.phoneCN}</div>
+        </div>
+        <span class="fc-row-action">拨打</span>
+      </a>
+      <!-- Online consult -->
+      <a class="fc-row fc-row-primary" href="/contact/">
+        <span class="fc-row-icon">✉️</span>
+        <div class="fc-row-text">
+          <div class="fc-row-label">在线预约咨询</div>
+          <div class="fc-row-val">免费评估 · 快速回复</div>
+        </div>
+        <span class="fc-row-action">前往 →</span>
+      </a>
+    </div>
+    <div class="fc-panel-footer">
+      营业时间：{site.contact.hours}
+    </div>
+    <!-- Toast notification -->
+    <div class="fc-toast" id="fc-toast" role="status" aria-live="polite">已复制微信号</div>
+  </div>
+
+  <!-- Trigger button -->
+  <button class="fc-trigger" id="fc-trigger" type="button" aria-label="联系我们" aria-expanded="false">
+    <span class="fc-trigger-icon fc-icon-chat">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C6.48 2 2 6.48 2 12C2 13.85 2.51 15.59 3.39 17.08L2.05 21.95L6.92 20.61C8.41 21.49 10.15 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2Z" fill="white"/>
+        <path d="M8 11H8.01M12 11H12.01M16 11H16.01" stroke="#d92d20" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <span class="fc-trigger-icon fc-icon-close" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 6L6 18M6 6L18 18" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <span class="fc-trigger-badge">咨询</span>
+  </button>
+</div>
+
+<script>
+  const root = document.getElementById("fc-root");
+  const trigger = document.getElementById("fc-trigger");
+  const panel = document.getElementById("fc-panel");
+  const toast = document.getElementById("fc-toast");
+  const wechatBtn = document.getElementById("fc-wechat-btn");
+  const iconChat = trigger?.querySelector(".fc-icon-chat") as HTMLElement | null;
+  const iconClose = trigger?.querySelector(".fc-icon-close") as HTMLElement | null;
+  const badge = trigger?.querySelector(".fc-trigger-badge") as HTMLElement | null;
+
+  let open = false;
+
+  function setOpen(state: boolean) {
+    open = state;
+    if (!panel || !trigger) return;
+    panel.setAttribute("aria-hidden", open ? "false" : "true");
+    panel.classList.toggle("is-open", open);
+    trigger.setAttribute("aria-expanded", open ? "true" : "false");
+    if (iconChat) iconChat.style.display = open ? "none" : "";
+    if (iconClose) iconClose.style.display = open ? "" : "none";
+    if (badge) badge.style.display = open ? "none" : "";
+  }
+
+  trigger?.addEventListener("click", () => setOpen(!open));
+
+  // Close on outside click
+  document.addEventListener("click", (e) => {
+    if (open && root && !root.contains(e.target as Node)) {
+      setOpen(false);
+    }
+  });
+
+  // WeChat copy
+  async function copyText(text: string) {
+    if (navigator.clipboard?.writeText) return navigator.clipboard.writeText(text);
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.cssText = "position:fixed;left:-9999px";
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    ta.remove();
+  }
+
+  function showToast() {
+    if (!toast) return;
+    toast.classList.add("is-visible");
+    clearTimeout((showToast as any)._t);
+    (showToast as any)._t = setTimeout(() => toast.classList.remove("is-visible"), 2000);
+  }
+
+  wechatBtn?.addEventListener("click", async () => {
+    const val = wechatBtn.querySelector(".fc-row-val")?.textContent?.trim();
+    if (!val) return;
+    try {
+      await copyText(val);
+      showToast();
+    } catch {
+      showToast();
+    }
+  });
+</script>
+
+<style>
+/* ── ROOT ────────────────────────────────────────────────────────── */
+.fc-root {
+  position: fixed;
+  right: 20px;
+  bottom: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+@media (max-width: 460px) {
+  .fc-root { right: 14px; bottom: 16px; }
+}
+
+/* ── TRIGGER BUTTON ──────────────────────────────────────────────── */
+.fc-trigger {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: #d92d20;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(217, 45, 32, 0.45);
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+  flex-shrink: 0;
+}
+.fc-trigger:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 26px rgba(217, 45, 32, 0.55);
+}
+.fc-trigger-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fc-trigger-icon svg { width: 28px; height: 28px; }
+.fc-trigger-badge {
+  position: absolute;
+  top: -2px;
+  right: -4px;
+  background: #fff;
+  color: #d92d20;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 5px;
+  border-radius: 999px;
+  line-height: 1.3;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+
+/* ── PANEL ───────────────────────────────────────────────────────── */
+.fc-panel {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.08);
+  width: 300px;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(16px) scale(0.96);
+  pointer-events: none;
+  transition: opacity 0.22s, transform 0.22s;
+  transform-origin: bottom right;
+}
+.fc-panel.is-open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+@media (max-width: 360px) {
+  .fc-panel { width: calc(100vw - 28px); }
+}
+
+/* panel header */
+.fc-panel-header {
+  background: linear-gradient(135deg, #0a1628, #0f1f38);
+  padding: 16px 18px;
+}
+.fc-panel-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+  display: block;
+  margin-bottom: 3px;
+}
+.fc-panel-subtitle {
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+}
+
+/* panel body */
+.fc-panel-body {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+}
+
+/* rows */
+.fc-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(26,29,35,0.07);
+  background: rgba(26,29,35,0.02);
+  text-decoration: none;
+  color: #1a1d23;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  width: 100%;
+  text-align: left;
+}
+.fc-row:hover {
+  background: rgba(217, 45, 32, 0.05);
+  border-color: rgba(217, 45, 32, 0.2);
+  text-decoration: none;
+  color: #1a1d23;
+}
+.fc-row-primary {
+  background: rgba(217, 45, 32, 0.06);
+  border-color: rgba(217, 45, 32, 0.18);
+}
+.fc-row-primary:hover {
+  background: rgba(217, 45, 32, 0.1);
+}
+.fc-row-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.fc-row-text {
+  flex: 1;
+  min-width: 0;
+}
+.fc-row-label {
+  font-size: 12px;
+  color: rgba(26,29,35,0.45);
+  font-weight: 500;
+  margin-bottom: 1px;
+}
+.fc-row-val {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1a1d23;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fc-row-action {
+  font-size: 11px;
+  color: #d92d20;
+  font-weight: 700;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* panel footer */
+.fc-panel-footer {
+  padding: 8px 18px 12px;
+  font-size: 11px;
+  color: rgba(26,29,35,0.4);
+  text-align: center;
+  border-top: 1px solid rgba(26,29,35,0.06);
+  margin: 0 8px;
+}
+
+/* toast */
+.fc-toast {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  background: rgba(26,29,35,0.9);
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 999px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.fc-toast.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+</style>

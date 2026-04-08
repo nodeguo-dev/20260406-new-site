@@ -1,0 +1,694 @@
+---
+import { site } from "@/config/site";
+
+const pathname = Astro.url.pathname;
+
+type NavItem = { href: string; label: string; desc?: string };
+type NavGroup = {
+  href: string;
+  label: string;
+  children?: NavItem[];
+  columns?: NavItem[][];
+};
+
+const nav: NavGroup[] = [
+  { href: "/", label: "首页" },
+  {
+    href: "/projects/",
+    label: "移民项目",
+    columns: [
+      [
+        { href: "/projects/ee-category/", label: "EE定向移民", desc: "类别邀请 · CBS 定向总览" },
+        { href: "/projects/provincial-nomination/", label: "各省省提名", desc: "PNP 总览 · Enhanced / Base" },
+        { href: "/projects/province/ontario/", label: "安省移民 OINP", desc: "安大略省提名计划" },
+        { href: "/projects/province/newfoundland/", label: "海洋四省 · NL", desc: "纽芬兰 NLNP · AIP" },
+        { href: "/projects/province/nova-scotia/", label: "海洋四省 · NS", desc: "新斯科舍 NSNP · AIP" },
+        { href: "/projects/province/new-brunswick/", label: "海洋四省 · NB", desc: "新不伦瑞克 NBPNP · AIP" },
+        { href: "/projects/province/prince-edward-island/", label: "海洋四省 · PEI", desc: "爱德华王子岛 PEIPNP · AIP" },
+      ],
+      [
+        { href: "/projects/province/manitoba/", label: "曼省留学移民", desc: "MPNP · 毕业留省与雇主类" },
+        { href: "/projects/lmia-overview/", label: "LMIA 雇主担保", desc: "劳工市场影响评估" },
+        { href: "/projects/federal-programs/", label: "联邦移民项目", desc: "EE · CEC · FSW 等联邦通道" },
+        { href: "/services/family-sponsorship-service/", label: "家庭团聚担保", desc: "配偶 · 父母 · 子女担保" },
+        { href: "/projects/study-to-pr/", label: "留学转移民（毕业移民）", desc: "PGWP 衔接各省提名" },
+        { href: "/projects/ee-trades/", label: "EE 技工类定向", desc: "更多定向类别入口" },
+        { href: "/projects/cec/", label: "加拿大经验类（CEC）", desc: "境内工作经验转永居" },
+      ],
+    ],
+  },
+  {
+    href: "/visa/",
+    label: "签证服务",
+    children: [
+      { href: "/visa/visitor/", label: "访问签 / 旅游签" },
+      { href: "/visa/family-visit/", label: "探亲签证" },
+      { href: "/visa/super-visa/", label: "超级签证（父母）" },
+      { href: "/visa/study-permit/", label: "学签（Study Permit）" },
+      { href: "/visa/work-permit/", label: "工签（Work Permit）" },
+      { href: "/visa/french-mobility-work-permit/", label: "法语流动工签" },
+      { href: "/visa/c11-work-permit/", label: "C11 重大利益工签" },
+      { href: "/visa/extend/", label: "续签 / 延期 / 境内转换" },
+    ],
+  },
+  {
+    href: "/school/",
+    label: "免费申请学校",
+    columns: [
+      [
+        { href: "/school/", label: "📚 10省院校目录总览", desc: "按热门度排序，安省第一" },
+        { href: "/school/ontario/", label: "🏙️ 安大略省（Ontario）", desc: "院校最多·GTA就业·OINP" },
+        { href: "/school/british-columbia/", label: "🌊 不列颠哥伦比亚省（BC）", desc: "温哥华·UBC·BCPNP" },
+        { href: "/school/alberta/", label: "⛽ 阿尔伯塔省（Alberta）", desc: "无省税·高工资·AAIP" },
+        { href: "/school/quebec/", label: "🗼 魁北克省（Quebec）", desc: "学费最低·麦吉尔·法语移民" },
+        { href: "/school/manitoba/", label: "🌾 曼尼托巴省（Manitoba）", desc: "低成本·MPNP·曼大·RRC" },
+      ],
+      [
+        { href: "/school/nova-scotia/", label: "⚓ 新斯科舍省（Nova Scotia）", desc: "NSCC·NSNP·AIP大西洋" },
+        { href: "/school/new-brunswick/", label: "🌲 新不伦瑞克省（New Brunswick）", desc: "蒙克顿双语·AIP·NBPNP" },
+        { href: "/school/saskatchewan/", label: "🏔️ 萨斯喀彻温省（Saskatchewan）", desc: "农业矿产·SINP·Sask Poly" },
+        { href: "/school/prince-edward-island/", label: "🦞 爱德华王子岛（PEI）", desc: "最小省·UPEI·PEIPNP" },
+        { href: "/school/newfoundland-and-labrador/", label: "🐟 纽芬兰与拉布拉多省（NL）", desc: "MUN学费最低·NLNP·AIP" },
+        { href: "/visa/study-permit/", label: "📋 学签申请指南", desc: "材料清单·时间线·资金证明" },
+      ],
+    ],
+  },
+  {
+    href: "/tools/",
+    label: "移民打分",
+    children: [
+      { href: "/tools/", label: "打分工具总览" },
+      { href: "/tools/crs-calculator/", label: "联邦 CRS 计算器" },
+      { href: "/tools/bc-pnp-calculator/", label: "BC PNP · SIRS" },
+      { href: "/tools/oinp-calculator/", label: "安省 OINP · EOI" },
+      { href: "/tools/aaip-calculator/", label: "阿省 AAIP · Worker EOI" },
+    ],
+  },
+  {
+    href: "/immigration/",
+    label: "移民资讯",
+    children: [
+      { href: "/immigration/", label: "移民资讯总览" },
+      { href: "/noc/", label: "加拿大NOC职业库" },
+      { href: "/immigration/guide/", label: "新手必读（保姆级）" },
+      { href: "/category/federal-pnp/", label: "联邦与省提名动态" },
+      { href: "/category/policy/", label: "政策解读" },
+      { href: "/category/immigration-programs/", label: "移民项目分析" },
+      { href: "/category/inland-affairs/", label: "境内身份与签证事务" },
+      { href: "/blog/inland-status-extension-guide/", label: "　续签与桥接身份" },
+      { href: "/blog/inland-pgwp-work-study-bridge/", label: "　学签→工签（PGWP）" },
+      { href: "/blog/inland-document-renewal-guide/", label: "　证件更新与常用表格" },
+      { href: "/blog/inland-pr-card-landing-guide/", label: "　PR卡与登陆后事项" },
+      { href: "/guides/toronto-life/", label: "多伦多生活指南" },
+      { href: "/guides/toronto-life/housing/", label: "　租房与安居" },
+      { href: "/guides/toronto-life/transit/", label: "　交通与出行" },
+      { href: "/guides/toronto-life/health/", label: "　医疗与保险" },
+      { href: "/guides/toronto-life/partners/", label: "　生活指南 · 商务合作" },
+    ],
+  },
+  { href: "/blog/", label: "移民新闻" },
+  { href: "/faq/", label: "常见问题" },
+  { href: "/about/", label: "关于我们" },
+];
+
+function isActive(href: string) {
+  if (href === "/") return pathname === "/";
+  return pathname.startsWith(href);
+}
+---
+
+<!-- ── Trust bar ─────────────────────────────────────────────────── -->
+<div class="trust-bar">
+  <div class="container trust-bar-inner">
+    <div class="trust-items">
+      <span class="trust-item">
+        <span class="trust-dot green"></span>
+        RCIC 持牌顾问
+      </span>
+      <span class="trust-sep">|</span>
+      <span class="trust-item">📞 加拿大：<a href={`tel:${site.contact.phoneCA.replace(/[^+0-9]/g,'')}`}>{site.contact.phoneCA}</a></span>
+      <span class="trust-sep">|</span>
+      <span class="trust-item">🇨🇳 国内：<a href={`tel:${site.contact.phoneCNPlain}`}>{site.contact.phoneCN}</a></span>
+      <span class="trust-sep hide-sm">|</span>
+      <span class="trust-item hide-sm">💬 微信：<strong>{site.contact.wechat}</strong></span>
+    </div>
+    <div class="trust-right hide-sm">
+      <span class="trust-item">🕐 {site.contact.hours}</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── Main header ──────────────────────────────────────────────── -->
+<header class="site-header" id="site-header">
+  <div class="container site-header-inner">
+
+    <!-- Logo -->
+    <a class="brand" href="/" aria-label={site.name}>
+      <div class="brand-icon" aria-hidden="true">
+        <img
+          src="/assets/logo.webp"
+          alt={`${site.name} Logo`}
+          width="38" height="38"
+          loading="eager" decoding="async"
+        />
+      </div>
+      <span class="brand-text">
+        <span class="brand-name">{site.name}</span>
+        <small class="brand-sub">加拿大移民 · 签证 · 留学</small>
+      </span>
+    </a>
+
+    <!-- Desktop nav -->
+    <nav class="nav-desktop" aria-label="主导航">
+      {nav.map((g) => {
+        const active = isActive(g.href);
+        if (g.columns) {
+          return (
+            <div class="nav-dd">
+              <a class={`nav-link${active ? " active" : ""}`} href={g.href}>
+                {g.label}
+                <svg class="dd-chevron" width="10" height="6" viewBox="0 0 10 6" fill="none">
+                  <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+              <div class="nav-mega" role="menu">
+                <div class="mega-inner">
+                  {g.columns.map((col) => (
+                    <div class="mega-col">
+                      {col.map((item) => (
+                        <a class="mega-item" href={item.href} role="menuitem">
+                          <span class="mega-label">{item.label}</span>
+                          {item.desc && <span class="mega-desc">{item.desc}</span>}
+                        </a>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          );
+        }
+        if (g.children?.length) {
+          return (
+            <div class="nav-dd">
+              <a class={`nav-link${active ? " active" : ""}`} href={g.href}>
+                {g.label}
+                <svg class="dd-chevron" width="10" height="6" viewBox="0 0 10 6" fill="none">
+                  <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+              <div class="nav-dropdown" role="menu">
+                {g.children.map((c) => (
+                  <a class={`dd-item${isActive(c.href) ? " active" : ""}`} href={c.href} role="menuitem">{c.label}</a>
+                ))}
+              </div>
+            </div>
+          );
+        }
+        return <a class={`nav-link${active ? " active" : ""}`} href={g.href}>{g.label}</a>;
+      })}
+    </nav>
+
+    <!-- Desktop CTA -->
+    <a class="header-cta" href="/contact/">
+      <span>免费咨询</span>
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+
+    <!-- Mobile toggle -->
+    <button class="mobile-toggle" id="mobileToggle" aria-label="打开菜单" aria-expanded="false">
+      <span class="ham-bar"></span>
+      <span class="ham-bar"></span>
+      <span class="ham-bar"></span>
+    </button>
+  </div>
+</header>
+
+<!-- ── Mobile drawer ────────────────────────────────────────────── -->
+<div class="mobile-overlay" id="mobileOverlay"></div>
+<nav class="mobile-drawer" id="mobileDrawer" aria-label="移动端导航">
+  <div class="mobile-drawer-header">
+    <a class="brand" href="/">
+      <img src="/assets/logo.webp" alt="Logo" width="32" height="32" style="border-radius:8px"/>
+      <span class="brand-name">{site.name}</span>
+    </a>
+    <button class="mobile-close" id="mobileClose" aria-label="关闭菜单">✕</button>
+  </div>
+  <div class="mobile-drawer-body">
+    {nav.map((g) => {
+      const hasChildren = Boolean((g.children && g.children.length) || (g.columns && g.columns.length));
+      const subItems = (g.children ?? g.columns?.flat()) ?? [];
+
+      if (!hasChildren) {
+        return (
+          <div class="mobile-group">
+            <a class={`mobile-top${isActive(g.href) ? " active" : ""}`} href={g.href}>{g.label}</a>
+          </div>
+        );
+      }
+
+      return (
+        <div class="mobile-group">
+          <details class="mobile-details" data-has-children="true">
+            <summary class={`mobile-link${isActive(g.href) ? " active" : ""}`}>
+              <a class="mobile-parent-link" href={g.href}>{g.label}</a>
+              <svg class="mobile-chevron" width="14" height="8" viewBox="0 0 10 6" fill="none" aria-hidden="true">
+                <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </summary>
+            {subItems.map((c) => (
+              <a class={`mobile-sub${isActive(c.href) ? " active" : ""}`} href={c.href}>{c.label}</a>
+            ))}
+          </details>
+        </div>
+      );
+    })}
+  </div>
+  <div class="mobile-drawer-footer">
+    <a class="mobile-cta" href="/contact/">立即免费咨询 →</a>
+    <div class="mobile-contact">
+      <a href={`tel:${site.contact.phoneCA.replace(/[^+0-9]/g,'')}`}>📞 {site.contact.phoneCA}</a>
+      <a href={`tel:${site.contact.phoneCNPlain}`}>🇨🇳 {site.contact.phoneCN}</a>
+    </div>
+  </div>
+</nav>
+
+<script>
+  const toggle   = document.getElementById('mobileToggle')!;
+  const close    = document.getElementById('mobileClose')!;
+  const overlay  = document.getElementById('mobileOverlay')!;
+  const drawer   = document.getElementById('mobileDrawer')!;
+
+  function open() {
+    drawer.classList.add('open');
+    overlay.classList.add('open');
+    toggle.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMenu() {
+    drawer.classList.remove('open');
+    overlay.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+
+	  toggle.addEventListener('click', open);
+	  close.addEventListener('click', closeMenu);
+	  overlay.addEventListener('click', closeMenu);
+
+	  // Mobile submenu UX:
+	  // First tap on the parent link expands the submenu; second tap navigates.
+	  drawer.querySelectorAll('details.mobile-details[data-has-children="true"]').forEach((details) => {
+	    const link = details.querySelector('summary a');
+	    if (!link) return;
+	    link.addEventListener('click', (e) => {
+	      if (!details.open) {
+	        e.preventDefault();
+	        details.open = true;
+	      }
+	    });
+	  });
+
+	  // Scroll shadow
+	  const header = document.getElementById('site-header')!;
+	  window.addEventListener('scroll', () => {
+	    header.classList.toggle('scrolled', window.scrollY > 8);
+	  }, { passive: true });
+	</script>
+
+<style>
+/* ── Trust Bar ───────────────────────────────────────────────────── */
+.trust-bar {
+  background: #0a1628;
+  color: rgba(255,255,255,0.6);
+  font-size: 12px;
+  padding: 7px 0;
+  display: none;
+}
+@media (min-width: 960px) { .trust-bar { display: block; } }
+
+.trust-bar-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.trust-items {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.trust-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.trust-item a { color: rgba(255,255,255,0.75); transition: color 0.15s; }
+.trust-item a:hover { color: #fff; text-decoration: none; }
+.trust-item strong { color: rgba(255,255,255,0.9); }
+.trust-sep { opacity: 0.25; }
+.trust-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  animation: pulse-trust 2s ease infinite;
+}
+.trust-dot.green { background: #10b981; box-shadow: 0 0 6px rgba(16,185,129,0.5); }
+.hide-sm { display: none; }
+@media (min-width: 1200px) { .hide-sm { display: inline-flex; } }
+.trust-right { display: flex; align-items: center; gap: 12px; }
+
+@keyframes pulse-trust {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+/* ── Header ──────────────────────────────────────────────────────── */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255,255,255,0.95);
+  border-bottom: 1px solid rgba(13,17,23,0.08);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  transition: box-shadow 0.2s ease;
+}
+.site-header.scrolled {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+.site-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 68px;
+}
+
+/* ── Brand ───────────────────────────────────────────────────────── */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.brand:hover { text-decoration: none; }
+.brand-icon {
+  border-radius: 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.brand-icon img { display: block; border-radius: 10px; }
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+.brand-name {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0d1117;
+  letter-spacing: -0.02em;
+}
+.brand-sub {
+  font-size: 11px;
+  color: rgba(13,17,23,0.5);
+  font-weight: 400;
+}
+
+/* ── Desktop Nav ─────────────────────────────────────────────────── */
+.nav-desktop {
+  display: none;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+  justify-content: center;
+}
+@media (min-width: 1080px) { .nav-desktop { display: flex; } }
+
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 11px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #374151;
+  text-decoration: none;
+  border-radius: 8px;
+  white-space: nowrap;
+  transition: color 0.15s, background 0.15s;
+  position: relative;
+}
+.nav-link:hover { color: #d92d20; background: rgba(217,45,32,0.05); text-decoration: none; }
+.nav-link.active {
+  color: #d92d20;
+  font-weight: 600;
+  background: rgba(217,45,32,0.06);
+}
+.dd-chevron {
+  flex-shrink: 0;
+  color: currentColor;
+  opacity: 0.5;
+  transition: transform 0.2s;
+}
+.nav-dd:hover .dd-chevron { transform: rotate(180deg); }
+
+/* ── Dropdown ────────────────────────────────────────────────────── */
+.nav-dd { position: relative; }
+.nav-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 230px;
+  background: #fff;
+  border: 1px solid rgba(13,17,23,0.1);
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.06);
+  padding: 8px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+  z-index: 100;
+}
+.nav-dd:hover .nav-dropdown,
+.nav-dd:focus-within .nav-dropdown {
+  opacity: 1; visibility: visible; transform: translateY(0);
+}
+.dd-item {
+  display: block;
+  padding: 9px 12px;
+  font-size: 14px;
+  color: #374151;
+  text-decoration: none;
+  border-radius: 10px;
+  transition: background 0.12s, color 0.12s;
+  white-space: nowrap;
+}
+.dd-item:hover { background: rgba(217,45,32,0.06); color: #d92d20; text-decoration: none; }
+.dd-item.active { color: #d92d20; font-weight: 600; }
+
+/* ── Mega Menu ───────────────────────────────────────────────────── */
+.nav-mega {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-6px);
+  background: #fff;
+  border: 1px solid rgba(13,17,23,0.1);
+  border-radius: 20px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.06);
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+  z-index: 100;
+  min-width: 580px;
+}
+.nav-dd:hover .nav-mega,
+.nav-dd:focus-within .nav-mega {
+  opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0);
+}
+.mega-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 20px;
+}
+.mega-col { display: flex; flex-direction: column; gap: 2px; }
+.mega-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: background 0.12s;
+}
+.mega-item:hover { background: rgba(217,45,32,0.05); text-decoration: none; }
+.mega-label { font-size: 14px; font-weight: 600; color: #1a1d23; }
+.mega-item:hover .mega-label { color: #d92d20; }
+.mega-desc { font-size: 12px; color: rgba(13,17,23,0.5); line-height: 1.4; }
+
+/* ── Header CTA ──────────────────────────────────────────────────── */
+.header-cta {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  background: #d92d20;
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: 10px;
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: background 0.18s, transform 0.15s, box-shadow 0.18s;
+  box-shadow: 0 4px 14px rgba(217,45,32,0.3);
+}
+@media (min-width: 960px) { .header-cta { display: inline-flex; } }
+.header-cta:hover {
+  background: #b52418; transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(217,45,32,0.4); text-decoration: none;
+}
+
+/* ── Mobile Toggle ───────────────────────────────────────────────── */
+.mobile-toggle {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+@media (min-width: 1080px) { .mobile-toggle { display: none; } }
+.mobile-toggle:hover { background: rgba(13,17,23,0.06); }
+.ham-bar {
+  width: 22px; height: 2px;
+  background: #374151; border-radius: 2px;
+  transition: all 0.2s;
+  display: block;
+}
+.mobile-toggle[aria-expanded="true"] .ham-bar:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
+.mobile-toggle[aria-expanded="true"] .ham-bar:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.mobile-toggle[aria-expanded="true"] .ham-bar:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
+
+/* ── Overlay ─────────────────────────────────────────────────────── */
+.mobile-overlay {
+  position: fixed; inset: 0; z-index: 60;
+  background: rgba(0,0,0,0.5);
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.25s, visibility 0.25s;
+  backdrop-filter: blur(4px);
+}
+.mobile-overlay.open { opacity: 1; visibility: visible; }
+
+/* ── Mobile Drawer ───────────────────────────────────────────────── */
+.mobile-drawer {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  width: min(340px, 92vw);
+  background: #fff;
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
+  box-shadow: -8px 0 40px rgba(0,0,0,0.15);
+}
+.mobile-drawer.open { transform: translateX(0); }
+
+.mobile-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(13,17,23,0.08);
+}
+.mobile-close {
+  background: rgba(13,17,23,0.06); border: none;
+  width: 32px; height: 32px; border-radius: 8px;
+  cursor: pointer; font-size: 15px; color: #374151;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+}
+.mobile-close:hover { background: rgba(217,45,32,0.1); color: #d92d20; }
+
+.mobile-drawer-body {
+  flex: 1; overflow-y: auto; padding: 12px 0;
+}
+.mobile-group { border-bottom: 1px solid rgba(13,17,23,0.06); }
+.mobile-details { }
+.mobile-details > summary { list-style: none; }
+.mobile-details > summary::-webkit-details-marker { display: none; }
+
+	.mobile-link {
+	  display: flex;
+	  align-items: center;
+	  justify-content: space-between;
+	  padding: 0;
+	  cursor: pointer;
+	}
+	.mobile-top,
+	.mobile-link a {
+	  display: block;
+	  flex: 1;
+	  padding: 13px 20px;
+	  font-size: 15px;
+	  font-weight: 600;
+	  color: #1a1d23;
+	  text-decoration: none;
+	}
+	.mobile-top.active,
+	.mobile-link.active a { color: #d92d20; }
+.mobile-chevron {
+  margin-right: 20px;
+  color: rgba(13,17,23,0.4);
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+.mobile-details[open] .mobile-chevron { transform: rotate(180deg); }
+
+.mobile-sub {
+  display: block;
+  padding: 10px 20px 10px 32px;
+  font-size: 14px;
+  color: rgba(13,17,23,0.7);
+  text-decoration: none;
+  border-top: 1px solid rgba(13,17,23,0.04);
+  transition: color 0.15s, background 0.15s;
+}
+.mobile-sub:hover { color: #d92d20; background: rgba(217,45,32,0.04); text-decoration: none; }
+.mobile-sub.active { color: #d92d20; font-weight: 600; }
+
+.mobile-drawer-footer {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(13,17,23,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.mobile-cta {
+  display: block; text-align: center;
+  padding: 14px; background: #d92d20; color: #fff;
+  font-weight: 700; font-size: 16px;
+  border-radius: 12px; text-decoration: none;
+  transition: background 0.15s;
+}
+.mobile-cta:hover { background: #b52418; text-decoration: none; }
+.mobile-contact {
+  display: flex; flex-direction: column; gap: 6px; align-items: center;
+}
+.mobile-contact a {
+  font-size: 13px; color: rgba(13,17,23,0.6);
+  text-decoration: none; transition: color 0.15s;
+}
+.mobile-contact a:hover { color: #d92d20; text-decoration: none; }
+</style>

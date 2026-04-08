@@ -1,0 +1,358 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import { categoryMeta } from "@/data/categoryMeta";
+import { withSiteTitle } from "@/utils/seo";
+---
+
+<BaseLayout
+  title={withSiteTitle("站内搜索 | 移民签证信息检索")}
+  description="快速搜索移民签证相关文章、项目指南与政策解读，覆盖快速通道、省提名、学签、工签等全类别内容。"
+  canonical="https://cachinavisa.com/search/"
+  noindex={true}
+>
+  <div class="search-layout">
+    <main class="search-main">
+      <!-- Search Hero -->
+      <div class="search-hero">
+        <div class="sh-badge">
+          <span class="sh-dot"></span>
+          站内搜索
+        </div>
+        <h1 class="sh-title">找到你需要的移民信息</h1>
+        <p class="sh-desc">搜索文章标题、摘要、分类与标签，覆盖联邦移民、省提名、签证申请、服务页、项目页、百科与加拿大 NOC 职业库。</p>
+
+        <!-- Search Input -->
+        <div class="search-box">
+          <div class="sb-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+          </div>
+          <input
+            id="q"
+            class="sb-input"
+            type="search"
+            placeholder="例如：LMIA 工签、EXPRESS ENTRY、学签申请、EE 分数线、技工…"
+            autocomplete="off"
+            autofocus
+          />
+          <div id="search-loading" class="sb-spinner" style="display:none">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+            </svg>
+          </div>
+        </div>
+
+        <div id="search-status" class="sh-status">输入关键词即可开始搜索</div>
+      </div>
+
+      <!-- Category Quick Links -->
+      <div class="cat-shortcuts" id="cat-shortcuts">
+        <div class="cs-label">按分类浏览</div>
+        <div class="cs-pills">
+          {Object.entries(categoryMeta).map(([slug, m]) => (
+            <a class="cs-pill" href={`/category/${slug}/`}>{m.title}</a>
+          ))}
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div id="results-wrap" style="display:none">
+        <div id="results" class="results-list"></div>
+      </div>
+
+      <!-- Empty / Initial -->
+      <div id="empty-state" class="empty-state">
+        <div class="es-graphic">🔍</div>
+        <div class="es-title">等待搜索</div>
+        <p class="es-desc">在上方输入关键词，系统会即时从 1,000+ 篇文章中为您匹配最相关的内容。</p>
+        <div class="es-tips">
+          <div class="es-tip-label">搜索示例：</div>
+          <div class="es-tip-tags">
+            <span class="tip-tag" data-q="Express Entry">Express Entry</span>
+            <span class="tip-tag" data-q="省提名">省提名</span>
+            <span class="tip-tag" data-q="学签">学签</span>
+            <span class="tip-tag" data-q="LMIA">LMIA</span>
+            <span class="tip-tag" data-q="工签续签">工签续签</span>
+            <span class="tip-tag" data-q="家庭团聚">家庭团聚</span>
+            <span class="tip-tag" data-q="NOC">NOC</span>
+            <span class="tip-tag" data-q="技工">技工</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="no-results" class="no-results" style="display:none">
+        <div class="nr-icon">📭</div>
+        <div class="nr-title">未找到相关文章</div>
+        <p class="nr-desc">换个关键词试试，或者<a href="/contact/">直接联系我们</a>获取一对一解答。</p>
+      </div>
+    </main>
+
+    <aside class="search-sidebar">
+      <ContactCard />
+      <div class="sidebar-card">
+        <div class="sc-title">全部分类</div>
+        <div class="sc-links">
+          {Object.entries(categoryMeta).map(([slug, m]) => (
+            <a class="sc-link" href={`/category/${slug}/`}>
+              <span>{m.title}</span>
+              <span class="sc-arrow">→</span>
+            </a>
+          ))}
+          <a class="sc-link" href="/noc/">
+            <span>加拿大 NOC 职业库</span>
+            <span class="sc-arrow">→</span>
+          </a>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script type="module">
+    const input = document.getElementById("q");
+    const status = document.getElementById("search-status");
+    const resultsWrap = document.getElementById("results-wrap");
+    const results = document.getElementById("results");
+    const emptyState = document.getElementById("empty-state");
+    const noResults = document.getElementById("no-results");
+    const catShortcuts = document.getElementById("cat-shortcuts");
+    const spinner = document.getElementById("search-loading");
+    const tipTags = document.querySelectorAll(".tip-tag");
+
+    let mini = null;
+    let docs = [];
+    let initPromise = null;
+
+    function setStatus(text) { status.textContent = text; }
+
+    function el(tag, attrs = {}, children = []) {
+      const node = document.createElement(tag);
+      for (const [k, v] of Object.entries(attrs)) {
+        if (k === "class") node.className = String(v);
+        else if (k === "href") node.setAttribute("href", v);
+        else node.setAttribute(k, String(v));
+      }
+      for (const c of children) {
+        if (typeof c === "string") node.appendChild(document.createTextNode(c));
+        else node.appendChild(c);
+      }
+      return node;
+    }
+
+    function renderResults(items) {
+      results.innerHTML = "";
+      if (!items.length) {
+        resultsWrap.style.display = "none";
+        noResults.style.display = "block";
+        catShortcuts.style.display = "none";
+        return;
+      }
+      noResults.style.display = "none";
+      resultsWrap.style.display = "block";
+      catShortcuts.style.display = "none";
+
+      for (const item of items) {
+          const card = el("a", { class: "result-card", href: item.href || `/blog/${item.slug}/` }, [
+          el("div", { class: "rc-meta" }, [
+            el("span", { class: "rc-cat" }, [item.kind || item.category || ""]),
+            ...(item.tags || []).slice(0, 3).map(t => el("span", { class: "rc-tag" }, [`#${t}`])),
+          ]),
+          el("div", { class: "rc-title" }, [item.title || ""]),
+          el("div", { class: "rc-excerpt" }, [item.excerpt || item.description || ""]),
+        ]);
+        results.appendChild(card);
+      }
+    }
+
+    async function init() {
+      spinner.style.display = "flex";
+      setStatus("正在加载索引…");
+      const res = await fetch("/search-index.json");
+      docs = await res.json();
+      const { default: MiniSearch } = await import("https://esm.sh/minisearch@7");
+      mini = new MiniSearch({
+        idField: "id",
+        fields: ["title", "excerpt", "description", "category", "kind", "tags"],
+        storeFields: ["title", "excerpt", "description", "slug", "href", "category", "kind", "tags"],
+        searchOptions: {
+          prefix: true,
+          fuzzy: 0.15,
+          boost: { title: 3, category: 1.5, kind: 1.2, tags: 1.2 },
+        },
+      });
+      mini.addAll(docs);
+      spinner.style.display = "none";
+      setStatus(`索引就绪，共 ${docs.length} 篇文章。输入关键词开始搜索。`);
+    }
+
+    function search(q) {
+      if (!mini) return;
+      if (!q.trim()) {
+        resultsWrap.style.display = "none";
+        noResults.style.display = "none";
+        emptyState.style.display = "block";
+        catShortcuts.style.display = "block";
+        setStatus("输入关键词即可开始搜索");
+        return;
+      }
+      emptyState.style.display = "none";
+      const hits = mini.search(q, { prefix: true, fuzzy: 0.2 }).slice(0, 30);
+      setStatus(hits.length ? `找到 ${hits.length} 条结果` : "未找到匹配内容");
+      const items = hits.map(h => docs.find(d => d.id === h.id)).filter(Boolean);
+      renderResults(items);
+    }
+
+    input.addEventListener("input", (e) => search(e.target.value));
+    tipTags.forEach(tag => {
+      tag.addEventListener("click", () => {
+        input.value = tag.dataset.q;
+        input.dispatchEvent(new Event("input"));
+        input.focus();
+      });
+    });
+
+    initPromise = init().catch(e => {
+      spinner.style.display = "none";
+      setStatus("索引加载失败，请稍后重试。");
+      console.error(e);
+    });
+  </script>
+</BaseLayout>
+
+<style>
+.search-layout {
+  display: grid; grid-template-columns: 1fr; gap: 24px; align-items: start;
+}
+@media (min-width: 960px) { .search-layout { grid-template-columns: 1fr 280px; } }
+
+/* Hero */
+.search-hero {
+  background: linear-gradient(135deg, #0a1628 0%, #0f2040 55%, #141028 100%);
+  border-radius: 20px; padding: 40px 36px 32px; margin-bottom: 20px;
+  position: relative; overflow: hidden;
+}
+.search-hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 95% 10%, rgba(217,45,32,0.18), transparent 60%),
+              radial-gradient(ellipse 40% 60% at 5% 90%, rgba(26,86,196,0.12), transparent 60%);
+  pointer-events: none;
+}
+.sh-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 5px 12px; border-radius: 999px;
+  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+  font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.7);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  margin-bottom: 14px; position: relative; z-index: 1;
+}
+.sh-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 6px #22c55e;
+  animation: pulse-dot 2s infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.8); }
+}
+.sh-title {
+  font-size: clamp(22px, 3.5vw, 32px); font-weight: 900; color: #fff;
+  margin: 0 0 10px; letter-spacing: -0.025em; position: relative; z-index: 1;
+}
+.sh-desc {
+  font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.7;
+  margin: 0 0 24px; position: relative; z-index: 1;
+}
+
+/* Search Box */
+.search-box {
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(255,255,255,0.1); border: 1.5px solid rgba(255,255,255,0.2);
+  border-radius: 14px; padding: 0 16px;
+  margin-bottom: 12px; position: relative; z-index: 1;
+  transition: border-color 0.15s, background 0.15s;
+}
+.search-box:focus-within {
+  background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.35);
+}
+.sb-icon { color: rgba(255,255,255,0.5); flex-shrink: 0; display: flex; align-items: center; }
+.sb-input {
+  flex: 1; background: transparent; border: none; outline: none;
+  font-size: 15px; color: #fff; padding: 14px 0;
+  font-family: inherit;
+}
+.sb-input::placeholder { color: rgba(255,255,255,0.35); }
+.sb-spinner { flex-shrink: 0; color: rgba(255,255,255,0.5); display: flex; align-items: center; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.sh-status {
+  font-size: 12px; color: rgba(255,255,255,0.4);
+  position: relative; z-index: 1; height: 16px;
+}
+
+/* Category shortcuts */
+.cat-shortcuts { margin-bottom: 20px; }
+.cs-label { font-size: 12px; font-weight: 700; color: rgba(13,17,23,0.4); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+.cs-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.cs-pill {
+  display: inline-flex; align-items: center; padding: 7px 14px;
+  border-radius: 10px; background: #fff; border: 1.5px solid rgba(13,17,23,0.1);
+  color: rgba(13,17,23,0.65); font-size: 13px; font-weight: 600;
+  text-decoration: none; transition: all 0.12s;
+}
+.cs-pill:hover { border-color: rgba(217,45,32,0.3); color: #d92d20; text-decoration: none; }
+
+/* Results */
+.results-list { display: flex; flex-direction: column; gap: 10px; }
+.result-card {
+  display: block; padding: 18px 20px; background: #fff;
+  border: 1.5px solid rgba(13,17,23,0.09); border-radius: 14px;
+  text-decoration: none; transition: border-color 0.15s, box-shadow 0.15s;
+}
+.result-card:hover { border-color: rgba(217,45,32,0.25); box-shadow: 0 4px 20px rgba(0,0,0,0.07); text-decoration: none; }
+.rc-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.rc-cat {
+  font-size: 11px; font-weight: 700; color: #d92d20;
+  background: rgba(217,45,32,0.08); padding: 2px 8px; border-radius: 6px;
+}
+.rc-tag { font-size: 11px; color: rgba(13,17,23,0.5); background: rgba(13,17,23,0.05); padding: 2px 8px; border-radius: 6px; }
+.rc-title { font-size: 16px; font-weight: 750; color: #1a1d23; line-height: 1.4; margin-bottom: 6px; }
+.rc-excerpt { font-size: 13px; color: rgba(13,17,23,0.55); line-height: 1.65; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
+/* Empty / No results */
+.empty-state, .no-results {
+  text-align: center; padding: 48px 20px;
+  background: #fff; border: 1px solid rgba(13,17,23,0.08); border-radius: 18px;
+}
+.es-graphic { font-size: 52px; margin-bottom: 16px; }
+.es-title, .nr-title { font-size: 18px; font-weight: 800; color: #0d1117; margin-bottom: 8px; }
+.es-desc, .nr-desc { font-size: 14px; color: rgba(13,17,23,0.55); line-height: 1.7; margin: 0 0 20px; }
+.nr-desc a { color: #d92d20; }
+.nr-icon { font-size: 48px; margin-bottom: 16px; }
+
+.es-tips { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.es-tip-label { font-size: 12px; color: rgba(13,17,23,0.45); font-weight: 600; }
+.es-tip-tags { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.tip-tag {
+  display: inline-block; padding: 7px 14px; border-radius: 10px;
+  background: rgba(217,45,32,0.07); border: 1px solid rgba(217,45,32,0.2);
+  color: #d92d20; font-size: 13px; font-weight: 600; cursor: pointer;
+  transition: all 0.12s;
+}
+.tip-tag:hover { background: rgba(217,45,32,0.12); }
+
+/* Sidebar */
+.search-sidebar { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 88px; }
+.sidebar-card { background: #fff; border: 1px solid rgba(13,17,23,0.09); border-radius: 16px; overflow: hidden; }
+.sc-title { font-size: 14px; font-weight: 700; color: #0d1117; padding: 16px 20px 12px; border-bottom: 1px solid rgba(13,17,23,0.07); }
+.sc-links { padding: 6px 0; }
+.sc-link {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 20px; font-size: 13.5px; color: rgba(13,17,23,0.7);
+  text-decoration: none; transition: background 0.12s, color 0.12s;
+}
+.sc-link:hover { background: rgba(217,45,32,0.04); color: #d92d20; text-decoration: none; }
+.sc-arrow { font-size: 13px; color: rgba(13,17,23,0.3); transition: transform 0.12s; }
+.sc-link:hover .sc-arrow { transform: translateX(3px); color: #d92d20; }
+</style>

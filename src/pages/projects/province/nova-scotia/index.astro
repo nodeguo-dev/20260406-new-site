@@ -1,0 +1,241 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民项目", href: "/projects/" },
+  { name: "省提名计划（PNP）", href: "/projects/provincial-nomination/" },
+  { name: "新省省提名（NSNP）", href: "/projects/province/nova-scotia/" },
+];
+
+const streams = [
+  {
+    title: "新斯科舍经验类（Nova Scotia Experience: Express Entry）",
+    badge: "EE 对接",
+    badgeColor: "#1a56c4",
+    req: [
+      "过去 3 年内在新斯科舍省从事全职工作 ≥ 12 个月（TEER 0–3）",
+      "语言要求：CLB 5+（TEER 0–2）或 CLB 4+（TEER 3）",
+      "有合法身份在省内工作（如 PGWP、雇主担保工签等）",
+      "意愿定居新斯科舍省",
+    ],
+    target: "已在新省工作的外国工人，持有有效工签并有 12 个月经验",
+    processing: "3–6 个月（EE 通道处理快）",
+    notes: "NSE-EE 通道是目前新省最快速的省提名路径，通过 EE 候选池筛选，提名后自动获得 600 分 CRS 加分确保联邦 ITA。",
+  },
+  {
+    title: "新斯科舍劳动力需求类（Employer Demand）",
+    badge: "雇主担保",
+    badgeColor: "#059669",
+    req: [
+      "新斯科舍省雇主提供全职工作 offer（TEER 0–3）",
+      "对口职业为省内优先缺工职业（Priority Occupations List）",
+      "至少 1 年对口工作经验（含境外）",
+      "满足最低语言要求（CLB 4–5）",
+    ],
+    target: "有新省雇主提供工作 offer 的境外申请人",
+    processing: "6–12 个月",
+    notes: "新省雇主担保通道对境外申请人开放，无需事先进入 EE 候选池，适合已有 offer 但 CRS 分数不足的申请人。",
+  },
+  {
+    title: "新斯科舍大西洋移民试点（AIP）",
+    badge: "大西洋四省",
+    badgeColor: "#7c3aed",
+    req: [
+      "取得大西洋四省认可雇主（Designated Employer）的工作 offer",
+      "工作为全职（非季节性），TEER 0–3",
+      "教育水平：高中毕业以上，依职位类别有所不同",
+      "语言要求：CLB 4–5 及以上",
+      "满足定居资金要求",
+    ],
+    target: "来自全球任何地方、有大西洋四省认可雇主 offer 的申请人",
+    processing: "6–12 个月",
+    notes: "AIP 是覆盖新斯科舍（NS）、新不伦瑞克（NB）、爱德华王子岛（PEI）、纽芬兰（NL）四省的联合移民通道，认可雇主必须事先在 AIP 系统注册。",
+  },
+  {
+    title: "新省国际留学生通道（International Graduate）",
+    badge: "留学生专属",
+    badgeColor: "#b45309",
+    req: [
+      "在新斯科舍省被认可院校（DLI）完成至少 2 年学习",
+      "毕业后持 PGWP 工签在新省工作",
+      "工作职位为 TEER 0–3",
+      "满足语言要求（CLB 4–5+）",
+      "有定居新省的意愿",
+    ],
+    target: "在新省读书、毕业后在省内工作的留学生",
+    processing: "6–12 个月",
+    notes: "新省国际留学生通道鼓励在省内院校（如 NSCC、达尔豪斯大学、圣玛丽大学）就读的毕业生留省就业。NSCC 是新省最大的职业技术 College，覆盖大量技工和医护课程。",
+  },
+];
+
+const faqs = [
+  {
+    q: "新斯科舍省（NS）在哪里，适合哪类人去？",
+    a: "新斯科舍省位于加拿大大西洋地区，首府为哈利法克斯（Halifax）。适合：① 希望通过留学积累工作经验后留省的学生（NSCC、达尔豪斯等院校都很好）；② 医护、技工类背景的外国工人，因为 NS 省这两类职业极度缺人；③ 寻求低竞争、高通过率省提名通道的人。生活成本在加拿大各省中属于较低水平，房价远低于安省和 BC 省。",
+  },
+  {
+    q: "NSNP 和 AIP（大西洋移民试点）的区别是什么？",
+    a: "NSNP（新省省提名）：由新斯科舍省政府单独管理，主要面向已在省内有工作经验或有省内雇主 offer 的申请人；AIP（Atlantic Immigration Program）：是联邦项目，覆盖大西洋四省（NS、NB、PEI、NL），由联邦政府主导，雇主须事先获得联邦认可（Designated Employer），不走省政府的独立审批。两者都要求定居大西洋省份，AIP 处理速度通常快于 NSNP。",
+  },
+  {
+    q: "新斯科舍哪些职业最容易找工作？",
+    a: "以下职业在新省需求最旺盛：① 医护类：注册护士（RN）、LPN、PSW、医技人员——NSHA（新省卫生局）长期大量招聘；② 技工类：电工、管道工、建筑工人、HVAC 技师；③ 餐饮厨师；④ 信息技术（哈利法克斯有规模不小的科技公司集群，如 IBM、CGI）；⑤ 教育类：幼儿教育工作者（ECE）、教育辅助员。",
+  },
+  {
+    q: "新省的 NSCC（新斯科舍社区学院）适合国际学生吗？",
+    a: "非常适合。NSCC 是新斯科舍省最大的职业技术学院，学费普遍低于安省和 BC 省的 College，课程完成后可申请 PGWP。更重要的是，NSCC 的医护类、技工类课程与省内就业市场高度对口，毕业后留省工作并通过 NSNP 或 AIP 申请省提名是一条非常成熟的留学移民路线。",
+  },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org", "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({ "@type": "ListItem", position: i + 1, name: c.name, item: new URL(c.href, site.url).toString() })),
+};
+const faqLd = {
+  "@context": "https://schema.org", "@type": "FAQPage",
+  mainEntity: faqs.map((i) => ({ "@type": "Question", name: i.q, acceptedAnswer: { "@type": "Answer", text: i.a } })),
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("新斯科舍省提名（NSNP）完整指南 | 技术移民·留学生·AIP大西洋通道")}
+  description="新斯科舍省省提名计划（NSNP）详解：NSE-EE 通道、雇主担保、AIP 大西洋移民试点、国际留学生通道，以及 NSCC 留学转移民路径，适合技工、医护、留学生群体。"
+  canonical="https://cachinavisa.com/projects/province/nova-scotia/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={faqLd} />
+  <Breadcrumbs items={breadcrumbs} />
+
+  <div class="page-layout" style="margin-top:16px">
+    <main>
+      <div class="page-hero">
+        <div class="hero-kicker">新斯科舍省 · 省提名</div>
+        <h1 class="hero-title">新省省提名<br /><span class="hero-title-en">Nova Scotia Provincial Nominee Program (NSNP)</span></h1>
+        <p class="hero-desc">
+          新斯科舍省位于加拿大大西洋地区，是整个大西洋四省中城市化程度最高的省份。
+          NSNP 同时与<strong>EE 联邦通道</strong>和<strong>AIP 大西洋移民试点</strong>对接，
+          对技工、医护、留学生群体尤其友好。哈利法克斯日益增长的科技产业也在吸引越来越多高技术人才。
+        </p>
+        <div class="hero-tags">
+          <span class="htag teal">EE 通道对接</span>
+          <span class="htag teal">AIP 大西洋四省</span>
+          <span class="htag teal">留学生专属通道</span>
+          <span class="htag teal">低生活成本</span>
+        </div>
+      </div>
+
+      {streams.map((s) => (
+        <div class="content-card">
+          <div class="stream-header">
+            <h2 class="stream-title">{s.title}</h2>
+            <span class="stream-badge" style={`background: ${s.badgeColor}18; color: ${s.badgeColor}; border-color: ${s.badgeColor}40`}>{s.badge}</span>
+          </div>
+          <div class="stream-target">🎯 适合人群：{s.target}</div>
+          <div class="stream-meta"><span class="sm-label">预计处理时间：</span>{s.processing}</div>
+          <div class="req-list">
+            {s.req.map((r) => <div class="req-item"><span class="ri-check">✓</span>{r}</div>)}
+          </div>
+          {s.notes && <div class="stream-note">💡 {s.notes}</div>}
+        </div>
+      ))}
+
+      <div class="content-card">
+        <h2 class="cc-title">常见问题（FAQ）</h2>
+        {faqs.map((item) => (
+          <details class="faq-item">
+            <summary class="faq-q">{item.q}</summary>
+            <p class="faq-a">{item.a}</p>
+          </details>
+        ))}
+      </div>
+
+      <div class="cta-block">
+        <div class="cta-text">
+          <div class="cta-title">免费评估你的 NSNP 申请资格</div>
+          <p class="cta-desc">是否有新斯科舍工作经验或在省内读书？填写表单，顾问帮你找最合适的通道。</p>
+        </div>
+        <a href="/contact/" class="cta-btn">免费评估 →</a>
+      </div>
+    </main>
+
+    <aside class="page-sidebar">
+      <ContactCard title="咨询新省移民" />
+      <div class="sidebar-card">
+        <div class="sc-title">海洋四省通道</div>
+        <div class="sc-links">
+          <a class="sc-link" href="/projects/province/newfoundland/">纽芬兰 NL（NLNP）</a>
+          <a class="sc-link active" href="/projects/province/nova-scotia/">新斯科舍 NS（当前）</a>
+          <a class="sc-link" href="/projects/province/new-brunswick/">新不伦瑞克 NB（NBPNP）</a>
+          <a class="sc-link" href="/projects/province/prince-edward-island/">爱德华王子岛 PEI</a>
+        </div>
+      </div>
+      <div class="sidebar-card">
+        <div class="sc-title">其他省提名</div>
+        <div class="sc-links">
+          <a class="sc-link" href="/projects/province/ontario/">安省 OINP</a>
+          <a class="sc-link" href="/projects/province/british-columbia/">BC省 BCPNP</a>
+          <a class="sc-link" href="/projects/province/alberta/">阿省 AAIP</a>
+          <a class="sc-link" href="/projects/province/manitoba/">曼省 MPNP</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+      <div class="page-share">
+        <ShareBar url="https://cachinavisa.com/projects/province/nova-scotia/" title={"新斯科舍省提名（NSNP）完整指南 | 技术移民·留学生·AIP大西洋通道"} />
+      </div>
+</BaseLayout>
+
+<style>
+.page-layout { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: start; }
+@media (min-width: 960px) { .page-layout { grid-template-columns: 1fr 280px; } }
+.page-hero { background: linear-gradient(135deg,#032b33 0%,#065f46 55%,#0a1628 100%); border-radius: 20px; padding: 40px 36px; margin-bottom: 16px; position: relative; overflow: hidden; }
+.hero-kicker { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(110,231,183,0.8); margin-bottom: 12px; }
+.hero-title { font-size: clamp(24px, 4vw, 36px); font-weight: 900; color: #fff; margin: 0 0 14px; line-height: 1.15; }
+.hero-title-en { font-size: 0.48em; font-weight: 500; color: rgba(255,255,255,0.4); display: block; margin-top: 4px; }
+.hero-desc { font-size: 14.5px; color: rgba(255,255,255,0.65); line-height: 1.75; margin: 0 0 22px; max-width: 680px; }
+.hero-desc strong { color: #6ee7b7; }
+.hero-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+.htag { padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; border: 1px solid transparent; }
+.htag.teal { background: rgba(5,150,105,0.2); border-color: rgba(5,150,105,0.35); color: #6ee7b7; }
+
+.content-card { background: #fff; border: 1px solid rgba(13,17,23,0.09); border-radius: 18px; padding: 24px 28px; margin-bottom: 16px; }
+.cc-title { font-size: 18px; font-weight: 800; color: #0d1117; margin: 0 0 16px; padding-bottom: 10px; border-bottom: 2px solid rgba(5,150,105,0.15); }
+.stream-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+.stream-title { font-size: 16px; font-weight: 800; color: #0d1117; margin: 0; }
+.stream-badge { font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 999px; border: 1.5px solid; white-space: nowrap; }
+.stream-target { font-size: 13px; color: rgba(13,17,23,0.6); margin-bottom: 6px; }
+.stream-meta { font-size: 12.5px; color: rgba(13,17,23,0.5); margin-bottom: 10px; }
+.sm-label { font-weight: 700; }
+.req-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.req-item { display: flex; gap: 8px; font-size: 13px; color: rgba(13,17,23,0.7); line-height: 1.55; }
+.ri-check { color: #059669; font-weight: 700; flex-shrink: 0; }
+.stream-note { font-size: 12.5px; color: rgba(13,17,23,0.55); background: rgba(5,150,105,0.04); padding: 10px 14px; border-radius: 10px; border-left: 3px solid rgba(5,150,105,0.25); line-height: 1.55; }
+
+.faq-item { border: 1px solid rgba(13,17,23,0.08); border-radius: 12px; overflow: hidden; margin-bottom: 8px; }
+.faq-q { padding: 14px 18px; font-size: 14px; font-weight: 600; color: #0d1117; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.faq-q::after { content: '+'; font-size: 18px; color: #059669; font-weight: 400; }
+details[open] .faq-q::after { content: '−'; }
+.faq-a { padding: 12px 18px 14px; font-size: 13.5px; color: rgba(13,17,23,0.65); line-height: 1.75; margin: 0; border-top: 1px solid rgba(13,17,23,0.06); }
+
+.cta-block { background: linear-gradient(135deg,#032b33,#065f46); border-radius: 18px; padding: 28px 32px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.cta-title { font-size: 17px; font-weight: 800; color: #fff; margin-bottom: 7px; }
+.cta-desc { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.65; margin: 0; max-width: 500px; }
+.cta-btn { padding: 12px 26px; background: #059669; color: #fff; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
+.cta-btn:hover { background: #047857; text-decoration: none; }
+
+.page-sidebar { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 88px; }
+.sidebar-card { background: #fff; border: 1px solid rgba(13,17,23,0.09); border-radius: 16px; overflow: hidden; }
+.sc-title { font-size: 13px; font-weight: 700; color: #0d1117; padding: 14px 18px 10px; border-bottom: 1px solid rgba(13,17,23,0.07); }
+.sc-links { padding: 6px 0; }
+.sc-link { display: block; padding: 8px 18px; font-size: 13px; color: rgba(13,17,23,0.7); text-decoration: none; transition: all 0.12s; }
+.sc-link:hover { background: rgba(5,150,105,0.04); color: #059669; text-decoration: none; }
+.sc-link.active { background: rgba(5,150,105,0.07); color: #059669; font-weight: 700; }
+</style>

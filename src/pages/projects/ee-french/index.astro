@@ -1,0 +1,589 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import RelatedToolsCard from "@/components/RelatedToolsCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民项目", href: "/projects/" },
+  { name: "EE 定向邀请（CBS）", href: "/projects/ee-category/" },
+  { name: "EE 法语定向移民", href: "/projects/ee-french/" },
+];
+
+const scoreTable = [
+  { level: "NCLC 10", tef_read: "549+", tef_write: "549+", tef_listen: "549+", tef_speak: "549+", tcf_read: "549+", tcf_write: "16–20", tcf_listen: "549+", tcf_speak: "16–20" },
+  { level: "NCLC 9",  tef_read: "524–548", tef_write: "524–548", tef_listen: "524–548", tef_speak: "524–548", tcf_read: "524–548", tcf_write: "14–15", tcf_listen: "524–548", tcf_speak: "14–15" },
+  { level: "NCLC 8",  tef_read: "499–523", tef_write: "499–523", tef_listen: "499–523", tef_speak: "499–523", tcf_read: "499–523", tcf_write: "12–13", tcf_listen: "499–523", tcf_speak: "12–13" },
+  { level: "NCLC 7 ✓最低门槛", tef_read: "434–461", tef_write: "428–471", tef_listen: "434–461", tef_speak: "456–493", tcf_read: "453–498", tcf_write: "10–11", tcf_listen: "458–502", tcf_speak: "10–11" },
+];
+
+const studyPlan = [
+  {
+    phase: "阶段 1",
+    title: "摸底评估（1周）",
+    duration: "第 1 周",
+    actions: [
+      "参加一次免费在线法语水平测试（如 TV5MONDE、Alliance Française 在线测试）",
+      "了解自己当前的 DELF/NCLC 大概水平（A1/A2/B1/B2/C1）",
+      "确认目标：达到 NCLC 7（相当于 B2 中低水平）",
+    ],
+  },
+  {
+    phase: "阶段 2",
+    title: "系统学习法语（6–24 个月，视起点）",
+    duration: "核心阶段",
+    actions: [
+      "零基础→NCLC 7：通常需要 18–24 个月密集学习（每天 1–2 小时以上）",
+      "英语母语者或有欧洲语言基础：通常 12–18 个月可达 B2/NCLC 7",
+      "推荐学习资源：Duolingo（入门）→ FLE 教材（Le Nouveau Taxi / Alter Ego）→ 真题练习",
+      "找法语语言交换伙伴（Tandem App、Meetup 法语角）大幅加速口语",
+      "建议参加当地法语文化协会（Alliance Française）的课程，系统性更强",
+    ],
+  },
+  {
+    phase: "阶段 3",
+    title: "备考 TEF Canada 或 TCF Canada（2–3 个月）",
+    duration: "考前冲刺",
+    actions: [
+      "优先选择 TEF Canada（更常见，考场更多，成绩有效期 2 年）",
+      "购买官方备考教材，熟悉题型：听力（Compréhension de l'oral）、阅读（COE）、写作（EE）、口语（EO）",
+      "写作和口语是大多数中国考生的弱项，需要专门练习，可以找 tutor 模拟评分",
+      "注意：四项必须同时达到 NCLC 7，任何一项不达标都不符合法语定向条件",
+      "建议在确认达到 NCLC 7 水平后再正式预约考试，避免浪费考试费（约 $350–$500）",
+    ],
+  },
+  {
+    phase: "阶段 4",
+    title: "进入 EE 候选池等待邀请",
+    duration: "最终阶段",
+    actions: [
+      "拿到 TEF/TCF 成绩后，登录 IRCC 官网创建或更新 Express Entry Profile",
+      "法语成绩符合 NCLC 7，如同时英语达 CLB 4+，可获额外法语加分（+25 或 +50 分 CRS）",
+      "进入候选池后，符合法语定向条件，等待 IRCC 举行法语专项抽签（French-Language Proficiency Round）",
+      "历史法语定向邀请规模：每次 3,000–8,500 人，分数线 350–450 分，是所有 CBS 中最低的",
+    ],
+  },
+];
+
+const faqs = [
+  {
+    q: "法语定向移民分数这么低，真的有这么容易吗？",
+    a: "分数线低是真实的——历史数据显示法语定向邀请截止分数在 350–450 分之间，而同期普通邀请通常在 490–540 分，差距非常显著。但「容易」是相对的：达到 NCLC 7 需要切实可用的法语能力（相当于 B2 水平），对于从零开始学习的人来说需要 18–24 个月的扎实努力。真正的门槛不是 CRS 分数，而是语言学习的意志力。",
+  },
+  {
+    q: "NCLC 7 大概相当于什么水平？日常能用吗？",
+    a: "NCLC 7 大致对应 CEFR 的 B1–B2 水平，即「能理解清晰的标准法语，能就熟悉的话题表达意见，能写出结构较清晰的短文」。日常生活对话基本没有问题，工作场合有一定挑战。TEF Canada 的评分标准略有不同，四项同时达到 NCLC 7 的具体分数见成绩对照表。",
+  },
+  {
+    q: "TEF Canada 和 TCF Canada 哪个更好考？",
+    a: "大多数人选择 TEF Canada，原因是：考场更多（全球均有），备考材料更丰富，且考试形式相对固定容易准备。TCF Canada 题量少、考试时间短，但有人反映分数把握感较低。建议买两套备考材料都模拟一遍，用哪套更顺手就考哪套。注意：两种成绩都被 IRCC 接受，效果相同。",
+  },
+  {
+    q: "我英语也要达标吗？",
+    a: "法语定向的核心条件只要求法语达到 NCLC 7，英语不是硬性门槛。但如果英语也达到一定水平，可以获得额外 CRS 加分：英语 CLB 5+ 且法语 NCLC 7+ → +50 分；英语 CLB 4 或以下 → +25 分。进入候选池后，英语越好，CRS 分数越高，在法语定向轮次中排名越靠前，ITA 越稳。",
+  },
+  {
+    q: "在哪里学法语效率最高？",
+    a: "效率最高的方式是「沉浸式学习」：① 如果你在加拿大，优先考虑去魁北克或渥太华生活一段时间；② 利用 Alliance Française 或 CSLF（法语学习中心）的系统课程；③ 找法语母语者做语言交换伙伴；④ 把手机、Netflix 改为法语界面；⑤ 每天至少 1–2 小时听法语播客（如 Inner French、RFI）。如果你在中国，线上 1v1 法语外教课程（如 italki、Preply）是最接近沉浸式的选择。",
+  },
+  {
+    q: "法语定向有无职业要求？",
+    a: "没有。法语定向（French-Language Proficiency）只有语言要求，不限职业。这是它与其他 CBS 类别最大的不同——你可以从事任何职业、有任何专业背景，只要法语成绩达标，就可以进入法语定向候选池。这使得法语定向对所有 CRS 分数不足的候选人都适用，无论你是 IT、厨师、会计还是工程师。",
+  },
+  {
+    q: "在魁北克工作或生活，法语移民有额外优势吗？",
+    a: "有，但要区分两个体系：① 联邦 EE 法语定向：无需在魁省生活，只需法语成绩达标，通过联邦通道申请 PR，可以住在任何省份（但魁省不在 EE 体系内，魁省有自己的移民系统 QSWP）；② 魁省移民（QSWP）：如果你想定居魁北克，应直接走魁省移民路径（Selection Certificate + 联邦 PR），与 EE 法语定向是两个完全不同的体系，不能混淆。如果你想住在渥太华、多伦多、卡尔加里等地，EE 法语定向完全适用。",
+  },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem", position: i + 1, name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((i) => ({
+    "@type": "Question", name: i.q,
+    acceptedAnswer: { "@type": "Answer", text: i.a },
+  })),
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("EE 法语定向移民完整指南 | 分数线最低 · TEF/TCF 备考 · NCLC 7 路径")}
+  description="2026年 Express Entry 法语定向邀请（French-Language Proficiency CBS）完整指南：历史邀请分数 350–450 分（全类别最低），TEF Canada / TCF Canada 成绩对照，从零到 NCLC 7 的学习计划，以及法语定向 vs 魁省移民的区别。"
+  canonical="https://cachinavisa.com/projects/ee-french/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={faqLd} />
+  <Breadcrumbs items={breadcrumbs} />
+
+  <div class="page-layout" style="margin-top:16px">
+    <main>
+
+      <!-- Hero -->
+      <div class="page-hero">
+        <div class="hero-kicker">EE 定向邀请 · 法语类</div>
+        <h1 class="hero-title">法语定向移民<br /><span class="hero-title-en">French-Language Proficiency CBS</span></h1>
+        <p class="hero-desc">
+          EE 法语定向是分数线<strong>最低</strong>的 CBS 类别——历史邀请截止分只需 <strong>350–450 分</strong>，
+          而同期普通邀请高达 490–540 分。更关键的是，它<strong>没有职业要求</strong>，
+          任何人只要法语四项成绩达到 NCLC 7，就有资格进入这条移民通道。
+          代价是：它也是需要最多准备时间和意志力的方式。
+        </p>
+        <div class="hero-tags">
+          <span class="htag blue">历史邀请分：350–450分（最低）</span>
+          <span class="htag blue">无职业要求</span>
+          <span class="htag blue">每次邀请 3,000–8,500 人</span>
+          <span class="htag blue">TEF/TCF 四项达 NCLC 7</span>
+        </div>
+        <div class="hero-honest">
+          <span class="hh-icon">⚠️</span>
+          <span>诚实提示：法语定向分数线最低，但语言学习本身是真实挑战。对于零基础者，从开始学到达到 NCLC 7 通常需要 18–24 个月持续努力。这条路适合有学语言意愿和耐心的人，不是捷径，是另一条正道。</span>
+        </div>
+      </div>
+
+      <!-- Advantage panel -->
+      <div class="content-card">
+        <h2 class="cc-title">法语定向的真实优势</h2>
+        <div class="adv-grid">
+          <div class="adv-item">
+            <div class="adv-num">350–450</div>
+            <div class="adv-label">历史邀请分数</div>
+            <div class="adv-desc">比普通邀请低 60–130 分，是所有 CBS 类别中门槛最低的</div>
+          </div>
+          <div class="adv-item">
+            <div class="adv-num">3,000–8,500</div>
+            <div class="adv-label">每次邀请规模</div>
+            <div class="adv-desc">法语定向每次邀请人数最多，通过概率更高</div>
+          </div>
+          <div class="adv-item">
+            <div class="adv-num">0</div>
+            <div class="adv-label">职业限制</div>
+            <div class="adv-desc">不限任何职业，IT、厨师、会计、学生均可参与</div>
+          </div>
+          <div class="adv-item">
+            <div class="adv-num">+50</div>
+            <div class="adv-label">额外 CRS 加分</div>
+            <div class="adv-desc">法语达 NCLC 7 且英语达 CLB 5+ 可额外获得 +50 分</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Score table -->
+      <div class="content-card">
+        <h2 class="cc-title">NCLC 7 对应的 TEF / TCF 成绩对照</h2>
+        <p class="cc-desc">四项（听说读写）必须<strong>同时</strong>达到 NCLC 7，任何一项不达标都不满足法语定向条件。以下为 2023 年 12 月 10 日后生效的新版 TEF 成绩标准。</p>
+
+        <div class="score-table">
+          <div class="st-header st-row">
+            <div>NCLC 级别</div>
+            <div colspan="4">TEF Canada 成绩范围</div>
+            <div colspan="4">TCF Canada 成绩范围</div>
+          </div>
+          <div class="st-subheader st-row">
+            <div></div>
+            <div>阅读</div>
+            <div>写作</div>
+            <div>听力</div>
+            <div>口语</div>
+            <div>阅读</div>
+            <div>写作</div>
+            <div>听力</div>
+            <div>口语</div>
+          </div>
+          {scoreTable.map((row) => (
+            <div class={`st-row${row.level.includes('✓') ? ' target-row' : ''}`}>
+              <div class="st-level">{row.level}</div>
+              <div>{row.tef_read}</div>
+              <div>{row.tef_write}</div>
+              <div>{row.tef_listen}</div>
+              <div>{row.tef_speak}</div>
+              <div>{row.tcf_read}</div>
+              <div>{row.tcf_write}</div>
+              <div>{row.tcf_listen}</div>
+              <div>{row.tcf_speak}</div>
+            </div>
+          ))}
+        </div>
+        <div class="tip-box">
+          📌 <strong>注意：</strong>以上为 2023 年 12 月 10 日后参加 TEF Canada 考试的成绩标准。如果你是在此之前考的，分数区间不同，请对照 IRCC 官网当前版本核实。TCF Canada 的写作和口语是用级别（10–20）而非分数表示。
+        </div>
+      </div>
+
+      <!-- Study plan -->
+      <div class="content-card">
+        <h2 class="cc-title">从零到 NCLC 7：分阶段学习路线图</h2>
+        <p class="cc-desc">以下计划适合法语零基础或初级水平（A1–A2）的中文母语者，目标是通过 TEF Canada 四项达到 NCLC 7。</p>
+
+        <div class="plan-list">
+          {studyPlan.map((phase, i) => (
+            <div class="plan-item">
+              <div class="plan-header">
+                <span class="plan-phase">{phase.phase}</span>
+                <div>
+                  <div class="plan-title">{phase.title}</div>
+                  <div class="plan-duration">{phase.duration}</div>
+                </div>
+              </div>
+              <div class="plan-actions">
+                {phase.actions.map((action) => (
+                  <div class="plan-action">
+                    <span class="pa-dot">›</span>
+                    <span>{action}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div class="timeline-compare">
+          <div class="tc-title">时间线参考（按起点划分）</div>
+          <div class="tc-items">
+            <div class="tc-item">
+              <div class="tc-label">零基础</div>
+              <div class="tc-bar"><div class="tc-fill" style="width:100%"></div></div>
+              <div class="tc-time">约 20–30 个月</div>
+            </div>
+            <div class="tc-item">
+              <div class="tc-label">初级（A1–A2）</div>
+              <div class="tc-bar"><div class="tc-fill" style="width:75%"></div></div>
+              <div class="tc-time">约 14–20 个月</div>
+            </div>
+            <div class="tc-item">
+              <div class="tc-label">中级（B1）</div>
+              <div class="tc-bar"><div class="tc-fill" style="width:50%"></div></div>
+              <div class="tc-time">约 8–14 个月</div>
+            </div>
+            <div class="tc-item">
+              <div class="tc-label">高级（B1+）</div>
+              <div class="tc-bar"><div class="tc-fill" style="width:30%"></div></div>
+              <div class="tc-time">约 3–8 个月</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resources -->
+      <div class="content-card">
+        <h2 class="cc-title">推荐学习资源（分阶段）</h2>
+        <div class="resources-grid">
+          <div class="resource-section">
+            <div class="rs-title">📱 入门（零基础 → A2）</div>
+            <div class="rs-items">
+              <div class="rs-item"><span class="ri-name">Duolingo 法语</span><span class="ri-note">免费，建立基础词汇语感</span></div>
+              <div class="rs-item"><span class="ri-name">Babbel 法语</span><span class="ri-note">付费，更系统的语法讲解</span></div>
+              <div class="rs-item"><span class="ri-name">Le Nouveau Taxi 教材</span><span class="ri-note">法国 FLE 教材，书店或淘宝可购</span></div>
+              <div class="rs-item"><span class="ri-name">italki 1v1 外教课</span><span class="ri-note">找法语母语外教，口语起步</span></div>
+            </div>
+          </div>
+          <div class="resource-section">
+            <div class="rs-title">📖 提升（B1 → B2/NCLC 7）</div>
+            <div class="rs-items">
+              <div class="rs-item"><span class="ri-name">Alter Ego+ B1/B2 教材</span><span class="ri-note">备考 DELF/TEF 的标准教材</span></div>
+              <div class="rs-item"><span class="ri-name">Inner French（播客）</span><span class="ri-note">专为 B1–B2 设计，慢速清晰法语</span></div>
+              <div class="rs-item"><span class="ri-name">TV5MONDE 网站</span><span class="ri-note">免费练习阅读听力，含字幕</span></div>
+              <div class="rs-item"><span class="ri-name">Alliance Française 系统课</span><span class="ri-note">本地或线上，最系统的备考课程</span></div>
+            </div>
+          </div>
+          <div class="resource-section">
+            <div class="rs-title">📝 备考（冲刺 NCLC 7）</div>
+            <div class="rs-items">
+              <div class="rs-item"><span class="ri-name">TEF Canada 官方备考书</span><span class="ri-note">法语国际书店或官方网站购买</span></div>
+              <div class="rs-item"><span class="ri-name">RFI 慢速法语新闻</span><span class="ri-note">提升听力理解真实场景法语</span></div>
+              <div class="rs-item"><span class="ri-name">Bescherelle（动词变位书）</span><span class="ri-note">写作必备，掌握各时态变位</span></div>
+              <div class="rs-item"><span class="ri-name">Tandem App 语言交换</span><span class="ri-note">与法语母语者互助练习口语</span></div>
+            </div>
+          </div>
+          <div class="resource-section">
+            <div class="rs-title">🇨🇦 在加拿大学法语</div>
+            <div class="rs-items">
+              <div class="rs-item"><span class="ri-name">FSL 成人法语课程</span><span class="ri-note">各省政府资助的免费法语课程</span></div>
+              <div class="rs-item"><span class="ri-name">CSLF（法语语言学习中心）</span><span class="ri-note">针对移民的专项法语培训，多省均有</span></div>
+              <div class="rs-item"><span class="ri-name">当地法语角 Meetup</span><span class="ri-note">多伦多、卡尔加里、温哥华均有定期活动</span></div>
+              <div class="rs-item"><span class="ri-name">渥太华/gatineau 沉浸式</span><span class="ri-note">这两个城市法语环境最好，进步最快</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- vs Quebec immigration -->
+      <div class="content-card">
+        <h2 class="cc-title">法语定向 vs 魁北克省移民：有什么区别？</h2>
+        <div class="compare-table">
+          <div class="ct-row ct-header">
+            <div>对比维度</div>
+            <div>EE 法语定向（联邦）</div>
+            <div>魁北克省移民（QSWP）</div>
+          </div>
+          <div class="ct-row">
+            <div>管理机构</div>
+            <div>IRCC（联邦）</div>
+            <div>MIFI（魁省移民厅）→ 再经 IRCC</div>
+          </div>
+          <div class="ct-row">
+            <div>定居省份要求</div>
+            <div class="pos">✓ 可住任何省份（除魁北克）</div>
+            <div>须承诺定居魁北克</div>
+          </div>
+          <div class="ct-row">
+            <div>语言要求</div>
+            <div>法语 NCLC 7+（TEF/TCF）</div>
+            <div>法语为主，有综合打分（法语分值高）</div>
+          </div>
+          <div class="ct-row">
+            <div>职业要求</div>
+            <div class="pos">✓ 无职业限制</div>
+            <div>需满足魁省职业清单或打分要求</div>
+          </div>
+          <div class="ct-row">
+            <div>处理时间</div>
+            <div>通过 EE，目标 6 个月 PR</div>
+            <div>魁省选拔证书 12–24 个月 + 联邦 6–12 个月</div>
+          </div>
+          <div class="ct-row">
+            <div>适合人群</div>
+            <div>不想住魁省，但愿意学法语换低分数线</div>
+            <div>想住魁省，法语能力强，认可魁省生活方式</div>
+          </div>
+        </div>
+        <div class="tip-box">
+          💡 <strong>结论：</strong>两条路都需要良好的法语能力，但定向不同。如果你不打算住在魁北克，EE 法语定向是正确选择。如果你确实打算在蒙特利尔等地生活，直接走 QSWP 魁省移民通道，处理时间虽较长，但整个体系更针对魁省居民设计。
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div class="content-card">
+        <h2 class="cc-title">常见问题（FAQ）</h2>
+        {faqs.map((item) => (
+          <details class="faq-item">
+            <summary class="faq-q">{item.q}</summary>
+            <p class="faq-a">{item.a}</p>
+          </details>
+        ))}
+      </div>
+
+      <!-- CTA -->
+      <div class="cta-block">
+        <div class="cta-text">
+          <div class="cta-title">想免费评估法语定向是否适合你？</div>
+          <p class="cta-desc">告诉我们你目前的法语水平和移民计划，顾问帮你判断法语定向是否是最优路径，还是应该结合其他策略。</p>
+        </div>
+        <a href="/contact/" class="cta-btn">免费咨询 →</a>
+      </div>
+
+    </main>
+
+    <aside class="page-sidebar">
+      <ContactCard title="评估法语定向路径" />
+      <RelatedToolsCard
+        title="相关打分工具"
+        subtitle="法语定向先看 CRS，再看语言加分是否能拉到位。"
+        items={[
+          { href: "/tools/crs-calculator/", label: "联邦 CRS 计算器", desc: "法语 + 英语成绩会共同影响 EE 排名。" },
+          { href: "/tools/", label: "打分工具总览", desc: "如果路径还没定，先把所有工具看一遍。" },
+          { href: "/projects/ee-category/", label: "EE 定向总览", desc: "回到 CBS 主页面，横向比较其他类别。" },
+        ]}
+        footerHref="/tools/crs-calculator/"
+        footerLabel="直接计算 CRS"
+      />
+      <div class="sidebar-card">
+        <div class="sc-title">CBS 三大热门通道</div>
+        <div class="sc-links">
+          <a class="sc-link" href="/projects/ee-trades/">🔧 技工类定向</a>
+          <a class="sc-link" href="/projects/ee-healthcare/">🏥 医护类定向</a>
+          <a class="sc-link active" href="/projects/ee-french/">🇫🇷 法语定向（当前页）</a>
+        </div>
+      </div>
+      <div class="sidebar-card highlight-card">
+        <div class="sc-title">⚡ 关键数据</div>
+        <div class="key-data">
+          <div class="kd-item">
+            <div class="kd-val">350–450</div>
+            <div class="kd-label">历史最低邀请分</div>
+          </div>
+          <div class="kd-item">
+            <div class="kd-val">8,500</div>
+            <div class="kd-label">最大单次邀请人数</div>
+          </div>
+          <div class="kd-item">
+            <div class="kd-val">NCLC 7</div>
+            <div class="kd-label">法语最低要求</div>
+          </div>
+          <div class="kd-item">
+            <div class="kd-val">+50</div>
+            <div class="kd-label">达标后 CRS 额外加分</div>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-card">
+        <div class="sc-title">相关链接</div>
+        <div class="sc-links">
+          <a class="sc-link" href="/projects/ee-category/">EE 定向邀请总览</a>
+          <a class="sc-link" href="/projects/province/quebec/">魁北克省移民</a>
+          <a class="sc-link" href="/projects/cec/">加拿大经验类（CEC）</a>
+          <a class="sc-link" href="/faq/">移民常见问题</a>
+        </div>
+      </div>
+      <div class="sidebar-card honest-card">
+        <div class="sc-title">📊 自测：法语定向适合你吗？</div>
+        <div class="self-check">
+          <div class="sc-q">✓ CRS 分数在 400–480 分之间</div>
+          <div class="sc-q">✓ 愿意花 12–24 个月认真学法语</div>
+          <div class="sc-q">✓ 每天能保证 1–2 小时语言学习</div>
+          <div class="sc-q">✓ 不打算定居魁北克（可以住任何省）</div>
+          <div class="sc-q">✓ 英语有一定基础（CLB 5+ 可额外加分）</div>
+          <div class="sc-note">满足以上 3–5 项，法语定向值得认真考虑。</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+      <div class="page-share">
+        <ShareBar url="https://cachinavisa.com/projects/ee-french/" title={"EE 法语定向移民完整指南 | 分数线最低 · TEF/TCF 备考 · NCLC 7 路径"} />
+      </div>
+</BaseLayout>
+
+<style>
+.page-layout { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: start; }
+@media (min-width: 960px) { .page-layout { grid-template-columns: 1fr 280px; } }
+
+/* Hero */
+.page-hero {
+  background: linear-gradient(135deg, #0a1e5e 0%, #1a3a8a 55%, #0a1628 100%);
+  border-radius: 20px; padding: 40px 36px; margin-bottom: 16px;
+  position: relative; overflow: hidden;
+}
+.page-hero::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 55% 70% at 90% 15%, rgba(37,99,235,0.3), transparent 55%);
+}
+.hero-kicker { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(147,197,253,0.8); margin-bottom: 12px; position: relative; z-index: 1; }
+.hero-title { font-size: clamp(24px, 4vw, 38px); font-weight: 900; color: #fff; margin: 0 0 14px; letter-spacing: -0.025em; line-height: 1.15; position: relative; z-index: 1; }
+.hero-title-en { font-size: 0.55em; font-weight: 500; color: rgba(255,255,255,0.45); display: block; margin-top: 4px; }
+.hero-desc { font-size: 14.5px; color: rgba(255,255,255,0.65); line-height: 1.75; margin: 0 0 22px; max-width: 680px; position: relative; z-index: 1; }
+.hero-desc strong { color: #93c5fd; }
+.hero-tags { display: flex; gap: 8px; flex-wrap: wrap; position: relative; z-index: 1; margin-bottom: 18px; }
+.htag { padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; border: 1px solid transparent; }
+.htag.blue { background: rgba(37,99,235,0.2); border-color: rgba(37,99,235,0.35); color: #93c5fd; }
+.hero-honest {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 14px 16px; background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.25);
+  border-radius: 12px; font-size: 13.5px; color: rgba(255,255,255,0.75); line-height: 1.65;
+  position: relative; z-index: 1;
+}
+.hh-icon { font-size: 18px; flex-shrink: 0; }
+
+/* Content card */
+.content-card { background: #fff; border: 1px solid rgba(13,17,23,0.09); border-radius: 18px; padding: 28px 30px; margin-bottom: 16px; }
+.cc-title { font-size: 19px; font-weight: 800; color: #0d1117; margin: 0 0 14px; padding-bottom: 10px; border-bottom: 2px solid rgba(37,99,235,0.15); }
+.cc-desc { font-size: 14px; color: rgba(13,17,23,0.6); line-height: 1.75; margin: 0 0 18px; }
+
+/* Advantage grid */
+.adv-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+@media (min-width: 640px) { .adv-grid { grid-template-columns: repeat(4, 1fr); } }
+.adv-item { text-align: center; padding: 20px 14px; border-radius: 14px; background: rgba(37,99,235,0.04); border: 1px solid rgba(37,99,235,0.1); }
+.adv-num { font-size: 24px; font-weight: 900; color: #1d4ed8; margin-bottom: 5px; }
+.adv-label { font-size: 12.5px; font-weight: 700; color: #0d1117; margin-bottom: 6px; }
+.adv-desc { font-size: 12px; color: rgba(13,17,23,0.55); line-height: 1.5; }
+
+/* Score table */
+.score-table { border: 1px solid rgba(13,17,23,0.09); border-radius: 14px; overflow: auto; margin-bottom: 14px; }
+.st-row { display: grid; grid-template-columns: 1.8fr repeat(8, 1fr); border-bottom: 1px solid rgba(13,17,23,0.07); min-width: 700px; }
+.st-row:last-child { border-bottom: none; }
+.st-row > div { padding: 9px 10px; font-size: 12px; color: rgba(13,17,23,0.7); border-right: 1px solid rgba(13,17,23,0.06); text-align: center; line-height: 1.4; }
+.st-row > div:last-child { border-right: none; }
+.st-header { background: rgba(37,99,235,0.06); }
+.st-header > div { font-weight: 700; color: #0d1117; font-size: 11px; text-transform: uppercase; }
+.st-subheader > div { font-weight: 600; color: rgba(13,17,23,0.55); font-size: 11px; background: rgba(13,17,23,0.02); }
+.target-row { background: rgba(37,99,235,0.04); }
+.st-level { font-weight: 700; color: #1d4ed8; text-align: left !important; font-size: 11.5px !important; }
+
+.tip-box { padding: 14px 16px; background: rgba(59,130,246,0.05); border-left: 3px solid rgba(59,130,246,0.35); border-radius: 0 12px 12px 0; font-size: 13.5px; color: rgba(13,17,23,0.65); line-height: 1.65; }
+
+/* Study plan */
+.plan-list { display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px; }
+.plan-item { border: 1px solid rgba(13,17,23,0.09); border-radius: 16px; overflow: hidden; }
+.plan-header { display: flex; gap: 14px; align-items: flex-start; padding: 16px 20px 12px; background: rgba(37,99,235,0.04); border-bottom: 1px solid rgba(13,17,23,0.07); }
+.plan-phase { display: inline-flex; align-items: center; justify-content: center; padding: 4px 12px; background: #1d4ed8; color: #fff; border-radius: 8px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+.plan-title { font-size: 14px; font-weight: 800; color: #0d1117; }
+.plan-duration { font-size: 12px; color: rgba(13,17,23,0.45); margin-top: 2px; }
+.plan-actions { padding: 14px 20px; display: flex; flex-direction: column; gap: 7px; }
+.plan-action { display: flex; gap: 8px; font-size: 13px; color: rgba(13,17,23,0.65); line-height: 1.6; }
+.pa-dot { color: #1d4ed8; font-size: 16px; flex-shrink: 0; line-height: 1.2; }
+
+/* Timeline */
+.timeline-compare { background: rgba(13,17,23,0.02); border-radius: 14px; padding: 18px; }
+.tc-title { font-size: 13px; font-weight: 700; color: #0d1117; margin-bottom: 14px; }
+.tc-items { display: flex; flex-direction: column; gap: 10px; }
+.tc-item { display: grid; grid-template-columns: 120px 1fr 110px; gap: 12px; align-items: center; }
+.tc-label { font-size: 13px; color: rgba(13,17,23,0.65); }
+.tc-bar { height: 8px; background: rgba(13,17,23,0.08); border-radius: 999px; overflow: hidden; }
+.tc-fill { height: 100%; background: linear-gradient(90deg, #1d4ed8, #60a5fa); border-radius: 999px; }
+.tc-time { font-size: 12px; font-weight: 700; color: #1d4ed8; text-align: right; }
+
+/* Resources */
+.resources-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 600px) { .resources-grid { grid-template-columns: 1fr; } }
+.resource-section { padding: 16px 18px; border-radius: 14px; border: 1px solid rgba(13,17,23,0.09); }
+.rs-title { font-size: 13px; font-weight: 700; color: #0d1117; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid rgba(13,17,23,0.07); }
+.rs-items { display: flex; flex-direction: column; gap: 7px; }
+.rs-item { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
+.ri-name { font-size: 13px; font-weight: 600; color: #0d1117; }
+.ri-note { font-size: 12px; color: rgba(13,17,23,0.5); text-align: right; }
+
+/* Compare table */
+.compare-table { border: 1px solid rgba(13,17,23,0.09); border-radius: 14px; overflow: hidden; margin-bottom: 14px; }
+.ct-row { display: grid; grid-template-columns: 1fr 1.3fr 1.3fr; border-bottom: 1px solid rgba(13,17,23,0.07); }
+.ct-row:last-child { border-bottom: none; }
+.ct-row > div { padding: 11px 14px; font-size: 13px; color: rgba(13,17,23,0.7); line-height: 1.5; border-right: 1px solid rgba(13,17,23,0.06); }
+.ct-row > div:last-child { border-right: none; }
+.ct-header { background: rgba(13,17,23,0.04); }
+.ct-header > div { font-weight: 700; font-size: 12px; color: #0d1117; text-transform: uppercase; }
+.pos { color: #059669 !important; font-weight: 600; }
+
+/* FAQ */
+.faq-item { border: 1px solid rgba(13,17,23,0.08); border-radius: 12px; overflow: hidden; margin-bottom: 8px; }
+.faq-q { padding: 14px 18px; font-size: 14px; font-weight: 600; color: #0d1117; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.faq-q::after { content: '+'; font-size: 18px; color: #1d4ed8; font-weight: 400; flex-shrink: 0; }
+details[open] .faq-q::after { content: '−'; }
+.faq-a { padding: 12px 18px 14px; font-size: 13.5px; color: rgba(13,17,23,0.65); line-height: 1.75; margin: 0; border-top: 1px solid rgba(13,17,23,0.06); }
+
+/* CTA */
+.cta-block { background: linear-gradient(135deg, #0a1e5e, #1a3a8a); border-radius: 18px; padding: 28px 32px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; position: relative; overflow: hidden; }
+.cta-block::before { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 50% 80% at 90% 10%, rgba(37,99,235,0.3), transparent 55%); }
+.cta-text { position: relative; z-index: 1; }
+.cta-title { font-size: 17px; font-weight: 800; color: #fff; margin-bottom: 7px; }
+.cta-desc { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.65; margin: 0; max-width: 500px; }
+.cta-btn { position: relative; z-index: 1; padding: 12px 26px; background: #1d4ed8; color: #fff; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
+.cta-btn:hover { background: #1e40af; text-decoration: none; }
+
+/* Sidebar */
+.page-sidebar { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 88px; }
+.sidebar-card { background: #fff; border: 1px solid rgba(13,17,23,0.09); border-radius: 16px; overflow: hidden; }
+.sc-title { font-size: 13px; font-weight: 700; color: #0d1117; padding: 14px 18px 10px; border-bottom: 1px solid rgba(13,17,23,0.07); }
+.sc-links { padding: 6px 0; }
+.sc-link { display: block; padding: 8px 18px; font-size: 13px; color: rgba(13,17,23,0.7); text-decoration: none; transition: background 0.12s, color 0.12s; }
+.sc-link:hover { background: rgba(37,99,235,0.04); color: #1d4ed8; text-decoration: none; }
+.sc-link.active { background: rgba(37,99,235,0.07); color: #1d4ed8; font-weight: 700; }
+.highlight-card .sc-title { background: rgba(37,99,235,0.06); }
+.key-data { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(13,17,23,0.07); }
+.kd-item { background: #fff; padding: 14px 12px; text-align: center; }
+.kd-val { font-size: 16px; font-weight: 900; color: #1d4ed8; margin-bottom: 4px; }
+.kd-label { font-size: 11px; color: rgba(13,17,23,0.45); line-height: 1.4; }
+.honest-card .sc-title { background: rgba(245,158,11,0.08); }
+.self-check { padding: 10px 16px 14px; display: flex; flex-direction: column; gap: 6px; }
+.sc-q { font-size: 12.5px; color: rgba(13,17,23,0.7); line-height: 1.5; }
+.sc-note { margin-top: 8px; font-size: 12px; font-weight: 700; color: #1d4ed8; border-top: 1px solid rgba(13,17,23,0.07); padding-top: 8px; }
+</style>

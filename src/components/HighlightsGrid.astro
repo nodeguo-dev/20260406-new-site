@@ -1,0 +1,23 @@
+---
+import { site } from "@/config/site";
+type Props = { title?: string };
+const { title = "为什么选择常春藤咨询" } = Astro.props;
+---
+
+<section class="card" aria-label={title}>
+  <div class="card-inner">
+    <h2 class="h2">{title}</h2>
+    <p class="muted" style="margin:0 0 12px">
+      我们更强调：把政策与材料落到你的真实背景上，给出能执行、能复用、能解释的方案。
+    </p>
+    <div style="display:grid; grid-template-columns:1fr; gap:10px;">
+      {site.highlights.map((h) => (
+        <div class="list-item">
+          <div style="font-weight:750">{h.title}</div>
+          <div class="muted" style="margin-top:8px">{h.desc}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+

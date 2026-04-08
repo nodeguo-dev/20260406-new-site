@@ -1,0 +1,311 @@
+Build a production-ready Astro website for an immigration consulting business (Cachinavisa / Ivy Consulting), inspired by the structure of https://newgvisa.com/, but NOT copying its content or branding.
+
+========================
+GOAL
+========================
+
+Create a content-driven immigration website focused on:
+
+- Blog/article system (primary)
+- Category and tag archives
+- SEO structure
+- Service pages
+- Consultation conversion (contact CTA)
+
+This is NOT a simple corporate landing page.
+
+It should behave like a content-heavy knowledge site with ongoing article publishing.
+
+Visual design does NOT need to match 1:1, but:
+
+- Information architecture
+- Page types
+- SEO coverage
+- Content structure
+
+should be similar in concept.
+
+========================
+CORE PRINCIPLES
+========================
+
+1. Content-first, not company-first
+- Homepage must show latest blog posts (NOT just company intro)
+- Blog system is the core of the site
+- Service pages are secondary
+
+2. DO NOT copy content
+- Do NOT copy text, articles, or branding from newgvisa
+- All content must be original
+- You may replicate structure, topics, and search intent
+
+3. SEO-oriented architecture
+- Clean URL structure
+- Strong internal linking
+- Category and tag system
+- Pagination
+
+4. Markdown-first content system
+- Blog posts and service pages must be written in Markdown or MDX
+- Easy to scale and update later
+
+========================
+TECH STACK
+========================
+
+- Astro (latest version)
+- TypeScript
+- Astro Content Collections
+- Markdown / MDX support
+- Static site generation
+
+========================
+REQUIRED PAGES
+========================
+
+Implement all of the following:
+
+- Home page (/)
+- Blog index (/blog/)
+- Blog post page (/blog/[slug]/)
+- Category page (/category/[slug]/)
+- Tag page (/tag/[slug]/)
+- Service pages (/services/[slug]/)
+- FAQ page (/faq/)
+- About page (/about/)
+- Contact page (/contact/)
+- Search page (/search/)
+- 404 page
+
+Also generate:
+
+- sitemap.xml
+- robots.txt
+- RSS feed
+
+========================
+URL STRUCTURE
+========================
+
+Use exactly this structure:
+
+/
+ /blog/
+ /blog/[slug]/
+ /category/[slug]/
+ /tag/[slug]/
+ /services/[slug]/
+ /faq/
+ /about/
+ /contact/
+ /search/
+
+========================
+CONTENT MODEL (SCHEMA)
+========================
+
+Define Astro Content Collections.
+
+Blog post frontmatter must include:
+
+- title
+- slug
+- description
+- publishDate
+- updatedDate
+- category
+- tags
+- author
+- excerpt
+- cover (optional)
+- draft
+- canonical (optional)
+- faq (optional)
+- relatedPosts (optional)
+
+Service page frontmatter:
+
+- title
+- slug
+- description
+- excerpt
+- publishDate
+- updatedDate
+- tags
+- draft
+- canonical (optional)
+- faq (optional)
+
+========================
+HOMEPAGE REQUIREMENTS
+========================
+
+Homepage must be content-focused:
+
+Main area:
+- List of latest blog posts
+- Show title, date, category, excerpt, read more
+
+Sidebar:
+- Contact info block
+- Featured services
+- Categories list
+- About snippet
+- CTA section
+
+Layout:
+- Two-column layout (desktop)
+- Mobile responsive
+
+========================
+BLOG SYSTEM REQUIREMENTS
+========================
+
+Must include:
+
+- Blog listing page
+- Blog detail page
+- Pagination
+- Category archive
+- Tag archive
+- Related posts
+- Previous / next navigation
+- Breadcrumbs
+- Article CTA section
+
+Blog post page must show:
+
+- Title
+- Publish date
+- Updated date
+- Category
+- Tags
+- Author
+- Content
+- Related posts
+- CTA section
+
+========================
+SERVICE PAGE REQUIREMENTS
+========================
+
+Service pages should include:
+
+- Title
+- Target audience
+- Description
+- Process
+- Requirements
+- FAQ section
+- CTA button
+
+Must be written in Markdown / MDX.
+
+========================
+SEARCH
+========================
+
+- Implement a basic local search system
+- Search title, excerpt, tags, category
+- Dedicated search page (/search/)
+
+========================
+SEO REQUIREMENTS
+========================
+
+Each page must include:
+
+- Unique title
+- Unique meta description
+- Canonical URL
+
+Also implement:
+
+- Open Graph tags
+- Twitter meta tags
+- sitemap.xml
+- robots.txt
+- RSS feed
+
+Structured data:
+
+- Article schema for blog posts
+- FAQ schema for FAQ sections
+- Organization schema
+- BreadcrumbList schema
+
+Pagination must have proper SEO titles.
+
+========================
+DESIGN GUIDELINES
+========================
+
+- Clean and minimal
+- Content-focused
+- NOT SaaS landing page style
+- Good typography for long reading
+- Clear hierarchy
+- Fast loading
+
+========================
+CONVERSION (IMPORTANT)
+========================
+
+Include contact CTA in:
+
+- Sidebar
+- Blog post bottom
+- Service pages
+- Footer
+
+Contact information to use:
+
+Phone CN: +86-19987006476  
+Phone CA: +1 (647)947-2456  
+WeChat: getprsoon  
+Email: info@cachinavisa.com  
+Business hours: Mon–Sun 9:00–21:00  
+
+Locations:
+- Toronto HQ: North York Centre
+- Shenzhen Office: KK100
+- Chengdu Office: Dongfang Tianxiang Plaza B
+
+========================
+IMPORTANT CONSTRAINTS
+========================
+
+- DO NOT implement forum
+- DO NOT implement user accounts
+- DO NOT implement payment system
+- DO NOT copy external content
+- Focus on scalable content architecture
+
+========================
+PROJECT STRUCTURE
+========================
+
+Organize project cleanly:
+
+- src/content/blog/
+- src/content/services/
+- src/content/config.ts
+- src/components/
+- src/layouts/
+- src/pages/
+- src/utils/
+
+========================
+DELIVERABLE
+========================
+
+Provide a fully working Astro project with:
+
+- All pages functional
+- Content collections configured
+- Sample blog posts (at least 2)
+- Sample services (at least 2)
+- Basic styling implemented
+- SEO baseline ready
+
+The project should be ready to run locally and extend easily.

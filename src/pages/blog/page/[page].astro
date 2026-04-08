@@ -1,0 +1,241 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PostCard from "@/components/PostCard.astro";
+import BlogInternalHub from "@/components/BlogInternalHub.astro";
+import Pagination from "@/components/Pagination.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import RelatedToolsCard from "@/components/RelatedToolsCard.astro";
+import { categoryMeta } from "@/data/categoryMeta";
+import { withSiteTitle } from "@/utils/seo";
+import { getAllPublishedPosts, getAllCategories } from "@/utils/content";
+import { getPageSlice } from "@/utils/pagination";
+
+const PAGE_SIZE = 12;
+
+export async function getStaticPaths() {
+  const { getAllPublishedPosts } = await import("@/utils/content");
+  const { getPageSlice } = await import("@/utils/pagination");
+  const posts = await getAllPublishedPosts();
+  const { totalPages } = getPageSlice(posts, 1, 12);
+  return Array.from({ length: totalPages }, (_, i) => ({
+    params: { page: String(i + 1) },
+  })).filter((p) => Number(p.params.page) > 1);
+}
+
+const pageNum = Number(Astro.params.page);
+const posts = await getAllPublishedPosts();
+const categories = getAllCategories(posts);
+const { items, totalPages } = getPageSlice(posts, pageNum, PAGE_SIZE);
+const tagCounts = new Map<string, number>();
+for (const p of posts) {
+  for (const t of p.data.tags ?? []) {
+    tagCounts.set(t, (tagCounts.get(t) ?? 0) + 1);
+  }
+}
+const tagRanked = [...tagCounts.entries()]
+  .sort((a, b) => b[1] - a[1])
+  .slice(0, 40)
+  .map(([t]) => t);
+---
+
+<BaseLayout
+  title={withSiteTitle(`移民新闻 - 第 ${pageNum} 页`)}
+  description={`加拿大移民新闻与政策解读，第 ${pageNum} 页，共 ${totalPages} 页。`}
+  canonical={`https://cachinavisa.com/blog/page/${pageNum}/`}
+>
+  <div class="blog-hero">
+    <div class="blog-hero-content">
+      <div class="blog-hero-badge">移民新闻 & 政策解读</div>
+      <h1 class="blog-hero-title">移民资讯 <span class="page-indicator">第 {pageNum} 页</span></h1>
+      <p class="blog-hero-desc">持续更新最新政策动态与实操攻略，共 {posts.length} 篇文章。</p>
+    </div>
+  </div>
+
+  <div class="blog-layout">
+    <main class="blog-main">
+      <div class="posts-list">
+        {items.map((p) => <PostCard post={p} variant="list" />)}
+      </div>
+      <div class="pagination-wrap">
+        <Pagination base="/blog/" page={pageNum} totalPages={totalPages} />
+      </div>
+
+      <section class="blog-hub-section" aria-labelledby={`blog-p${pageNum}-hub`}>
+        <h2 id={`blog-p${pageNum}-hub`} class="visually-hidden">站内导航与延伸阅读</h2>
+        <BlogInternalHub />
+      </section>
+    </main>
+
+    <aside class="blog-sidebar">
+      <ContactCard title="免费移民评估" />
+      <RelatedToolsCard
+        title="相关打分工具"
+        subtitle="博客页看到 CRS / EOI / 省提名时，先把分数算出来。"
+        items={[
+          { href: "/tools/crs-calculator/", label: "联邦 CRS 计算器", desc: "EE / CEC / FSW 的基础自测工具。" },
+          { href: "/tools/oinp-calculator/", label: "安省 OINP · EOI", desc: "安省雇主类 / 留学类常见入口。" },
+          { href: "/tools/bc-pnp-calculator/", label: "BC SIRS 计算器", desc: "BC 技术移民常用分值预估。" },
+          { href: "/tools/aaip-calculator/", label: "AAIP Worker EOI", desc: "阿省相关路径的分值自测。" },
+        ]}
+        footerHref="/tools/"
+        footerLabel="进入全部打分工具"
+      />
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">文章分类</div>
+        <div class="cat-list">
+          <a class="cat-item" href="/blog/">
+            <span>全部文章</span>
+            <span class="cat-count">{posts.length}</span>
+          </a>
+          {categories.map((slug) => {
+            const count = posts.filter(p => p.data.category === slug).length;
+            return (
+              <a class="cat-item" href={`/category/${slug}/`}>
+                <span>{categoryMeta[slug]?.title ?? slug}</span>
+                <span class="cat-count">{count}</span>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">热门标签</div>
+        <div class="tag-cloud">
+          {tagRanked.map((tag) => (
+            <a class="sidebar-tag" href={`/tag/${encodeURIComponent(tag)}/`}>#{tag}</a>
+          ))}
+        </div>
+      </div>
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">快速入口</div>
+        <div class="quick-links">
+          {[
+            { href: "/projects/", label: "移民项目" },
+            { href: "/tools/", label: "打分工具" },
+            { href: "/visa/", label: "签证指南" },
+            { href: "/visa/french-mobility-work-permit/", label: "法语流动工签" },
+            { href: "/visa/c11-work-permit/", label: "C11 工签" },
+            { href: "/category/work-permit-lmia/", label: "工签与 LMIA 文章" },
+            { href: "/immigration/guide/", label: "新手必读" },
+            { href: "/search/", label: "站内搜索" },
+          ].map((l) => (
+            <a class="quick-link" href={l.href}>{l.label} →</a>
+          ))}
+        </div>
+      </div>
+      <div class="sidebar-card sidebar-card--hub">
+        <BlogInternalHub compact heading="热门内链" />
+      </div>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+.blog-hero {
+  background: linear-gradient(135deg, #0f1923 0%, #1c2e45 100%);
+  border-radius: 16px;
+  padding: 40px 32px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.blog-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 60% at 100% 0%, rgba(217,45,32,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+.blog-hero-content { position: relative; z-index: 1; }
+.blog-hero-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(217,45,32,0.2);
+  color: #ff8a7a;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.blog-hero-title {
+  font-size: clamp(20px, 4vw, 28px);
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 8px;
+}
+.page-indicator { color: rgba(255,255,255,0.5); font-weight: 400; }
+.blog-hero-desc { font-size: 14px; color: rgba(255,255,255,0.58); margin: 0; }
+
+.blog-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: start;
+}
+@media (min-width: 960px) {
+  .blog-layout { grid-template-columns: 1fr 300px; }
+}
+.posts-list { display: grid; gap: 12px; }
+.pagination-wrap { margin-top: 24px; }
+
+.blog-sidebar { display: grid; gap: 16px; position: sticky; top: 80px; }
+.sidebar-card {
+  background: #fff;
+  border: 1px solid rgba(26,29,35,0.09);
+  border-radius: 14px;
+  padding: 18px 20px;
+}
+.sidebar-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a1d23;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(26,29,35,0.08);
+}
+.cat-list { display: flex; flex-direction: column; gap: 2px; }
+.cat-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  color: #374151;
+  text-decoration: none;
+  transition: background 0.12s, color 0.12s;
+}
+.cat-item:hover { background: rgba(217,45,32,0.06); color: #d92d20; text-decoration: none; }
+.cat-count {
+  font-size: 12px;
+  color: rgba(26,29,35,0.4);
+  background: rgba(26,29,35,0.06);
+  padding: 1px 7px;
+  border-radius: 999px;
+}
+
+.blog-hub-section { margin-top: 8px; }
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+.tag-cloud { display: flex; flex-wrap: wrap; gap: 6px; }
+.sidebar-tag {
+  font-size: 12px; padding: 4px 10px; border-radius: 999px;
+  border: 1px solid rgba(26,29,35,0.12); color: #6b7280;
+  text-decoration: none; transition: border-color 0.15s, color 0.15s;
+}
+.sidebar-tag:hover { border-color: #d92d20; color: #d92d20; text-decoration: none; }
+.quick-links { display: flex; flex-direction: column; gap: 4px; }
+.quick-link {
+  display: block; padding: 8px 10px; font-size: 13.5px;
+  color: #374151; text-decoration: none; border-radius: 8px;
+  transition: background 0.12s, color 0.12s;
+}
+.quick-link:hover { background: rgba(217,45,32,0.06); color: #d92d20; text-decoration: none; }
+.sidebar-card--hub { padding: 0; overflow: hidden; }
+.sidebar-card--hub :global(.bih) { border: none; border-radius: 0; margin: 0; }
+</style>

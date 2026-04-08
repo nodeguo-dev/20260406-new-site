@@ -1,0 +1,580 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import RelatedToolsCard from "@/components/RelatedToolsCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民项目", href: "/projects/" },
+  { name: "EE 定向邀请（CBS）", href: "/projects/ee-category/" },
+  { name: "医护类定向移民", href: "/projects/ee-healthcare/" },
+];
+
+const popularJobs = [
+  {
+    noc: "31301",
+    name: "注册护士（RN）",
+    en: "Registered Nurses",
+    salary: "$72,000–$110,000",
+    difficulty: "中",
+    licenseRequired: true,
+    licenseBody: "各省护士注册机构（如 CNO / CRNBC）",
+    foreignExp: true,
+    collegeAvail: true,
+    desc: "加拿大最缺人的医护职业之一，境内外经验均算，各省护士注册机构可认证境外学历。PGWP 或雇主担保工签在注册期间仍可工作。",
+  },
+  {
+    noc: "32101",
+    name: "执业护士（LPN/RPN）",
+    en: "Licensed Practical Nurses",
+    salary: "$52,000–$78,000",
+    difficulty: "低",
+    licenseRequired: true,
+    licenseBody: "省级 LPN 注册机构",
+    foreignExp: true,
+    collegeAvail: true,
+    desc: "比 RN 注册要求略低，College 2年制课程可毕业后申请注册。就业市场需求大，是留学生最常走的护理移民路线。",
+  },
+  {
+    noc: "42201",
+    name: "社区与社会服务工作者",
+    en: "Social & Community Service Workers",
+    salary: "$42,000–$65,000",
+    difficulty: "低",
+    licenseRequired: false,
+    licenseBody: "—",
+    foreignExp: true,
+    collegeAvail: true,
+    desc: "无需注册执照，College 2年文凭（Social Service Worker）即可就业，属于 TEER 2 类，工作机会多，是医护类 CBS 中入门门槛最低的职业之一。",
+  },
+  {
+    noc: "41300",
+    name: "社会工作者（MSW 持有者）",
+    en: "Social Workers",
+    salary: "$55,000–$85,000",
+    difficulty: "中",
+    licenseRequired: true,
+    licenseBody: "省级社工协会（如 OCSWSSW）",
+    foreignExp: true,
+    collegeAvail: false,
+    desc: "通常需要大学本科或硕士（MSW）学历，注册为 RSW（Registered Social Worker）。持境外 MSW 学历可申请认证，认证后可在加拿大执业。",
+  },
+  {
+    noc: "32201",
+    name: "按摩治疗师（RMT）",
+    en: "Massage Therapists",
+    salary: "$48,000–$80,000",
+    difficulty: "低",
+    licenseRequired: true,
+    licenseBody: "部分省份要求注册（BC/安省最严格）",
+    foreignExp: false,
+    collegeAvail: true,
+    desc: "College 2–3 年课程（Registered Massage Therapy），毕业后通过 MTA 考试注册。工作灵活，可自雇或受雇，经验多数需要在加拿大积累（部分省份不认境外经验）。",
+  },
+  {
+    noc: "32120",
+    name: "医学实验室技师（MLT）",
+    en: "Medical Laboratory Technologists",
+    salary: "$62,000–$88,000",
+    difficulty: "中",
+    licenseRequired: true,
+    licenseBody: "CSMLS（加拿大医学实验室科学家协会）",
+    foreignExp: true,
+    collegeAvail: true,
+    desc: "College 2–3 年医技课程毕业后通过 CSMLS 认证，医院、诊断实验室均有大量岗位，收入稳定，是 CBS 医护类中性价比很高的路线。",
+  },
+  {
+    noc: "32121",
+    name: "医学放射技师（MRT）",
+    en: "Medical Radiation Technologists",
+    salary: "$68,000–$95,000",
+    difficulty: "中",
+    licenseRequired: true,
+    licenseBody: "CAMRT（加拿大医学放射技师协会）",
+    foreignExp: true,
+    collegeAvail: true,
+    desc: "College 3年专科课程，毕业后通过 CAMRT 认证。医院放射科、诊断成像中心是主要就业场所，岗位稳定。",
+  },
+  {
+    noc: "32124",
+    name: "药房技术员",
+    en: "Pharmacy Technicians",
+    salary: "$42,000–$62,000",
+    difficulty: "低",
+    licenseRequired: true,
+    licenseBody: "省级药剂师协会（如 OCP）",
+    foreignExp: false,
+    collegeAvail: true,
+    desc: "College 2年课程，工作场所包括连锁药房（Shoppers、Rexall 等）和医院药房，工作环境好、工资稳定，是医护类中最好就业的岗位之一。",
+  },
+  {
+    noc: "33102",
+    name: "护理助理（PSW/HCA）",
+    en: "Nurse Aides & Personal Support Workers",
+    salary: "$36,000–$55,000",
+    difficulty: "极低",
+    licenseRequired: false,
+    licenseBody: "部分省份有注册要求，非全国统一",
+    foreignExp: true,
+    collegeAvail: true,
+    desc: "PSW（个人支援工作者）课程只需 6–8 个月，是进入医护行业最快速的路径。工作需求极大，长期护理机构、居家护理均大量招聘，是过渡性入门职业。",
+  },
+  {
+    noc: "42202",
+    name: "幼儿教育工作者（ECE）",
+    en: "Early Childhood Educators",
+    salary: "$38,000–$58,000",
+    difficulty: "低",
+    licenseRequired: true,
+    licenseBody: "省级 ECE 注册（如 BC ECEBC）",
+    foreignExp: false,
+    collegeAvail: true,
+    desc: "College 2年 ECE 文凭，毕业后注册成为 RECE（注册幼教人员），政府大幅扩建托育系统，职位供不应求，是教育类与医护社会服务类的交叉职业。",
+  },
+];
+
+const pathways = [
+  {
+    title: "路径 A：在国内已有护理/医技资格",
+    profile: "在中国/东南亚有护理本科或大专学历，有执业经历",
+    steps: [
+      "向目标省份护士注册机构申请学历认证（通常 6–12 个月）",
+      "完成差距培训或桥梁课程（如 CARE Centre for Internationally Educated Nurses）",
+      "通过 NCLEX-RN 或 CPNRE 考试取得加拿大注册资格",
+      "找到全职 RN/LPN 工作，积累 12 个月经验",
+      "进入 EE 候选池，等待医护类 CBS 定向 ITA",
+    ],
+    timeline: "从认证到 ITA 约 2–3 年",
+    note: "境外工作经验在医护类 CBS 中可以计算，但注册认证过程需要时间和耐心。",
+  },
+  {
+    title: "路径 B：在加拿大留学读护理/医技专业",
+    profile: "来加拿大读 College 护理（PN/BN）、医技、社工等专业",
+    steps: [
+      "申请有 PGWP 资格的 College 护理/医技/社工项目（1–3 年）",
+      "在校期间积极实习，毕业前提前准备注册考试",
+      "毕业申请 PGWP 工签，同时提交注册申请",
+      "入职 RN/LPN/MLT 等对口岗位，积累 12 个月全职经验",
+      "建立 EE Profile，等待 CBS 医护类定向邀请（历史分 430–485 分）",
+    ],
+    timeline: "从入学到 ITA 约 3–5 年（护理约 4 年，医技/社工约 3–4 年）",
+    note: "读完 College 医护课程后再工作积累经验，是许多人选择的稳健路线，且 College 学历为 EE 加分（+15 或 +30 分）。",
+  },
+  {
+    title: "路径 C：零学历基础，从 PSW/SSW 入门",
+    profile: "没有医护背景，但愿意从基础职位做起",
+    steps: [
+      "参加 PSW（个人支援工作者）或 SSW（社会服务工作者）短期课程（6 个月–2 年）",
+      "毕业后在长期护理院、社区机构、居家护理公司找到全职工作",
+      "在 PSW/SSW 职位积累 12 个月工作经验",
+      "同时计划下一步：进一步进修 RPN/RN 提升，或直接以 PSW/SSW NOC 进入 EE（NOC 33102/42201 均在列表内）",
+      "建立 EE Profile，申请 CBS 医护类定向邀请",
+    ],
+    timeline: "从课程到 ITA 约 1.5–2.5 年（最快路线）",
+    note: "PSW/SSW 是整个医护移民路线中成本最低、时间最短的入门方式。部分地区雇主甚至直接资助员工读 PSW 课程。",
+  },
+];
+
+const colleges = [
+  { name: "Humber College（多伦多）", programs: "RPN/PN、PSW、社会服务工作者（SSW）", province: "Ontario" },
+  { name: "George Brown College（多伦多）", programs: "RPN、牙科卫生、医学成像、护理辅助", province: "Ontario" },
+  { name: "Seneca College（多伦多）", programs: "PSW、社区服务、老年护理", province: "Ontario" },
+  { name: "Mohawk College（汉密尔顿）", programs: "RPN、医学放射、呼吸治疗", province: "Ontario" },
+  { name: "Douglas College（新威斯敏斯特）", programs: "RN（护理本科联合项目）、医技", province: "BC" },
+  { name: "Langara College（温哥华）", programs: "护理、社会服务、幼儿教育", province: "BC" },
+  { name: "NAIT（北阿理工学院）", programs: "医学放射技术、医学实验室技术、呼吸治疗", province: "Alberta" },
+  { name: "SAIT（南阿理工学院）", programs: "医技类、牙科、呼吸治疗", province: "Alberta" },
+  { name: "NSCC（新斯科舍社区学院）", programs: "护理辅助、医技、社区服务，可衔接 AIP 海洋省移民", province: "Nova Scotia" },
+];
+
+const faqs = [
+  {
+    q: "没有医护背景可以转行进入医护行业吗？",
+    a: "完全可以。PSW（个人支援工作者）课程只需 6–8 个月，完全零基础可入读，毕业后直接就业。SSW（社会服务工作者）College 2年文凭课程同样不要求医护背景。这两个职业都在 CBS 医护类名单内，是零基础转行进入医护移民通道最快的路线。",
+  },
+  {
+    q: "在中国读的护理学，来加拿大可以直接当护士吗？",
+    a: "不能直接执业，但可以通过认证流程获得加拿大注册资格。步骤：① 向目标省份护士注册机构提交学历和工作经验评估；② 完成差距培训（Gap Training / Bridge Program）；③ 通过加拿大护士执照考试（NCLEX-RN 或 CPNRE）；④ 获得省级护士注册证书。整个流程通常 12–24 个月，期间可以持工签在护理辅助岗位（如 PSW）工作积累经验。",
+  },
+  {
+    q: "医护类 CBS 多久举行一次？历史分数是多少？",
+    a: "医护类是 CBS 中举行频率最高、规模最大的定向类别之一，2024–2026 年间每年有 4–8 次医护类定向邀请，每次邀请数百至数千人。历史邀请截止分数在 430–485 分区间，比同期普通邀请低约 30–60 分，对医护类候选人非常友好。",
+  },
+  {
+    q: "社区服务工作者（SSW）是不是太简单了，将来能移民到哪里去？",
+    a: "SSW（NOC 42201）确实是学历要求较低的职业，但它稳定、需求大、且完全在 CBS 医护类名单内。许多人选择先以 SSW 进入医护行业并取得 ITA，之后在 PR 身份下继续深造（如转读 RPN/RN），再获得更高薪资的职位。不需要在申请 PR 之前就做最好的职位——先拿到身份是第一步。",
+  },
+  {
+    q: "医护类 CBS 经验可以境外积累吗？",
+    a: "是的。与「医生类（需要加拿大境内经验）」不同，医护类（Healthcare & Social Services）CBS 允许境内或境外工作经验。但要注意：境外工作经验计入 CBS 条件，但在 CRS 打分中，只有加拿大境内工作经验才能得「加拿大工作经验」分数。因此建议在加拿大境内积累经验，CRS 分数和 CBS 资格可以同时提升。",
+  },
+  {
+    q: "幼儿教育工作者（ECE）既属于医护类 CBS，也属于教育类 CBS，哪个更好用？",
+    a: "ECE（NOC 42202）确实同时出现在医护/社会服务类和教育类两个 CBS 名单中，这意味着你同时符合两个定向通道的条件，进入 EE 候选池后被邀请的机会是其他人的双倍。哪个通道先举行定向邀请就用哪个——你无需主动选择。",
+  },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem", position: i + 1, name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((i) => ({
+    "@type": "Question", name: i.q,
+    acceptedAnswer: { "@type": "Answer", text: i.a },
+  })),
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("EE 医护类定向移民完整指南 | 37个职业 · PSW/RN/社工路径 · 读 College 转行")}
+  description="2026年 Express Entry 医护类定向邀请（Healthcare CBS）详解：37个覆盖职业、护士/PSW/社工/医技各路径详解、推荐 College 课程、历史邀请分数 430–485 分，适合零基础转行或境外医护人员。"
+  canonical="https://cachinavisa.com/projects/ee-healthcare/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={faqLd} />
+  <Breadcrumbs items={breadcrumbs} />
+
+  <div class="page-layout" style="margin-top:16px">
+    <main>
+
+      <!-- Hero -->
+      <div class="page-hero">
+        <div class="hero-kicker">EE 定向邀请 · 医护类</div>
+        <h1 class="hero-title">医护类定向移民<br /><span class="hero-title-en">Healthcare & Social Services CBS</span></h1>
+        <p class="hero-desc">
+          医护类（Healthcare & Social Services）是 CBS 中<strong>覆盖最广、需求最旺盛</strong>的类别，共覆盖 37 个职业。
+          从顶级专科医生到 PSW 个人支援工作者，从 RN 注册护士到幼儿教育工作者，
+          境内外工作经验均可计入。对于想在加拿大<strong>学一门技能快速拿身份</strong>的人来说，这是最务实的路线之一。
+        </p>
+        <div class="hero-tags">
+          <span class="htag teal">历史邀请分：430–485分</span>
+          <span class="htag teal">37个覆盖职业</span>
+          <span class="htag teal">境内外经验均可</span>
+          <span class="htag teal">College 可入门</span>
+        </div>
+      </div>
+
+      <!-- Why Healthcare -->
+      <div class="content-card">
+        <h2 class="cc-title">为什么选医护类移民路径？</h2>
+        <div class="why-grid">
+          <div class="why-item">
+            <div class="wi-icon">🏥</div>
+            <div class="wi-title">政府最优先填补的缺口</div>
+            <div class="wi-desc">加拿大老龄化趋势加剧，医护人员缺口未来 10 年将持续扩大。IRCC 将医护类定为 CBS 永久固定类别，每年定期开放定向邀请，是政策最稳定的通道之一。</div>
+          </div>
+          <div class="why-item">
+            <div class="wi-icon">📚</div>
+            <div class="wi-title">College 可以入门</div>
+            <div class="wi-desc">无需医学本科，PSW 只需 6–8 个月课程，SSW/LPN/ECE 只需 2 年 College 文凭即可从事对口工作。读 College 同时还能获得加拿大本地学历 EE 加分（+15 或 +30 分）。</div>
+          </div>
+          <div class="why-item">
+            <div class="wi-icon">🌏</div>
+            <div class="wi-title">境外经验可用</div>
+            <div class="wi-desc">与「有加拿大经验的医生」类别不同，医护类 CBS 接受境外工作经验。如果你在中国有护士执照并有临床工作经历，可以直接计入 CBS 条件，同时进行加拿大认证。</div>
+          </div>
+          <div class="why-item">
+            <div class="wi-icon">💰</div>
+            <div class="wi-title">工资稳定，发展路径清晰</div>
+            <div class="wi-desc">护理类职业工资普遍偏高，RN 年薪 7–11 万加元，LPN 5–8 万，PSW 3.6–5.5 万。拿到 PR 后还可以继续升学（从 LPN 升 RN），收入进一步提升。</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Popular jobs -->
+      <div class="content-card">
+        <h2 class="cc-title">最常走的 10 个医护职业（含 College 路径）</h2>
+        <p class="cc-desc">以下职业均在 CBS 医护类名单内，按入行难度排序，重点展示适合留学生和转行人士的路线。</p>
+
+        <div class="jobs-list">
+          {popularJobs.map((job) => (
+            <div class="job-card">
+              <div class="jc-top">
+                <div>
+                  <div class="jc-noc">NOC {job.noc}</div>
+                  <div class="jc-name">{job.name}</div>
+                  <div class="jc-en">{job.en}</div>
+                </div>
+                <div class="jc-right">
+                  <div class="jc-salary">{job.salary}</div>
+                  <div class="jc-badges">
+                    <span class={`diff-badge diff-${job.difficulty}`}>{job.difficulty}难度</span>
+                    {job.licenseRequired
+                      ? <span class="badge-lic">需注册</span>
+                      : <span class="badge-no-lic">无需注册</span>
+                    }
+                    {job.collegeAvail && <span class="badge-college">College可入门</span>}
+                  </div>
+                </div>
+              </div>
+              <p class="jc-desc">{job.desc}</p>
+              {job.licenseRequired && (
+                <div class="jc-lic">🏛️ 注册机构：{job.licenseBody}</div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- 3 pathways -->
+      <div class="content-card">
+        <h2 class="cc-title">三条主流医护移民路径</h2>
+
+        <div class="pathways-list">
+          {pathways.map((p, i) => (
+            <div class="pathway-item">
+              <div class="pi-header">
+                <span class="pi-num">{String.fromCharCode(65+i)}</span>
+                <div>
+                  <div class="pi-title">{p.title}</div>
+                  <div class="pi-profile">适合：{p.profile}</div>
+                </div>
+              </div>
+              <div class="pi-steps">
+                {p.steps.map((step, si) => (
+                  <div class="pi-step">
+                    <span class="ps-num">{si+1}</span>
+                    <span class="ps-text">{step}</span>
+                  </div>
+                ))}
+              </div>
+              <div class="pi-footer">
+                <span class="pi-timeline">⏱ 时间线参考：{p.timeline}</span>
+                <div class="pi-note">💡 {p.note}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- College list -->
+      <div class="content-card">
+        <h2 class="cc-title">推荐 College 医护课程（含主要省份）</h2>
+        <div class="college-table">
+          <div class="ct-header ct-row">
+            <div>学校</div>
+            <div>推荐课程</div>
+            <div>省份</div>
+          </div>
+          {colleges.map((c) => (
+            <div class="ct-row">
+              <div class="ct-name">{c.name}</div>
+              <div class="ct-programs">{c.programs}</div>
+              <div class="ct-province">{c.province}</div>
+            </div>
+          ))}
+        </div>
+        <div class="tip-box">
+          💡 <strong>选校建议：</strong>医护类 College 课程需要认准「有 PGWP 资格」的学校（DLI 名单内），且课程时长 ≥ 2 年才能申请最长 3 年 PGWP。读完后积累 12 个月工作经验即满足 CBS 条件，这是最稳健的留学移民路径之一。
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div class="content-card">
+        <h2 class="cc-title">常见问题（FAQ）</h2>
+        {faqs.map((item) => (
+          <details class="faq-item">
+            <summary class="faq-q">{item.q}</summary>
+            <p class="faq-a">{item.a}</p>
+          </details>
+        ))}
+      </div>
+
+      <!-- CTA -->
+      <div class="cta-block">
+        <div class="cta-text">
+          <div class="cta-title">想规划你的医护类移民路径？</div>
+          <p class="cta-desc">告诉我们你的背景（有无医护经验、目前在哪读书或工作），顾问帮你找最快的路线。</p>
+        </div>
+        <a href="/contact/" class="cta-btn">免费评估 →</a>
+      </div>
+
+    </main>
+
+    <aside class="page-sidebar">
+      <ContactCard title="评估医护类资格" />
+      <RelatedToolsCard
+        title="相关打分工具"
+        subtitle="医护类定向最终还是要回到 CRS 与省提名打分。"
+        items={[
+          { href: "/tools/crs-calculator/", label: "联邦 CRS 计算器", desc: "医护经验会影响 EE 分数与邀请排序。" },
+          { href: "/tools/oinp-calculator/", label: "安省 OINP · EOI", desc: "如果走安省医护 / 雇主类路线，可先预估。" },
+          { href: "/tools/bc-pnp-calculator/", label: "BC SIRS 计算器", desc: "BC 医护类项目也常看省内打分。" },
+        ]}
+        footerHref="/tools/"
+        footerLabel="查看全部打分工具"
+      />
+      <div class="sidebar-card">
+        <div class="sc-title">CBS 三大热门通道</div>
+        <div class="sc-links">
+          <a class="sc-link" href="/projects/ee-trades/">🔧 技工类定向</a>
+          <a class="sc-link active" href="/projects/ee-healthcare/">🏥 医护类定向（当前页）</a>
+          <a class="sc-link" href="/projects/ee-french/">🇫🇷 法语定向</a>
+        </div>
+      </div>
+      <div class="sidebar-card">
+        <div class="sc-title">相关链接</div>
+        <div class="sc-links">
+          <a class="sc-link" href="/projects/ee-category/">EE 定向邀请总览</a>
+          <a class="sc-link" href="/projects/cec/">加拿大经验类（CEC）</a>
+          <a class="sc-link" href="/projects/study-to-pr/">留学转移民路径</a>
+          <a class="sc-link" href="/school/">免费院校申请</a>
+        </div>
+      </div>
+      <div class="sidebar-card highlight-card">
+        <div class="sc-title">⚡ 关键数据</div>
+        <div class="key-data">
+          <div class="kd-item">
+            <div class="kd-val">430–485</div>
+            <div class="kd-label">历史邀请分数区间</div>
+          </div>
+          <div class="kd-item">
+            <div class="kd-val">37</div>
+            <div class="kd-label">覆盖职业数量</div>
+          </div>
+          <div class="kd-item">
+            <div class="kd-val">6月</div>
+            <div class="kd-label">PSW 最短入门课程</div>
+          </div>
+          <div class="kd-item">
+            <div class="kd-val">境内外</div>
+            <div class="kd-label">工作经验均可计入</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+      <div class="page-share">
+        <ShareBar url="https://cachinavisa.com/projects/ee-healthcare/" title={"EE 医护类定向移民完整指南 | 37个职业 · PSW/RN/社工路径 · 读 College 转行"} />
+      </div>
+</BaseLayout>
+
+<style>
+.page-layout { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: start; }
+@media (min-width: 960px) { .page-layout { grid-template-columns: 1fr 280px; } }
+
+/* Hero */
+.page-hero {
+  background: linear-gradient(135deg, #052e16 0%, #064e3b 55%, #0a1628 100%);
+  border-radius: 20px; padding: 40px 36px; margin-bottom: 16px;
+  position: relative; overflow: hidden;
+}
+.page-hero::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 55% 70% at 90% 15%, rgba(5,150,105,0.3), transparent 55%);
+}
+.hero-kicker { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(110,231,183,0.8); margin-bottom: 12px; position: relative; z-index: 1; }
+.hero-title { font-size: clamp(24px, 4vw, 38px); font-weight: 900; color: #fff; margin: 0 0 14px; letter-spacing: -0.025em; line-height: 1.15; position: relative; z-index: 1; }
+.hero-title-en { font-size: 0.55em; font-weight: 500; color: rgba(255,255,255,0.45); display: block; margin-top: 4px; }
+.hero-desc { font-size: 14.5px; color: rgba(255,255,255,0.65); line-height: 1.75; margin: 0 0 22px; max-width: 680px; position: relative; z-index: 1; }
+.hero-desc strong { color: #6ee7b7; }
+.hero-tags { display: flex; gap: 8px; flex-wrap: wrap; position: relative; z-index: 1; }
+.htag { padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; border: 1px solid transparent; }
+.htag.teal { background: rgba(5,150,105,0.2); border-color: rgba(5,150,105,0.35); color: #6ee7b7; }
+
+/* Content card */
+.content-card { background: #fff; border: 1px solid rgba(13,17,23,0.09); border-radius: 18px; padding: 28px 30px; margin-bottom: 16px; }
+.cc-title { font-size: 19px; font-weight: 800; color: #0d1117; margin: 0 0 14px; padding-bottom: 10px; border-bottom: 2px solid rgba(5,150,105,0.15); }
+.cc-desc { font-size: 14px; color: rgba(13,17,23,0.6); line-height: 1.75; margin: 0 0 18px; }
+
+/* Why grid */
+.why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 600px) { .why-grid { grid-template-columns: 1fr; } }
+.why-item { padding: 18px; border-radius: 14px; border: 1px solid rgba(13,17,23,0.08); background: rgba(5,150,105,0.02); }
+.wi-icon { font-size: 26px; margin-bottom: 10px; }
+.wi-title { font-size: 14px; font-weight: 800; color: #0d1117; margin-bottom: 7px; }
+.wi-desc { font-size: 13px; color: rgba(13,17,23,0.6); line-height: 1.65; }
+
+/* Jobs list */
+.jobs-list { display: flex; flex-direction: column; gap: 12px; }
+.job-card { padding: 18px 20px; border-radius: 14px; border: 1px solid rgba(13,17,23,0.09); transition: border-color 0.15s; }
+.job-card:hover { border-color: rgba(5,150,105,0.25); }
+.jc-top { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.jc-noc { font-size: 11px; color: rgba(13,17,23,0.4); font-family: monospace; margin-bottom: 3px; }
+.jc-name { font-size: 15px; font-weight: 800; color: #0d1117; margin-bottom: 2px; }
+.jc-en { font-size: 12px; color: rgba(13,17,23,0.45); }
+.jc-right { flex-shrink: 0; text-align: right; }
+.jc-salary { font-size: 14px; font-weight: 700; color: #059669; margin-bottom: 6px; }
+.jc-badges { display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
+.diff-badge { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; }
+.diff-极低 { background: rgba(5,150,105,0.1); color: #059669; }
+.diff-低 { background: rgba(16,185,129,0.1); color: #059669; }
+.diff-中 { background: rgba(245,158,11,0.1); color: #b45309; }
+.diff-高 { background: rgba(217,45,32,0.1); color: #d92d20; }
+.badge-lic { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: rgba(245,158,11,0.1); color: #b45309; }
+.badge-no-lic { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: rgba(5,150,105,0.1); color: #059669; }
+.badge-college { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: rgba(26,86,196,0.08); color: #1a56c4; }
+.jc-desc { font-size: 13px; color: rgba(13,17,23,0.6); line-height: 1.65; margin: 0 0 8px; }
+.jc-lic { font-size: 12.5px; color: rgba(13,17,23,0.5); background: rgba(13,17,23,0.03); padding: 7px 10px; border-radius: 8px; }
+
+/* Pathways */
+.pathways-list { display: flex; flex-direction: column; gap: 16px; }
+.pathway-item { border: 1.5px solid rgba(5,150,105,0.15); border-radius: 16px; overflow: hidden; }
+.pi-header { display: flex; gap: 14px; align-items: flex-start; padding: 18px 20px 14px; background: rgba(5,150,105,0.04); border-bottom: 1px solid rgba(5,150,105,0.1); }
+.pi-num { width: 32px; height: 32px; min-width: 32px; border-radius: 50%; background: #059669; color: #fff; font-weight: 900; font-size: 16px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.pi-title { font-size: 15px; font-weight: 800; color: #0d1117; margin-bottom: 4px; }
+.pi-profile { font-size: 13px; color: rgba(13,17,23,0.55); }
+.pi-steps { padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; }
+.pi-step { display: flex; gap: 10px; }
+.ps-num { width: 22px; height: 22px; min-width: 22px; border-radius: 50%; background: rgba(5,150,105,0.12); color: #059669; font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ps-text { font-size: 13.5px; color: rgba(13,17,23,0.7); line-height: 1.6; padding-top: 2px; }
+.pi-footer { padding: 12px 20px 16px; background: rgba(13,17,23,0.02); border-top: 1px solid rgba(13,17,23,0.07); }
+.pi-timeline { font-size: 12.5px; font-weight: 700; color: #059669; display: block; margin-bottom: 6px; }
+.pi-note { font-size: 12.5px; color: rgba(13,17,23,0.55); line-height: 1.55; }
+
+/* College table */
+.college-table { border: 1px solid rgba(13,17,23,0.09); border-radius: 14px; overflow: hidden; margin-bottom: 14px; }
+.ct-row { display: grid; grid-template-columns: 1.6fr 2fr 0.8fr; border-bottom: 1px solid rgba(13,17,23,0.07); }
+.ct-row:last-child { border-bottom: none; }
+.ct-row > div { padding: 10px 14px; font-size: 13px; color: rgba(13,17,23,0.7); line-height: 1.5; border-right: 1px solid rgba(13,17,23,0.06); }
+.ct-row > div:last-child { border-right: none; }
+.ct-header { background: rgba(13,17,23,0.04); }
+.ct-header > div { font-weight: 700; font-size: 12px; color: #0d1117; text-transform: uppercase; }
+.ct-name { font-weight: 600; color: #0d1117; }
+.ct-province { color: #059669; font-weight: 600; font-size: 12px; }
+
+.tip-box { padding: 14px 16px; background: rgba(59,130,246,0.05); border-left: 3px solid rgba(59,130,246,0.35); border-radius: 0 12px 12px 0; font-size: 13.5px; color: rgba(13,17,23,0.65); line-height: 1.65; }
+
+/* FAQ */
+.faq-item { border: 1px solid rgba(13,17,23,0.08); border-radius: 12px; overflow: hidden; margin-bottom: 8px; }
+.faq-q { padding: 14px 18px; font-size: 14px; font-weight: 600; color: #0d1117; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.faq-q::after { content: '+'; font-size: 18px; color: #059669; font-weight: 400; flex-shrink: 0; }
+details[open] .faq-q::after { content: '−'; }
+.faq-a { padding: 12px 18px 14px; font-size: 13.5px; color: rgba(13,17,23,0.65); line-height: 1.75; margin: 0; border-top: 1px solid rgba(13,17,23,0.06); }
+
+/* CTA */
+.cta-block { background: linear-gradient(135deg, #052e16, #064e3b); border-radius: 18px; padding: 28px 32px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; position: relative; overflow: hidden; }
+.cta-block::before { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 50% 80% at 90% 10%, rgba(5,150,105,0.25), transparent 55%); }
+.cta-text { position: relative; z-index: 1; }
+.cta-title { font-size: 17px; font-weight: 800; color: #fff; margin-bottom: 7px; }
+.cta-desc { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.65; margin: 0; max-width: 500px; }
+.cta-btn { position: relative; z-index: 1; padding: 12px 26px; background: #059669; color: #fff; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
+.cta-btn:hover { background: #047857; text-decoration: none; }
+
+/* Sidebar */
+.page-sidebar { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 88px; }
+.sidebar-card { background: #fff; border: 1px solid rgba(13,17,23,0.09); border-radius: 16px; overflow: hidden; }
+.sc-title { font-size: 13px; font-weight: 700; color: #0d1117; padding: 14px 18px 10px; border-bottom: 1px solid rgba(13,17,23,0.07); }
+.sc-links { padding: 6px 0; }
+.sc-link { display: block; padding: 8px 18px; font-size: 13px; color: rgba(13,17,23,0.7); text-decoration: none; transition: background 0.12s, color 0.12s; }
+.sc-link:hover { background: rgba(5,150,105,0.04); color: #059669; text-decoration: none; }
+.sc-link.active { background: rgba(5,150,105,0.07); color: #059669; font-weight: 700; }
+.highlight-card .sc-title { background: rgba(5,150,105,0.06); }
+.key-data { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(13,17,23,0.07); }
+.kd-item { background: #fff; padding: 14px 12px; text-align: center; }
+.kd-val { font-size: 18px; font-weight: 900; color: #059669; margin-bottom: 4px; }
+.kd-label { font-size: 11px; color: rgba(13,17,23,0.45); line-height: 1.4; }
+</style>

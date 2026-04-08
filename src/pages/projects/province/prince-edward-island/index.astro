@@ -1,0 +1,460 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民项目", href: "/projects/" },
+  { name: "省提名计划（PNP）", href: "/projects/provincial-nomination/" },
+  { name: "爱德华王子岛省提名（PEIPNP）", href: "/projects/province/prince-edward-island/" },
+];
+
+const streams = [
+  {
+    title: "PEI 快速通道（Express Entry）",
+    badge: "EE 对接",
+    badgeColor: "#be123c",
+    req: [
+      "符合联邦 EE 入池条件并已注册档案",
+      "满足 PEI 省提名对该类别的评分或邀请要求",
+      "有在爱德华王子岛定居的真实意愿",
+    ],
+    target: "CRS 分数在中段、希望借省提名获 600 分加分的 EE 申请人",
+    processing: "随省邀请节奏变化",
+    notes: "PEI 会不定期向 EE 池内符合劳动力市场方向的候选人发出邀请，需关注省政府公告。",
+  },
+  {
+    title: "劳动力影响类别（Labour Impact）",
+    badge: "雇主 / 工作",
+    badgeColor: "#059669",
+    req: [
+      "PEI 雇主提供的长期全职工作 offer",
+      "岗位与 NOC、工资符合省里要求",
+      "语言、学历、工作经验达到所申子类别门槛",
+    ],
+    target: "已在岛上工作或有当地雇主 offer 的申请人",
+    processing: "约 6–14 个月",
+    notes: "旅游、农业、医疗保健等均为 PEI 常年紧缺方向，具体以 Critical Workers 等子类别为准。",
+  },
+  {
+    title: "大西洋移民计划（AIP）",
+    badge: "大西洋四省",
+    badgeColor: "#7c3aed",
+    req: [
+      "大西洋四省指定雇主的有效 job offer",
+      "满足联邦 AIP 在学历、语言、资金上的标准",
+      "计划在 PEI 或其他大西洋省份居住",
+    ],
+    target: "持 AIP 认可雇主 offer、希望较快联邦审理的申请人",
+    processing: "约 6–12 个月",
+    notes: "AIP 覆盖 NS、NB、PEI、NL；夏洛特敦周边雇主资源以旅游服务、渔业加工、医疗辅助等为多。",
+  },
+];
+
+const faqs = [
+  {
+    q: "PEI 省提名名额少吗？",
+    a: "爱德华王子岛人口与经济体量小，部分年度 PEIPNP 邀请确实名额有限、竞争存在。但若职业在省内紧缺清单、已有雇主或本地学习经历，仍有机会。可与顾问评估是否同时关注 AIP 或其他大西洋省份。",
+  },
+  {
+    q: "在 UPEI 或学院读书后好移民吗？",
+    a: "PEI 有国际毕业生相关类别，毕业后持 PGWP 在省内就业、与雇主与职业匹配，可走劳动力影响或 EE 衔接类。建议入学前即规划 NOC 与语言目标。",
+  },
+  {
+    q: "PEI 和 NS、NB 比有什么特点？",
+    a: "四省均适用 AIP。PEI 最小、生活节奏慢、部分行业季节性强；夏洛特敦与周边服务业、旅游业岗位较多。具体选省需综合雇主、配偶工作与子女教育等因素。",
+  },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((i) => ({
+    "@type": "Question",
+    name: i.q,
+    acceptedAnswer: { "@type": "Answer", text: i.a },
+  })),
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("爱德华王子岛省提名（PEIPNP）指南 | 海洋四省 · AIP · UPEI")}
+  description="爱德华王子岛 PEIPNP 与 AIP 通道简介：EE 衔接、劳动力影响类别与大西洋指定雇主项目，衔接夏洛特敦与 PEI 留学就业路径。"
+  canonical="https://cachinavisa.com/projects/province/prince-edward-island/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={faqLd} />
+  <Breadcrumbs items={breadcrumbs} />
+
+  <div class="page-layout" style="margin-top:16px">
+    <main>
+      <div class="page-hero pei-hero">
+        <div class="hero-kicker">爱德华王子岛 · 省提名</div>
+        <h1 class="hero-title">PEI 省提名<br /><span class="hero-title-en">Prince Edward Island Provincial Nominee Program (PEIPNP)</span></h1>
+        <p class="hero-desc">
+          PEI 是加拿大面积最小省份，首府<strong>夏洛特敦</strong>。移民通道以<strong> PEIPNP</strong>（含 EE 与劳动力影响等类别）及联邦<strong> AIP 大西洋计划</strong>为主。
+          岛上以旅游、渔业、农业与医疗辅助等岗位需求为特点，正式申请请以 PEI 政府与 IRCC 最新规则为准。
+        </p>
+        <div class="hero-tags">
+          <span class="htag">海洋四省 · PEI</span>
+          <span class="htag">AIP</span>
+          <span class="htag">UPEI / College</span>
+        </div>
+      </div>
+
+      {streams.map((s) => (
+        <div class="content-card">
+          <div class="stream-header">
+            <h2 class="stream-title">{s.title}</h2>
+            <span
+              class="stream-badge"
+              style={`background: ${s.badgeColor}18; color: ${s.badgeColor}; border-color: ${s.badgeColor}40`}
+              >{s.badge}</span
+            >
+          </div>
+          <div class="stream-target">🎯 适合人群：{s.target}</div>
+          <div class="stream-meta"><span class="sm-label">预计处理时间：</span>{s.processing}</div>
+          <div class="req-list">
+            {s.req.map((r) => (
+              <div class="req-item">
+                <span class="ri-check">✓</span>
+                {r}
+              </div>
+            ))}
+          </div>
+          {s.notes && <div class="stream-note">💡 {s.notes}</div>}
+        </div>
+      ))}
+
+      <div class="content-card">
+        <h2 class="cc-title">常见问题（FAQ）</h2>
+        {faqs.map((item) => (
+          <details class="faq-item">
+            <summary class="faq-q">{item.q}</summary>
+            <p class="faq-a">{item.a}</p>
+          </details>
+        ))}
+      </div>
+
+      <div class="cta-block pei-cta">
+        <div class="cta-text">
+          <div class="cta-title">评估 PEIPNP / AIP</div>
+          <p class="cta-desc">已有雇主或计划在 PEI 读书？可联系顾问比对省提名与 AIP 路径。</p>
+        </div>
+        <a href="/contact/" class="cta-btn">免费评估 →</a>
+      </div>
+    </main>
+
+    <aside class="page-sidebar">
+      <ContactCard title="咨询 PEI 移民" />
+      <div class="sidebar-card">
+        <div class="sc-title">海洋四省通道</div>
+        <div class="sc-links">
+          <a class="sc-link" href="/projects/province/newfoundland/">纽芬兰 NL（NLNP）</a>
+          <a class="sc-link" href="/projects/province/nova-scotia/">新斯科舍 NS（NSNP）</a>
+          <a class="sc-link" href="/projects/province/new-brunswick/">新不伦瑞克 NB（NBPNP）</a>
+          <a class="sc-link active" href="/projects/province/prince-edward-island/">爱德华王子岛 PEI（当前）</a>
+        </div>
+      </div>
+      <div class="sidebar-card">
+        <div class="sc-title">择校衔接</div>
+        <div class="sc-links">
+          <a class="sc-link" href="/school/prince-edward-island/">PEI 省院校目录</a>
+          <a class="sc-link" href="/projects/study-to-pr/">留学转移民总览</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="page-share">
+    <ShareBar
+      url="https://cachinavisa.com/projects/province/prince-edward-island/"
+      title={"爱德华王子岛省提名（PEIPNP）指南 | 海洋四省 · AIP"}
+    />
+  </div>
+</BaseLayout>
+
+<style>
+  .page-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  @media (min-width: 960px) {
+    .page-layout {
+      grid-template-columns: 1fr 280px;
+    }
+  }
+  .pei-hero {
+    background: linear-gradient(135deg, #4c0519 0%, #be123c 55%, #0a1628 100%);
+  }
+  .page-hero {
+    border-radius: 20px;
+    padding: 40px 36px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-kicker {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(254, 205, 211, 0.9);
+    margin-bottom: 12px;
+  }
+  .hero-title {
+    font-size: clamp(24px, 4vw, 36px);
+    font-weight: 900;
+    color: #fff;
+    margin: 0 0 14px;
+    line-height: 1.15;
+  }
+  .hero-title-en {
+    font-size: 0.48em;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.4);
+    display: block;
+    margin-top: 4px;
+  }
+  .hero-desc {
+    font-size: 14.5px;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.75;
+    margin: 0 0 22px;
+    max-width: 680px;
+  }
+  .hero-desc strong {
+    color: #fda4af;
+  }
+  .hero-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .htag {
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffe4e6;
+  }
+
+  .content-card {
+    background: #fff;
+    border: 1px solid rgba(13, 17, 23, 0.09);
+    border-radius: 18px;
+    padding: 24px 28px;
+    margin-bottom: 16px;
+  }
+  .cc-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0d1117;
+    margin: 0 0 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid rgba(190, 18, 60, 0.15);
+  }
+  .stream-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .stream-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #0d1117;
+    margin: 0;
+  }
+  .stream-badge {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 999px;
+    border: 1.5px solid;
+    white-space: nowrap;
+  }
+  .stream-target {
+    font-size: 13px;
+    color: rgba(13, 17, 23, 0.6);
+    margin-bottom: 6px;
+  }
+  .stream-meta {
+    font-size: 12.5px;
+    color: rgba(13, 17, 23, 0.5);
+    margin-bottom: 10px;
+  }
+  .sm-label {
+    font-weight: 700;
+  }
+  .req-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .req-item {
+    display: flex;
+    gap: 8px;
+    font-size: 13px;
+    color: rgba(13, 17, 23, 0.7);
+    line-height: 1.55;
+  }
+  .ri-check {
+    color: #be123c;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .stream-note {
+    font-size: 12.5px;
+    color: rgba(13, 17, 23, 0.55);
+    background: rgba(190, 18, 60, 0.04);
+    padding: 10px 14px;
+    border-radius: 10px;
+    border-left: 3px solid rgba(190, 18, 60, 0.25);
+    line-height: 1.55;
+  }
+
+  .faq-item {
+    border: 1px solid rgba(13, 17, 23, 0.08);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .faq-q {
+    padding: 14px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #0d1117;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+  .faq-q::after {
+    content: "+";
+    font-size: 18px;
+    color: #be123c;
+    font-weight: 400;
+  }
+  details[open] .faq-q::after {
+    content: "−";
+  }
+  .faq-a {
+    padding: 12px 18px 14px;
+    font-size: 13.5px;
+    color: rgba(13, 17, 23, 0.65);
+    line-height: 1.75;
+    margin: 0;
+    border-top: 1px solid rgba(13, 17, 23, 0.06);
+  }
+
+  .pei-cta {
+    background: linear-gradient(135deg, #4c0519, #be123c);
+  }
+  .cta-block {
+    border-radius: 18px;
+    padding: 28px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .cta-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 7px;
+  }
+  .cta-desc {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.65;
+    margin: 0;
+    max-width: 500px;
+  }
+  .cta-btn {
+    padding: 12px 26px;
+    background: #fff;
+    color: #9f1239;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 14px;
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .cta-btn:hover {
+    background: #fff1f2;
+    text-decoration: none;
+  }
+
+  .page-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: sticky;
+    top: 88px;
+  }
+  .sidebar-card {
+    background: #fff;
+    border: 1px solid rgba(13, 17, 23, 0.09);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .sc-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0d1117;
+    padding: 14px 18px 10px;
+    border-bottom: 1px solid rgba(13, 17, 23, 0.07);
+  }
+  .sc-links {
+    padding: 6px 0;
+  }
+  .sc-link {
+    display: block;
+    padding: 8px 18px;
+    font-size: 13px;
+    color: rgba(13, 17, 23, 0.7);
+    text-decoration: none;
+    transition: all 0.12s;
+  }
+  .sc-link:hover {
+    background: rgba(190, 18, 60, 0.04);
+    color: #be123c;
+    text-decoration: none;
+  }
+  .sc-link.active {
+    background: rgba(190, 18, 60, 0.07);
+    color: #be123c;
+    font-weight: 700;
+  }
+  .page-share {
+    margin-top: 24px;
+  }
+</style>

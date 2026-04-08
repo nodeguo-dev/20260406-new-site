@@ -1,0 +1,483 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+import { getCollection } from "astro:content";
+
+/* ── Province popularity order + enrichment metadata ── */
+const provinceOrder = [
+  "ontario",
+  "british-columbia",
+  "alberta",
+  "quebec",
+  "manitoba",
+  "nova-scotia",
+  "new-brunswick",
+  "saskatchewan",
+  "prince-edward-island",
+  "newfoundland-and-labrador",
+];
+
+const provinceMeta: Record<string, {
+  emoji: string;
+  city: string;
+  highlight: string;
+  tags: string[];
+  immigrationLink?: string;
+}> = {
+  ontario: {
+    emoji: "🏙️",
+    city: "多伦多 · 渥太华 · 汉密尔顿",
+    highlight: "加拿大最大省份，院校资源最集中，华人社区最成熟，是绝大多数留学生的首选目的地。",
+    tags: ["院校数量最多", "OINP省提名", "PGWP友好", "GTA就业市场"],
+    immigrationLink: "/projects/province/ontario/",
+  },
+  "british-columbia": {
+    emoji: "🌊",
+    city: "温哥华 · 维多利亚 · 本拿比",
+    highlight: "UBC、SFU、BCIT 领衔，气候温和，华人聚集，科技产业蓬勃，BC省提名（BCPNP）对技术类移民友好。",
+    tags: ["华人最多", "BCPNP技术类", "自然环境佳", "科技产业"],
+    immigrationLink: "/projects/province/british-columbia/",
+  },
+  alberta: {
+    emoji: "⛽",
+    city: "卡尔加里 · 埃德蒙顿",
+    highlight: "无省税优势显著，工资水平全国最高省份之一，能源/工程/商科方向强，AAIP省提名对技工和EE候选人友好。",
+    tags: ["无省税", "高工资", "AAIP省提名", "能源工程"],
+    immigrationLink: "/projects/province/alberta/",
+  },
+  quebec: {
+    emoji: "🗼",
+    city: "蒙特利尔 · 魁北克城",
+    highlight: "法语为主，学费全国最低（即使是国际生），麦吉尔和蒙特利尔大学闻名全球，同时衔接魁省移民（QSWP）。",
+    tags: ["学费最低", "法语环境", "麦吉尔大学", "QSWP移民"],
+    immigrationLink: "/projects/province/quebec/",
+  },
+  manitoba: {
+    emoji: "🌾",
+    city: "温尼伯",
+    highlight: "生活成本低，曼省省提名（MPNP）以「留省意愿」为核心，有雇主担保就有机会，是近年来越来越受关注的移民友好省份。",
+    tags: ["低生活成本", "MPNP省提名", "雇主担保优先", "华人社区成长中"],
+    immigrationLink: "/projects/province/manitoba/",
+  },
+  "nova-scotia": {
+    emoji: "⚓",
+    city: "哈利法克斯",
+    highlight: "大西洋省份中城市化程度最高，NSCC 职业技术学院课程与就业市场高度对口，NSNP + AIP 双通道，医护技工移民机会多。",
+    tags: ["NSNP省提名", "AIP大西洋通道", "NSCC性价比高", "医护技工缺口"],
+    immigrationLink: "/projects/province/nova-scotia/",
+  },
+  "new-brunswick": {
+    emoji: "🌲",
+    city: "弗雷德里克顿 · 蒙克顿 · 圣约翰",
+    highlight: "大西洋四省之一，AIP 大西洋移民试点覆盖，生活成本极低，蒙克顿是双语城市，法语移民通道友好。",
+    tags: ["AIP大西洋通道", "生活成本极低", "NBPNP省提名", "双语城市蒙克顿"],
+    immigrationLink: "/projects/province/new-brunswick/",
+  },
+  saskatchewan: {
+    emoji: "🏔️",
+    city: "萨斯卡通 · 里贾纳",
+    highlight: "农业和矿产资源大省，SINP省提名通道稳定，生活成本低，工程/农业/技工类需求旺盛，部分职业可快速获得省提名。",
+    tags: ["SINP省提名", "农业/矿产", "低生活成本", "工程技工缺口"],
+    immigrationLink: "/projects/provincial-nomination/",
+  },
+  "prince-edward-island": {
+    emoji: "🦞",
+    city: "夏洛特敦",
+    highlight: "加拿大最小省份，生活环境宁静，PEIPNP省提名名额有限但竞争也相对少，是追求安静生活方式的移民选择。",
+    tags: ["最小省份", "PEIPNP省提名", "宁静生活", "旅游/餐饮业"],
+    immigrationLink: "/projects/province/prince-edward-island/",
+  },
+  "newfoundland-and-labrador": {
+    emoji: "🐟",
+    city: "圣约翰斯",
+    highlight: "纽芬兰纪念大学（MUN）学费全国最低，房价全国最低省份之一，能源/医护缺人严重，NLNP + AIP 双通道。",
+    tags: ["MUN学费最低", "房价全国最低", "NLNP省提名", "能源/医护缺口"],
+    immigrationLink: "/projects/province/newfoundland/",
+  },
+};
+
+/* Sort by popularity order */
+const rawProvinces = (await getCollection("schools"))
+  .filter((e) => !e.data.draft && e.data.entityType === "province");
+
+const provinces = [...rawProvinces].sort((a, b) => {
+  const ai = provinceOrder.indexOf(a.slug);
+  const bi = provinceOrder.indexOf(b.slug);
+  return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+});
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "免费申请学校", href: "/school/" },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("免费申请加拿大学校 | 10省院校目录 · College/大学 · 留学移民衔接")}
+  description="加拿大10个省份院校完整目录，按热门度排序（安省第一）。涵盖College、大学、K12选校策略，以及PGWP工签、省提名PNP的移民衔接路径。免费选校咨询。"
+  canonical="https://cachinavisa.com/school/"
+>
+  <JsonLd data={breadcrumbLd} />
+
+  <!-- Hero -->
+  <div class="school-hero">
+    <div class="sh-inner">
+      <div class="sh-kicker">免费申请服务 · 10省全覆盖</div>
+      <h1 class="sh-title">加拿大留学选校<br />从<span class="sh-accent">省份定位</span>开始</h1>
+      <p class="sh-desc">
+        选校不只是"哪个学校好"——而是省份、城市、课程、未来路径的综合决策。
+        我们覆盖全加拿大 10 个省份的主流院校，帮你把留学规划和移民路径同步做好。
+      </p>
+      <div class="sh-stats">
+        <div class="ss-item"><span class="ss-val">10</span><span class="ss-label">省份全覆盖</span></div>
+        <div class="ss-sep"></div>
+        <div class="ss-item"><span class="ss-val">200+</span><span class="ss-label">院校收录</span></div>
+        <div class="ss-sep"></div>
+        <div class="ss-item"><span class="ss-val">免费</span><span class="ss-label">申请协助</span></div>
+        <div class="ss-sep"></div>
+        <div class="ss-item"><span class="ss-val">PGWP</span><span class="ss-label">移民路径对接</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="school-layout">
+    <main>
+
+      <!-- Quick jump -->
+      <div class="quick-jump">
+        <span class="qj-label">快速跳转：</span>
+        <div class="qj-pills">
+          {provinces.map((p) => (
+            <a class="qj-pill" href={`/school/${p.slug}/`}>
+              {provinceMeta[p.slug]?.emoji} {p.data.province ?? p.data.title.split('（')[0].replace('省（','').replace('省','').replace('不列颠哥伦比亚','BC').replace('阿尔伯塔','阿省').replace('萨斯喀彻温','萨省').replace('爱德华王子岛','PEI').replace('纽芬兰与拉布拉多','纽省').replace('曼尼托巴','曼省').replace('新不伦瑞克','NB').replace('安大略','安省').replace('魁北克','魁省').replace('新斯科舍','新省')}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- Province cards grid -->
+      <div class="province-grid">
+        {provinces.map((p, i) => {
+          const meta = provinceMeta[p.slug] ?? {};
+          const isTop3 = i < 3;
+          return (
+            <a class={`province-card${isTop3 ? ' featured' : ''}`} href={`/school/${p.slug}/`}>
+              <div class="pc-top">
+                <div class="pc-emoji">{meta.emoji ?? '🍁'}</div>
+                <div class="pc-rank">#{i + 1}</div>
+              </div>
+              <div class="pc-name">{p.data.title.split('（')[0]}</div>
+              <div class="pc-city">{meta.city ?? ''}</div>
+              <p class="pc-desc">{meta.highlight ?? p.data.excerpt}</p>
+              <div class="pc-tags">
+                {(meta.tags ?? []).map((tag) => (
+                  <span class="pc-tag">{tag}</span>
+                ))}
+              </div>
+              {meta.immigrationLink && (
+                <div class="pc-imm">
+                  <a class="pc-imm-link" href={meta.immigrationLink} onclick="event.stopPropagation()">→ 省提名移民</a>
+                </div>
+              )}
+              <div class="pc-cta">查看院校详情 →</div>
+            </a>
+          );
+        })}
+      </div>
+
+      <!-- Why choose by province -->
+      <div class="info-card">
+        <h2 class="ic-title">为什么要先从省份开始选？</h2>
+        <div class="ic-grid">
+          <div class="ic-item">
+            <div class="ic-icon">🗺️</div>
+            <div class="ic-name">就业市场决定你的未来</div>
+            <p class="ic-desc">不同省份的主导产业差异巨大：安省科技/金融，BC省科技/地产，阿省能源，魁省航空/AI，大西洋省医护/技工。选错省份，毕业后可能发现对口工作难找。</p>
+          </div>
+          <div class="ic-item">
+            <div class="ic-icon">🏛️</div>
+            <div class="ic-name">省提名（PNP）路径不同</div>
+            <p class="ic-desc">每个省的省提名计划条件差异极大：安省 OINP 看职业类型，BC省 BCPNP 偏技术类，曼省 MPNP 看留省意愿，大西洋省 AIP 需要认可雇主。选校同时就是选移民通道。</p>
+          </div>
+          <div class="ic-item">
+            <div class="ic-icon">💰</div>
+            <div class="ic-name">生活成本影响实际收益</div>
+            <p class="ic-desc">多伦多/温哥华的生活成本是大西洋省的 2–3 倍。同样的学费预算，在曼省或新省可以过更好的生活，同时还能享受更易得的省提名。</p>
+          </div>
+          <div class="ic-item">
+            <div class="ic-icon">🌏</div>
+            <div class="ic-name">华人社区影响适应速度</div>
+            <p class="ic-desc">安省和 BC 省华人社区最成熟，中餐、华人超市、中文社区服务一应俱全，适应期最短。大西洋省华人较少，但往往更受当地人和雇主重视。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Study + PR path overview -->
+      <div class="info-card">
+        <h2 class="ic-title">留学 → PGWP → 移民：标准路径图</h2>
+        <div class="path-steps">
+          <div class="ps-item">
+            <div class="ps-num">1</div>
+            <div class="ps-content">
+              <div class="ps-title">选校 + 申请学签（Study Permit）</div>
+              <div class="ps-desc">确认院校在 DLI 名单内（PGWP 资格）。学签材料：录取 offer、资金证明、学习计划、无犯罪记录。处理时间约 8–16 周（线上申请）。</div>
+            </div>
+          </div>
+          <div class="ps-item">
+            <div class="ps-num">2</div>
+            <div class="ps-content">
+              <div class="ps-title">在加拿大完成学业（1–4 年）</div>
+              <div class="ps-desc">全职学习期间可每周工作 24 小时（2024年新规）。建议在校期间就开始关注目标职业的 NOC 类别和移民条件。</div>
+            </div>
+          </div>
+          <div class="ps-item">
+            <div class="ps-num">3</div>
+            <div class="ps-content">
+              <div class="ps-title">毕业申请 PGWP（毕业后工签）</div>
+              <div class="ps-desc">课程 ≥ 2 年 → PGWP 最长 3 年；课程 8 个月–2 年 → PGWP 与课程等长；课程 ＜ 8 个月 → 不符合 PGWP 资格。PGWP 申请须在毕业后 180 天内提交。</div>
+            </div>
+          </div>
+          <div class="ps-item">
+            <div class="ps-num">4</div>
+            <div class="ps-content">
+              <div class="ps-title">积累工作经验，进入 EE 候选池或省提名</div>
+              <div class="ps-desc">TEER 0–2 职业积累 12 个月 → 符合 CEC（加拿大经验类）条件；同时可申请 CBS 定向邀请（技工/医护/教育类）；或通过省提名（PNP）提前锁定 ITA。</div>
+            </div>
+          </div>
+          <div class="ps-item">
+            <div class="ps-num">5</div>
+            <div class="ps-content">
+              <div class="ps-title">申请永久居留（PR）</div>
+              <div class="ps-desc">通过 EE 获得 ITA → 提交 PR 申请 → 目标处理时间 6 个月内。或通过省提名（PNP）获得 600 分 CRS 加分后申请联邦 PR。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tips -->
+      <div class="tips-row">
+        <div class="tip-card">
+          <div class="tip-icon">⚠️</div>
+          <div class="tip-title">选 College 必看：PGWP 资格</div>
+          <p class="tip-desc">不是所有 College 的课程都有 PGWP 资格。短期证书课程（＜ 8 个月）、部分私立 College 的项目不符合。选校前务必在 IRCC 官网的 DLI 名单上核实。</p>
+        </div>
+        <div class="tip-card">
+          <div class="tip-icon">💡</div>
+          <div class="tip-title">双学历策略：本科 + College</div>
+          <p class="tip-desc">如果你已有本科或专科学历，在加拿大再读 1–2 年 College，EE 可获得加拿大本地学历加分（+15 或 +30 分），同时开启CBS定向通道，大幅提升移民竞争力。</p>
+        </div>
+        <div class="tip-card">
+          <div class="tip-icon">🎯</div>
+          <div class="tip-title">选专业：先看就业市场</div>
+          <p class="tip-desc">加拿大最缺的不是 MBA，而是护士、电工、HVAC 技师、厨师、幼儿教育工作者。选一个「有 CBS 定向通道」的专业，意味着毕业后移民路径更宽、更快。</p>
+        </div>
+      </div>
+
+    </main>
+
+    <aside class="school-sidebar">
+      <ContactCard title="免费选校咨询" />
+      <div class="sidebar-card">
+        <div class="sc-title">10 省院校快速入口</div>
+        <div class="sc-links">
+          {provinces.map((p, i) => (
+            <a class="sc-link" href={`/school/${p.slug}/`}>
+              <span class="scl-rank">#{i+1}</span>
+              <span>{provinceMeta[p.slug]?.emoji} {p.data.province ?? p.slug}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+      <div class="sidebar-card">
+        <div class="sc-title">留学相关移民通道</div>
+        <div class="sc-links">
+          <a class="sc-link" href="/projects/ee-category/">EE 定向邀请总览</a>
+          <a class="sc-link" href="/projects/ee-healthcare/">🏥 医护类定向</a>
+          <a class="sc-link" href="/projects/ee-trades/">🔧 技工类定向</a>
+          <a class="sc-link" href="/projects/ee-education/">📚 教育类定向</a>
+          <a class="sc-link" href="/projects/cec/">加拿大经验类（CEC）</a>
+          <a class="sc-link" href="/visa/study-permit/">学签申请指南</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+/* ── Hero ─────────────────────────────────────────── */
+.school-hero {
+  background: linear-gradient(135deg, #0a1628 0%, #0d2240 50%, #0a2818 100%);
+  padding: 52px 0 44px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 0;
+}
+.school-hero::before {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 60% 80% at 85% 20%, rgba(26,86,196,0.2), transparent 55%),
+              radial-gradient(ellipse 40% 60% at 10% 80%, rgba(5,150,105,0.15), transparent 55%);
+}
+.sh-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 24px;
+  position: relative; z-index: 1;
+}
+.sh-kicker { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(110,231,183,0.8); margin-bottom: 14px; }
+.sh-title { font-size: clamp(26px, 4.5vw, 44px); font-weight: 900; color: #fff; margin: 0 0 16px; line-height: 1.12; letter-spacing: -0.03em; }
+.sh-accent { color: #6ee7b7; }
+.sh-desc { font-size: 15px; color: rgba(255,255,255,0.6); line-height: 1.75; margin: 0 0 28px; max-width: 620px; }
+.sh-stats { display: flex; gap: 0; align-items: center; flex-wrap: wrap; }
+.ss-item { display: flex; flex-direction: column; align-items: center; padding: 12px 24px; }
+.ss-val { font-size: 22px; font-weight: 900; color: #6ee7b7; }
+.ss-label { font-size: 11.5px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+.ss-sep { width: 1px; height: 32px; background: rgba(255,255,255,0.1); }
+@media (max-width: 480px) { .ss-sep { display: none; } .sh-stats { gap: 8px; } }
+
+/* ── Main layout ──────────────────────────────────── */
+.school-layout {
+  display: grid; grid-template-columns: 1fr; gap: 24px;
+  max-width: 1200px; margin: 0 auto; padding: 28px 24px 48px;
+  align-items: start;
+}
+@media (min-width: 1000px) { .school-layout { grid-template-columns: 1fr 280px; } }
+
+/* ── Quick jump ───────────────────────────────────── */
+.quick-jump { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; margin-bottom: 20px; }
+.qj-label { font-size: 12px; font-weight: 700; color: rgba(13,17,23,0.4); padding-top: 5px; white-space: nowrap; }
+.qj-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+.qj-pill {
+  padding: 4px 12px; border-radius: 999px; font-size: 12.5px; font-weight: 600;
+  border: 1.5px solid rgba(13,17,23,0.1); color: rgba(13,17,23,0.65);
+  text-decoration: none; transition: all 0.12s; white-space: nowrap;
+}
+.qj-pill:hover { border-color: rgba(26,86,196,0.3); color: #1a56c4; background: rgba(26,86,196,0.05); text-decoration: none; }
+
+/* ── Province grid ────────────────────────────────── */
+.province-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;
+  margin-bottom: 24px;
+}
+@media (min-width: 700px) { .province-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 500px) { .province-grid { grid-template-columns: 1fr; } }
+
+.province-card {
+  background: #fff;
+  border: 1.5px solid rgba(13,17,23,0.09);
+  border-radius: 18px;
+  padding: 20px 18px;
+  text-decoration: none;
+  display: flex; flex-direction: column; gap: 8px;
+  transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+  position: relative;
+}
+.province-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(26,86,196,0.3);
+  box-shadow: 0 8px 30px rgba(13,17,23,0.08);
+  text-decoration: none;
+}
+.province-card.featured {
+  border-color: rgba(26,86,196,0.2);
+  background: linear-gradient(160deg, #fff 70%, rgba(26,86,196,0.03) 100%);
+}
+.province-card.featured:nth-child(1) { border-color: rgba(26,86,196,0.25); }
+.province-card.featured:nth-child(2) { border-color: rgba(5,150,105,0.2); }
+.province-card.featured:nth-child(3) { border-color: rgba(180,83,9,0.2); }
+
+.pc-top { display: flex; justify-content: space-between; align-items: flex-start; }
+.pc-emoji { font-size: 28px; }
+.pc-rank { font-size: 11px; font-weight: 800; color: rgba(13,17,23,0.25); letter-spacing: 0.05em; }
+.featured .pc-rank { color: #1a56c4; }
+
+.pc-name { font-size: 15px; font-weight: 800; color: #0d1117; line-height: 1.2; }
+.pc-city { font-size: 12px; color: rgba(13,17,23,0.45); margin-top: -2px; }
+.pc-desc { font-size: 12.5px; color: rgba(13,17,23,0.6); line-height: 1.6; margin: 2px 0 0; flex: 1; }
+
+.pc-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 2px; }
+.pc-tag {
+  font-size: 11px; font-weight: 600;
+  padding: 2px 8px; border-radius: 6px;
+  background: rgba(13,17,23,0.05); color: rgba(13,17,23,0.55);
+  border: 1px solid rgba(13,17,23,0.07);
+}
+.featured:nth-child(1) .pc-tag { background: rgba(26,86,196,0.06); color: #1a56c4; border-color: rgba(26,86,196,0.12); }
+.featured:nth-child(2) .pc-tag { background: rgba(5,150,105,0.06); color: #059669; border-color: rgba(5,150,105,0.12); }
+.featured:nth-child(3) .pc-tag { background: rgba(180,83,9,0.06); color: #b45309; border-color: rgba(180,83,9,0.12); }
+
+.pc-imm { margin-top: 2px; }
+.pc-imm-link {
+  font-size: 11.5px; font-weight: 700; color: #7c3aed;
+  text-decoration: none; padding: 3px 0;
+  display: inline-block;
+}
+.pc-imm-link:hover { text-decoration: underline; }
+
+.pc-cta {
+  font-size: 12.5px; font-weight: 700; color: rgba(13,17,23,0.35);
+  margin-top: 4px; padding-top: 10px;
+  border-top: 1px solid rgba(13,17,23,0.06);
+  transition: color 0.12s;
+}
+.province-card:hover .pc-cta { color: #1a56c4; }
+
+/* ── Info cards ───────────────────────────────────── */
+.info-card {
+  background: #fff; border: 1px solid rgba(13,17,23,0.09);
+  border-radius: 20px; padding: 28px 30px; margin-bottom: 16px;
+}
+.ic-title { font-size: 19px; font-weight: 800; color: #0d1117; margin: 0 0 20px; padding-bottom: 12px; border-bottom: 2px solid rgba(13,17,23,0.07); }
+
+.ic-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 560px) { .ic-grid { grid-template-columns: 1fr; } }
+.ic-item { padding: 16px; border-radius: 14px; border: 1px solid rgba(13,17,23,0.07); background: rgba(13,17,23,0.01); }
+.ic-icon { font-size: 24px; margin-bottom: 8px; }
+.ic-name { font-size: 13.5px; font-weight: 800; color: #0d1117; margin-bottom: 7px; }
+.ic-desc { font-size: 12.5px; color: rgba(13,17,23,0.6); line-height: 1.65; margin: 0; }
+
+/* ── Path steps ───────────────────────────────────── */
+.path-steps { display: flex; flex-direction: column; gap: 0; }
+.ps-item {
+  display: flex; gap: 16px; align-items: flex-start;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(13,17,23,0.06);
+}
+.ps-item:last-child { border-bottom: none; padding-bottom: 0; }
+.ps-num {
+  width: 30px; height: 30px; min-width: 30px; border-radius: 50%;
+  background: #0d1117; color: #fff; font-weight: 800; font-size: 14px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+}
+.ps-title { font-size: 14px; font-weight: 800; color: #0d1117; margin-bottom: 5px; }
+.ps-desc { font-size: 13px; color: rgba(13,17,23,0.6); line-height: 1.65; }
+
+/* ── Tips row ─────────────────────────────────────── */
+.tips-row { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 8px; }
+@media (min-width: 560px) { .tips-row { grid-template-columns: repeat(3, 1fr); } }
+.tip-card { padding: 18px 20px; border-radius: 16px; border: 1px solid rgba(13,17,23,0.09); background: #fff; }
+.tip-icon { font-size: 22px; margin-bottom: 10px; }
+.tip-title { font-size: 13.5px; font-weight: 800; color: #0d1117; margin-bottom: 8px; }
+.tip-desc { font-size: 12.5px; color: rgba(13,17,23,0.6); line-height: 1.65; margin: 0; }
+
+/* ── Sidebar ──────────────────────────────────────── */
+.school-sidebar { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 88px; }
+.sidebar-card { background: #fff; border: 1px solid rgba(13,17,23,0.09); border-radius: 16px; overflow: hidden; }
+.sc-title { font-size: 13px; font-weight: 700; color: #0d1117; padding: 14px 18px 10px; border-bottom: 1px solid rgba(13,17,23,0.07); }
+.sc-links { padding: 4px 0; }
+.sc-link { display: flex; gap: 8px; align-items: center; padding: 7px 18px; font-size: 13px; color: rgba(13,17,23,0.7); text-decoration: none; transition: all 0.12s; }
+.sc-link:hover { background: rgba(26,86,196,0.04); color: #1a56c4; text-decoration: none; }
+.scl-rank { font-size: 11px; font-weight: 700; color: rgba(13,17,23,0.3); min-width: 22px; }
+</style>

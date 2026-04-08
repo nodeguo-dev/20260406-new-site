@@ -1,0 +1,315 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const orgLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: site.name,
+  url: site.url,
+  email: site.contact.email,
+  contactPoint: [
+    { "@type": "ContactPoint", telephone: site.contact.phoneCA, contactType: "customer support", areaServed: "CA" },
+    { "@type": "ContactPoint", telephone: site.contact.phoneCN, contactType: "customer support", areaServed: "CN" },
+  ],
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("联系我们 | 免费移民咨询评估")}
+  description="常春藤国际咨询联系方式：加拿大 +1(647)947-2456，国内 +86-19987006476，微信 getprsoon。周一至周日 9:00-21:00，提供免费移民路径评估。"
+  canonical="https://cachinavisa.com/contact/"
+  fullWidth={true}
+>
+  <JsonLd data={orgLd} />
+
+  <!-- Hero -->
+  <section class="contact-hero">
+    <div class="ch-bg"></div>
+    <div class="container ch-inner">
+      <div class="ch-kicker">联系我们</div>
+      <h1 class="ch-title">免费移民路径评估</h1>
+      <p class="ch-desc">告诉我们您的基本情况，我们将给出可落地的路径分析与下一步行动建议。不做推销，不套模板，只把您的情况和可选路径讲清楚。</p>
+      <div class="ch-contact-pills">
+        <a class="ch-pill" href={`tel:${site.contact.phoneCA}`}>📞 {site.contact.phoneCA}</a>
+        <a class="ch-pill" href={`tel:${site.contact.phoneCN}`}>🇨🇳 {site.contact.phoneCN}</a>
+        <span class="ch-pill">💬 微信：{site.contact.wechat}</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="container contact-body">
+    <div class="contact-grid">
+
+      <!-- Left: Form -->
+      <div class="form-area">
+        <div class="form-card">
+          <div class="form-card-header">
+            <h2 class="form-title">在线提交咨询</h2>
+            <p class="form-subtitle">填写以下信息后提交，我们通常在 1 个工作日内回复，紧急情况可直接致电。</p>
+          </div>
+
+          <form
+            class="contact-form"
+            method="post"
+            action={`https://formsubmit.co/${site.contact.email}`}
+          >
+            <input type="hidden" name="_subject" value="cachinavisa.com 新咨询提交" />
+            <input type="hidden" name="_captcha" value="false" />
+            <input type="hidden" name="_next" value="https://cachinavisa.com/contact/?sent=1" />
+
+            <div class="form-row-2">
+              <div class="form-field">
+                <label class="field-label">姓名 <span class="required">*</span></label>
+                <input class="field-input" name="name" type="text" placeholder="您的姓名" required />
+              </div>
+              <div class="form-field">
+                <label class="field-label">所在地 <span class="required">*</span></label>
+                <input class="field-input" name="location" type="text" placeholder="如：多伦多 / 北京 / 上海" required />
+              </div>
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-field">
+                <label class="field-label">邮箱 <span class="required">*</span></label>
+                <input class="field-input" name="email" type="email" placeholder="your@email.com" required />
+              </div>
+              <div class="form-field">
+                <label class="field-label">电话或微信</label>
+                <input class="field-input" name="contact" type="text" placeholder="电话 / 微信号" />
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label class="field-label">咨询类型 <span class="required">*</span></label>
+              <select class="field-input" name="type" required>
+                <option value="">请选择咨询类型</option>
+                <option>快速通道（Express Entry）</option>
+                <option>省提名移民（PNP）</option>
+                <option>LMIA 雇主担保</option>
+                <option>家庭团聚移民</option>
+                <option>访问签 / 探亲签 / 超级签证</option>
+                <option>学签（Study Permit）</option>
+                <option>工签（Work Permit）</option>
+                <option>续签 / 身份衔接</option>
+                <option>PR卡 / 登陆后事项</option>
+                <option>其他 / 不确定</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label class="field-label">您的基本情况 <span class="required">*</span></label>
+              <p class="field-hint">建议提供：当前身份、学历与专业、语言成绩、工作经历、是否携带家属、目标时间线</p>
+              <textarea class="field-input field-textarea" name="message" rows="6" placeholder="例如：目前持工签在安省工作，雅思综合 7 分，软件工程背景，有 5 年工作经验，希望 3 年内拿到 PR，配偶随行……" required></textarea>
+            </div>
+
+            <button class="form-submit" type="submit">提交咨询 →</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Right: Info -->
+      <aside class="contact-sidebar">
+
+        <!-- Contact methods -->
+        <div class="cs-card">
+          <div class="cs-card-title">联系方式</div>
+          <div class="contact-methods">
+            <a class="cm-item" href={`tel:${site.contact.phoneCA}`}>
+              <div class="cm-icon">📞</div>
+              <div>
+                <div class="cm-label">加拿大热线</div>
+                <div class="cm-value">{site.contact.phoneCA}</div>
+              </div>
+            </a>
+            <a class="cm-item" href={`tel:${site.contact.phoneCN}`}>
+              <div class="cm-icon">🇨🇳</div>
+              <div>
+                <div class="cm-label">国内热线</div>
+                <div class="cm-value">{site.contact.phoneCN}</div>
+              </div>
+            </a>
+            <div class="cm-item">
+              <div class="cm-icon">💬</div>
+              <div>
+                <div class="cm-label">微信</div>
+                <div class="cm-value">{site.contact.wechat}</div>
+              </div>
+            </div>
+            <a class="cm-item" href={`mailto:${site.contact.email}`}>
+              <div class="cm-icon">✉️</div>
+              <div>
+                <div class="cm-label">邮箱</div>
+                <div class="cm-value">{site.contact.email}</div>
+              </div>
+            </a>
+          </div>
+          <div class="cs-hours">🕐 {site.contact.hours}</div>
+        </div>
+
+        <!-- Offices -->
+        <div class="cs-card">
+          <div class="cs-card-title">办公地点</div>
+          <div class="offices-list">
+            {site.contact.locations.map((loc) => (
+              <div class="ol-item">
+                <div class="ol-icon">{loc.label.includes("多伦多") ? "🇨🇦" : "🇨🇳"}</div>
+                <div>
+                  <div class="ol-label">{loc.label}</div>
+                  <div class="ol-value">{loc.value}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- Prepare info -->
+        <div class="cs-card cs-tip-card">
+          <div class="cs-card-title">咨询前建议准备</div>
+          <ul class="tip-list">
+            <li>当前所在地与持有的身份类型</li>
+            <li>最高学历、专业及毕业院校</li>
+            <li>语言成绩（雅思 / TEF 等）</li>
+            <li>工作经历（职位、年限、所在地）</li>
+            <li>家庭情况（是否携带配偶或子女）</li>
+            <li>目标时间线（计划几年内获得 PR）</li>
+          </ul>
+          <div class="tip-note">准备的信息越完整，评估结果越准确。</div>
+        </div>
+
+        <!-- Quick links -->
+        <div class="cs-card">
+          <div class="cs-card-title">了解更多</div>
+          <div class="cs-links">
+            {[
+              { href: "/projects/", label: "移民项目总览" },
+              { href: "/visa/", label: "签证服务" },
+              { href: "/inland/", label: "境内身份事务" },
+              { href: "/faq/", label: "常见问题解答" },
+              { href: "/blog/", label: "移民新闻资讯" },
+            ].map(l => (
+              <a class="cs-link" href={l.href}>{l.label} →</a>
+            ))}
+          </div>
+        </div>
+
+      </aside>
+    </div>
+  </div>
+
+</BaseLayout>
+
+<style>
+/* ── HERO ─────────────────────────────────────────────────────── */
+.contact-hero {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0a1628 0%, #0f2040 55%, #1a0828 100%);
+  padding: 80px 0 72px;
+}
+.ch-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 60% at 70% 30%, rgba(217,45,32,0.18) 0%, transparent 60%),
+              radial-gradient(ellipse 50% 50% at 10% 80%, rgba(26,86,196,0.1) 0%, transparent 60%);
+  pointer-events: none;
+}
+.ch-inner { position: relative; z-index: 1; }
+.ch-kicker {
+  display: inline-block; padding: 5px 14px; border-radius: 999px;
+  background: rgba(217,45,32,0.2); border: 1px solid rgba(217,45,32,0.3);
+  color: #f87171; font-size: 12px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 16px;
+}
+.ch-title { font-size: clamp(28px, 4vw, 46px); font-weight: 900; color: #fff; margin: 0 0 16px; letter-spacing: -0.03em; line-height: 1.2; }
+.ch-desc { font-size: 16px; color: rgba(255,255,255,0.65); line-height: 1.8; margin: 0 0 28px; max-width: 560px; }
+.ch-contact-pills { display: flex; gap: 10px; flex-wrap: wrap; }
+.ch-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.14);
+  color: rgba(255,255,255,0.8);
+  font-size: 13px;
+  text-decoration: none;
+  transition: background 0.18s;
+}
+.ch-pill:hover { background: rgba(255,255,255,0.14); text-decoration: none; }
+
+/* ── BODY ─────────────────────────────────────────────────────── */
+.contact-body { padding-top: 36px; padding-bottom: 48px; }
+.contact-grid { display: grid; grid-template-columns: 1fr; gap: 24px; align-items: start; }
+@media (min-width: 920px) { .contact-grid { grid-template-columns: 1fr 320px; } }
+
+/* ── FORM ─────────────────────────────────────────────────────── */
+.form-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 16px; overflow: hidden; }
+.form-card-header { padding: 24px 28px 20px; border-bottom: 1px solid rgba(26,29,35,0.08); }
+.form-title { font-size: 20px; font-weight: 800; color: #1a1d23; margin: 0 0 6px; }
+.form-subtitle { font-size: 13.5px; color: rgba(26,29,35,0.55); margin: 0; }
+.contact-form { padding: 24px 28px; display: grid; gap: 16px; }
+.form-row-2 { display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 600px) { .form-row-2 { grid-template-columns: 1fr 1fr; } }
+.form-field { display: flex; flex-direction: column; gap: 6px; }
+.field-label { font-size: 13px; font-weight: 600; color: #374151; }
+.required { color: #d92d20; }
+.field-hint { font-size: 12px; color: rgba(26,29,35,0.45); line-height: 1.5; margin: 0 0 4px; }
+.field-input {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(26,29,35,0.14);
+  background: #fafbfc;
+  color: #1a1d23;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  width: 100%;
+  box-sizing: border-box;
+}
+.field-input:focus { outline: none; border-color: #d92d20; box-shadow: 0 0 0 3px rgba(217,45,32,0.08); }
+.field-textarea { resize: vertical; min-height: 120px; }
+.form-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 28px;
+  border-radius: 12px;
+  background: #d92d20;
+  color: #fff;
+  font-weight: 700;
+  font-size: 15px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  font-family: inherit;
+}
+.form-submit:hover { background: #b52418; transform: translateY(-1px); }
+
+/* ── SIDEBAR ──────────────────────────────────────────────────── */
+.contact-sidebar { display: grid; gap: 16px; }
+@media (min-width: 920px) { .contact-sidebar { position: sticky; top: 80px; } }
+.cs-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 14px; padding: 18px 20px; }
+.cs-card-title { font-size: 14px; font-weight: 700; color: #1a1d23; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid rgba(26,29,35,0.08); }
+.contact-methods { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+.cm-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; text-decoration: none; color: #1a1d23; background: rgba(26,29,35,0.025); transition: background 0.12s; }
+.cm-item:hover { background: rgba(217,45,32,0.05); text-decoration: none; }
+.cm-icon { font-size: 18px; flex-shrink: 0; }
+.cm-label { font-size: 11px; color: rgba(26,29,35,0.45); margin-bottom: 2px; }
+.cm-value { font-size: 14px; font-weight: 650; color: #1a1d23; }
+.cs-hours { font-size: 12px; color: rgba(26,29,35,0.5); padding: 8px 0 0; }
+.offices-list { display: flex; flex-direction: column; gap: 10px; }
+.ol-item { display: flex; gap: 10px; align-items: flex-start; }
+.ol-icon { font-size: 18px; flex-shrink: 0; }
+.ol-label { font-size: 12px; color: rgba(26,29,35,0.45); margin-bottom: 2px; }
+.ol-value { font-size: 14px; font-weight: 600; color: #1a1d23; }
+.cs-tip-card { background: rgba(217,45,32,0.03); border-color: rgba(217,45,32,0.12); }
+.tip-list { list-style: none; padding: 0; margin: 0 0 10px; display: flex; flex-direction: column; gap: 6px; }
+.tip-list li { font-size: 13px; color: rgba(26,29,35,0.7); padding-left: 18px; position: relative; line-height: 1.5; }
+.tip-list li::before { content: "✓"; position: absolute; left: 0; color: #d92d20; font-weight: 700; }
+.tip-note { font-size: 12px; color: rgba(26,29,35,0.45); font-style: italic; }
+.cs-links { display: flex; flex-direction: column; gap: 2px; }
+.cs-link { display: block; padding: 8px 10px; font-size: 13.5px; color: #374151; text-decoration: none; border-radius: 8px; transition: background 0.12s, color 0.12s; }
+.cs-link:hover { background: rgba(217,45,32,0.06); color: #d92d20; text-decoration: none; }
+</style>

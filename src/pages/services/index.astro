@@ -1,0 +1,281 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import { getAllPublishedServices } from "@/utils/content";
+import { withSiteTitle } from "@/utils/seo";
+
+const services = await getAllPublishedServices();
+
+const serviceIcons: Record<string, string> = {
+  "express-entry-planning":      "🍁",
+  "ee-pathway-job-match":        "🎯",
+  "pnp-strategy":                "🏛️",
+  "study-permit-application":    "🎓",
+  "visitor-visa":                "✈️",
+  "inland-status":               "🏠",
+  "family-sponsorship-service":  "👨‍👩‍👧",
+};
+
+const highlights = [
+  { icon: "⏱", label: "平均处理周期", value: "6–12 个月" },
+  { icon: "✅", label: "成功案例", value: "2500+" },
+  { icon: "🌐", label: "服务覆盖", value: "全类别" },
+  { icon: "🎖", label: "RCIC 认证", value: "持牌合规" },
+];
+---
+
+<BaseLayout
+  title={withSiteTitle("移民签证服务 | 全类别专业咨询")}
+  description="常春藤国际咨询提供全面的加拿大移民与签证服务，涵盖技术移民规划、省提名策略、学签申请、访问签证、境内续签及家庭担保。"
+  canonical="https://cachinavisa.com/services/"
+  fullWidth={true}
+>
+
+  <!-- ── Page Hero ───────────────────────────────────────────────── -->
+  <section class="services-hero">
+    <div class="sh-noise"></div>
+    <div class="container sh-inner">
+      <div class="sh-kicker">专业服务</div>
+      <h1 class="sh-title">移民 · 签证 · 留学全类别服务</h1>
+      <p class="sh-desc">
+        从路径评估到材料递交，从工签、学签到永久居民申请，
+        专业顾问团队全程陪伴，让每一步都走得清晰稳健。
+      </p>
+      <div class="sh-highlights">
+        {highlights.map((h) => (
+          <div class="shh-item">
+            <span class="shh-icon">{h.icon}</span>
+            <div>
+              <div class="shh-value">{h.value}</div>
+              <div class="shh-label">{h.label}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Main Body ──────────────────────────────────────────────── -->
+  <div class="container services-body">
+    <div class="services-layout">
+
+      <!-- Services Grid -->
+      <main>
+        <div class="services-intro">
+        <h2 class="si-title">找到适合您的服务方向</h2>
+        <p class="si-desc">每项服务均由 RCIC 持牌顾问负责，结合您的实际情况制定最优申请方案。</p>
+        </div>
+
+        {services.length > 0 ? (
+          <div class="svc-grid">
+            {services.map((s) => (
+              <a class="svc-card-lg" href={`/services/${s.slug}/`}>
+                <div class="svc-card-top">
+                  <div class="svc-icon-wrap">
+                    {serviceIcons[s.slug] ?? "📋"}
+                  </div>
+                  <div class="svc-meta">
+                    <div class="svc-title-lg">{s.data.title}</div>
+                  </div>
+                </div>
+                <p class="svc-excerpt-lg">{s.data.excerpt}</p>
+                <div class="svc-footer">
+                  <span class="svc-cta">了解详情</span>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+              </a>
+            ))}
+          </div>
+        ) : (
+          <div class="svc-empty">
+            <div class="svc-empty-icon">📋</div>
+            <p>服务页面正在完善中，请稍后再访问。</p>
+          </div>
+        )}
+
+        <!-- Process steps -->
+        <div class="process-section">
+          <h2 class="process-title">标准服务流程</h2>
+          <div class="process-steps">
+            {[
+              { step: "01", title: "免费初步评估", desc: "了解您的背景、移民目标与时间要求，初步判断可行路径。" },
+              { step: "02", title: "制定专属方案", desc: "根据评估结果梳理 2–3 条优先路径与备选方案，确定材料清单。" },
+              { step: "03", title: "材料准备与核查", desc: "逐份审核材料，搭建完整的证据链，确保内容准确、无遗漏。" },
+              { step: "04", title: "递交与全程跟进", desc: "专业递交申请，持续跟踪进度，补件或官方通知第一时间响应。" },
+            ].map((step) => (
+              <div class="process-step">
+                <div class="ps-number">{step.step}</div>
+                <div class="ps-content">
+                  <div class="ps-title">{step.title}</div>
+                  <div class="ps-desc">{step.desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </main>
+
+      <!-- Sidebar -->
+      <aside class="services-sidebar">
+        <ContactCard />
+        <div class="sidebar-card sbar-faq">
+          <div class="sbar-title">常见问题</div>
+          <div class="sbar-faq-list">
+            {[
+              { q: "如何确认哪条路径适合我？", a: "提交免费评估后，顾问会根据您的年龄、学历、工作经验及语言成绩给出具体建议，通常 1 个工作日内回复。" },
+              { q: "收费方式是怎样的？", a: "我们采用透明定价，按服务类别单独报价，不设隐藏费用，签约前会提供书面确认。" },
+              { q: "申请周期大概多长？", a: "视申请类别而定，短则 3 个月，长则 2 年以上。评估阶段我们会给出针对您情况的预期时间范围。" },
+            ].map((faq) => (
+              <details class="sbar-faq-item">
+                <summary class="sbar-faq-q">{faq.q}</summary>
+                <div class="sbar-faq-a">{faq.a}</div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+</BaseLayout>
+
+<style>
+/* ── Hero ─────────────────────────────────────────────────────────── */
+.services-hero {
+  position: relative;
+  background: linear-gradient(135deg, #0a1628 0%, #0f2040 60%, #1a0828 100%);
+  overflow: hidden;
+  padding: 72px 0 80px;
+}
+.sh-noise {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 80% 20%, rgba(217,45,32,0.12) 0%, transparent 60%),
+              radial-gradient(ellipse at 20% 80%, rgba(26,86,196,0.1) 0%, transparent 60%);
+}
+.sh-inner { position: relative; z-index: 2; text-align: center; max-width: 700px; margin: 0 auto; }
+.sh-kicker {
+  display: inline-block; padding: 5px 14px; border-radius: 999px;
+  background: rgba(217,45,32,0.2); border: 1px solid rgba(217,45,32,0.3);
+  color: #f87171; font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; margin-bottom: 16px;
+}
+.sh-title {
+  font-size: clamp(28px, 4vw, 46px);
+  font-weight: 900; color: #fff; letter-spacing: -0.025em;
+  line-height: 1.2; margin: 0 0 16px;
+}
+.sh-desc {
+  font-size: 17px; color: rgba(255,255,255,0.65);
+  line-height: 1.8; margin: 0 0 32px;
+}
+.sh-highlights {
+  display: flex; justify-content: center; gap: 16px;
+  flex-wrap: wrap;
+}
+.shh-item {
+  display: flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px; padding: 12px 16px; backdrop-filter: blur(8px);
+}
+.shh-icon { font-size: 18px; }
+.shh-value { font-size: 16px; font-weight: 800; color: #fff; }
+.shh-label { font-size: 11px; color: rgba(255,255,255,0.5); }
+
+/* ── Layout ──────────────────────────────────────────────────────── */
+.services-body { padding: 40px 0 60px; }
+.services-layout {
+  display: grid; grid-template-columns: 1fr;
+  gap: 24px; align-items: start;
+}
+@media (min-width: 960px) { .services-layout { grid-template-columns: 1fr 320px; } }
+
+.services-intro { margin-bottom: 28px; }
+.si-title { font-size: 22px; font-weight: 800; color: #0d1117; margin: 0 0 8px; letter-spacing: -0.02em; }
+.si-desc  { font-size: 15px; color: rgba(13,17,23,0.6); margin: 0; }
+
+/* ── Services Grid ───────────────────────────────────────────────── */
+.svc-grid {
+  display: grid; grid-template-columns: 1fr;
+  gap: 14px; margin-bottom: 48px;
+}
+@media (min-width: 600px) { .svc-grid { grid-template-columns: repeat(2, 1fr); } }
+
+.svc-card-lg {
+  display: flex; flex-direction: column; gap: 12px;
+  background: #fff; border: 1px solid rgba(13,17,23,0.09);
+  border-radius: 18px; padding: 24px;
+  text-decoration: none;
+  transition: all 0.22s cubic-bezier(0.25,0.46,0.45,0.94);
+  position: relative; overflow: hidden;
+}
+.svc-card-lg::before {
+  content: '';
+  position: absolute; inset: 0; border-radius: 18px;
+  background: linear-gradient(135deg, rgba(217,45,32,0.04), transparent);
+  opacity: 0; transition: opacity 0.2s;
+}
+.svc-card-lg:hover {
+  border-color: rgba(217,45,32,0.3);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  transform: translateY(-3px);
+  text-decoration: none;
+}
+.svc-card-lg:hover::before { opacity: 1; }
+.svc-card-top { display: flex; align-items: center; gap: 14px; }
+.svc-icon-wrap {
+  width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0;
+  background: rgba(217,45,32,0.08); display: flex;
+  align-items: center; justify-content: center; font-size: 24px;
+  border: 1px solid rgba(217,45,32,0.12);
+}
+.svc-title-lg { font-size: 17px; font-weight: 800; color: #0d1117; line-height: 1.3; letter-spacing: -0.01em; }
+.svc-excerpt-lg { font-size: 14px; color: rgba(13,17,23,0.6); line-height: 1.75; margin: 0; flex: 1; }
+.svc-footer {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 700; color: #d92d20;
+  margin-top: auto;
+}
+.svc-empty { text-align: center; padding: 60px 0; color: rgba(13,17,23,0.4); }
+.svc-empty-icon { font-size: 48px; margin-bottom: 16px; }
+
+/* ── Process ─────────────────────────────────────────────────────── */
+.process-section { padding: 32px 0 0; }
+.process-title {
+  font-size: 20px; font-weight: 800; color: #0d1117;
+  margin: 0 0 24px; letter-spacing: -0.02em;
+}
+.process-steps { display: flex; flex-direction: column; gap: 16px; }
+.process-step {
+  display: flex; gap: 16px; align-items: flex-start;
+  background: #fff; border: 1px solid rgba(13,17,23,0.08);
+  border-radius: 14px; padding: 20px;
+}
+.ps-number {
+  font-size: 28px; font-weight: 900; color: rgba(217,45,32,0.15);
+  line-height: 1; flex-shrink: 0; width: 40px;
+  letter-spacing: -0.03em;
+}
+.ps-title { font-size: 16px; font-weight: 700; color: #0d1117; margin-bottom: 4px; }
+.ps-desc  { font-size: 14px; color: rgba(13,17,23,0.6); line-height: 1.65; }
+
+/* ── Sidebar ─────────────────────────────────────────────────────── */
+.services-sidebar { display: flex; flex-direction: column; gap: 16px; }
+.sidebar-card {
+  background: #fff; border: 1px solid rgba(13,17,23,0.09);
+  border-radius: 16px; overflow: hidden;
+}
+.sbar-title { font-size: 15px; font-weight: 700; color: #0d1117; padding: 18px 20px 14px; border-bottom: 1px solid rgba(13,17,23,0.07); }
+.sbar-faq-list { padding: 8px 0; }
+.sbar-faq-item { border-bottom: 1px solid rgba(13,17,23,0.06); }
+.sbar-faq-item:last-child { border-bottom: none; }
+.sbar-faq-q {
+  padding: 13px 20px; font-size: 14px; font-weight: 600; color: #374151;
+  cursor: pointer; list-style: none;
+  transition: color 0.15s;
+}
+.sbar-faq-q::-webkit-details-marker { display: none; }
+.sbar-faq-item[open] .sbar-faq-q { color: #d92d20; }
+.sbar-faq-a { padding: 0 20px 14px; font-size: 13px; color: rgba(13,17,23,0.65); line-height: 1.7; }
+</style>

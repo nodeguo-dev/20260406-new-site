@@ -1,0 +1,119 @@
+---
+import "@/styles/toronto-life-guides.css";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import TorontoLifeSubNav from "@/components/guides/TorontoLifeSubNav.astro";
+import TorontoLifePartnerBand from "@/components/guides/TorontoLifePartnerBand.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+import { torontoLifePageBands } from "@/data/torontoLifeSponsors";
+
+const pageKey = "finance";
+const bands = torontoLifePageBands[pageKey]!;
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "多伦多生活指南", href: "/guides/toronto-life/" },
+  { name: "金融税务", href: "/guides/toronto-life/finance/" },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("多伦多金融与税务入门 | SIN · 银行 · 报税")}
+  description="SIN、银行开户、信用记录与报税季常见概念；内含银行、房贷与税务类合作展示位。"
+  canonical="https://cachinavisa.com/guides/toronto-life/finance/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <div class="container tl-page">
+    <Breadcrumbs items={breadcrumbs} />
+    <header class="tl-hero">
+      <p class="tl-kicker">多伦多生活指南 · 分册</p>
+      <h1 class="tl-h1">金融与税务</h1>
+      <p class="tl-lead">
+        落地后尽早办理 SIN 与银行账户，有助于工资入账、租房信用核查与信用卡历史积累。税务身份与全球收入申报规则因人而异，以下为入门信息而非个案意见。
+      </p>
+      <TorontoLifeSubNav activeKey="finance" />
+    </header>
+
+    <TorontoLifePartnerBand band={bands.top} bandId="finance-top" />
+
+    <div class="tl-prose">
+      <h2>SIN 与银行</h2>
+      <p>
+        SIN 可通过 Service Canada 预约办理。银行常提供新移民套餐；担保信用卡是建立信用评分的常见起点。比较月费、EFT 与跨境汇款费用。
+      </p>
+      <p class="tl-inline-tip">
+        需要<strong>新移民开户专案、房贷预批或商业账户</strong>对接的读者，可通过
+        <a href="/contact/?topic=toronto-life-referral&vertical=finance">合作金融机构推荐</a>
+        索取材料清单（合作推广；审批以金融机构为准）。
+      </p>
+
+      <h2>报税季概念</h2>
+      <p>
+        税务年度通常为日历年；首次报税可能涉及海外资产申报（T1135 等）或税务协定问题。自雇与小生意需保留收支凭证。复杂情形请咨询持牌 CPA。
+      </p>
+    </div>
+
+    <TorontoLifePartnerBand band={bands.mid} bandId="finance-mid" />
+
+    <div class="tl-prose">
+      <h2>消费与信用</h2>
+      <p>信用卡按时还款有助于信用分；注意利率与年费。房贷审批与收入、首付、压力测试等相关，政策会调整。</p>
+    </div>
+
+    <TorontoLifePartnerBand band={bands.bottom} bandId="finance-bottom" />
+
+    <p class="tl-back">
+      <a href="/guides/toronto-life/">← 返回总览</a>
+      ·
+      <a href="/category/toronto-life/">分类文章</a>
+    </p>
+
+    <aside class="tl-disclaimer" role="note">非税务或投资建议；税务申报请咨询 CPA。投资类广告须符合证券法规。</aside>
+  </div>
+</BaseLayout>
+
+<style>
+  .tl-inline-tip {
+    font-size: 14px;
+    line-height: 1.65;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: rgba(26, 86, 196, 0.06);
+    border-left: 3px solid rgba(26, 86, 196, 0.35);
+    color: rgba(26, 29, 35, 0.78);
+    margin: 16px 0;
+  }
+  .tl-inline-tip a {
+    color: #1a56c4;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .tl-inline-tip a:hover {
+    text-decoration: underline;
+  }
+  .tl-back {
+    font-size: 14px;
+    margin-top: 28px;
+  }
+  .tl-back a {
+    color: var(--red);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .tl-back a:hover {
+    text-decoration: underline;
+  }
+</style>

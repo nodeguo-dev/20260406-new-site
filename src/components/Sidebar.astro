@@ -1,0 +1,81 @@
+---
+import ContactCard from "@/components/ContactCard.astro";
+import RelatedToolsCard from "@/components/RelatedToolsCard.astro";
+import StatsStrip from "@/components/StatsStrip.astro";
+import HighlightsGrid from "@/components/HighlightsGrid.astro";
+import { categoryMeta } from "@/data/categoryMeta";
+import type { CollectionEntry } from "astro:content";
+
+type Props = {
+  services: CollectionEntry<"services">[];
+  categories: string[];
+  tags: string[];
+  showBrandBlocks?: boolean;
+};
+
+const { services, categories, tags, showBrandBlocks = false } = Astro.props;
+const topServices = services.slice(0, 6);
+const topTags = tags.slice(0, 12);
+---
+
+<aside class="list" aria-label="侧边栏">
+  <ContactCard />
+  <RelatedToolsCard
+    title="相关打分工具"
+    subtitle="如果页面内容涉及 CRS、EOI 或省提名，这里先算一遍更稳。"
+    items={[
+      { href: "/tools/crs-calculator/", label: "联邦 CRS 计算器", desc: "EE / CEC / FSW 的基础自测工具。" },
+      { href: "/tools/oinp-calculator/", label: "安省 OINP · EOI", desc: "安省雇主类 / 留学类常见入口。" },
+      { href: "/tools/bc-pnp-calculator/", label: "BC SIRS 计算器", desc: "BC 技术移民常用分值预估。" },
+      { href: "/tools/aaip-calculator/", label: "AAIP Worker EOI", desc: "阿省相关路径的分值自测。" },
+    ]}
+    footerHref="/tools/"
+    footerLabel="进入全部打分工具"
+  />
+  {showBrandBlocks ? <StatsStrip title="官网数据概览" /> : null}
+  {showBrandBlocks ? <HighlightsGrid /> : null}
+
+  <section class="card">
+    <div class="card-inner">
+      <h2 class="h2">热门服务</h2>
+      <div class="list">
+        {topServices.map((s) => (
+          <a class="list-item" href={`/services/${s.slug}/`}>
+            <div style="font-weight:650">{s.data.title}</div>
+            <div class="muted" style="font-size:13px; margin-top:6px">
+              {s.data.excerpt}
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-inner">
+      <h2 class="h2">文章分类</h2>
+      <div class="list">
+        {categories.map((slug) => (
+          <a class="list-item" href={`/category/${slug}/`}>
+            <div style="font-weight:650">{categoryMeta[slug]?.title ?? slug}</div>
+            <div class="muted" style="font-size:13px; margin-top:6px">
+              {categoryMeta[slug]?.description ??
+                "查看该分类下的最新文章与政策解读。"}
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-inner">
+      <h2 class="h2">热门标签</h2>
+      <div style="display:flex; flex-wrap:wrap; gap:8px">
+        {topTags.map((tag) => (
+          <a class="pill" href={`/tag/${encodeURIComponent(tag)}/`}>{tag}</a>
+        ))}
+      </div>
+    </div>
+  </section>
+</aside>

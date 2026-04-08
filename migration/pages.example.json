@@ -1,0 +1,33 @@
+[
+  {
+    "collection": "blog",
+    "slug": "example-post",
+    "title": "示例文章标题",
+    "description": "用于 SEO 的描述（建议 60-120 字）。",
+    "excerpt": "用于列表展示的摘要（建议 60-140 字）。",
+    "publishDate": "2023-01-15",
+    "updatedDate": "2024-10-02",
+    "category": "policy",
+    "tags": ["政策解读", "材料清单"],
+    "author": "常春藤咨询编辑部",
+    "faq": [
+      { "question": "示例问题？", "answer": "示例回答。" }
+    ]
+  },
+  {
+    "collection": "projects",
+    "slug": "example-project",
+    "title": "示例项目标题",
+    "description": "用于 SEO 的描述。",
+    "excerpt": "用于列表展示的摘要。",
+    "publishDate": "2022-06-01",
+    "updatedDate": "2025-08-10",
+    "projectType": "省提名",
+    "region": "安省",
+    "tags": ["PNP", "安省"],
+    "faq": [
+      { "question": "适合人群？", "answer": "按条件与时间线判断。" }
+    ]
+  }
+]
+

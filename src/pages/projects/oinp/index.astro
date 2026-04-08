@@ -1,0 +1,59 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民项目", href: "/projects/" },
+  { name: "省提名计划（PNP）", href: "/projects/provincial-nomination/" },
+  { name: "安省 OINP 详解", href: "/projects/oinp/" },
+];
+---
+
+<BaseLayout
+  title={withSiteTitle("安大略省提名计划（OINP）详细指南")}
+  description="安大略省提名计划（OINP）完整指南：Human Capital Priorities、技术工人、雇主担保、国际毕业生等各类别详解，申请条件、流程及常见问题。"
+  canonical="https://cachinavisa.com/projects/oinp/"
+>
+  <JsonLd data={{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: breadcrumbs.map((c, i) => ({
+      "@type": "ListItem", position: i + 1, name: c.name,
+      item: new URL(c.href, site.url).toString(),
+    })),
+  }} />
+  <Breadcrumbs items={breadcrumbs} />
+
+  <div style="margin-top:16px; text-align:center; padding: 40px 20px;">
+    <div style="font-size:48px; margin-bottom:16px;">🔀</div>
+    <h1 style="font-size:24px; font-weight:800; color:#1a1d23; margin:0 0 12px;">
+      正在跳转至 OINP 详细页面
+    </h1>
+    <p style="font-size:15px; color:rgba(26,29,35,0.6); margin:0 0 20px; line-height:1.7;">
+      安大略省提名（OINP）的完整申请指南，包括 HCP 类别、技术工人、国际学生等各类条件，已整合在以下页面：
+    </p>
+    <a href="/projects/province/ontario/" style="display:inline-block; padding:12px 28px; background:#d92d20; color:#fff; border-radius:12px; font-weight:700; font-size:15px; text-decoration:none;">
+      前往安大略省 OINP 完整指南 →
+    </a>
+    <div style="margin-top:32px; padding:20px; background:#f8f9fc; border-radius:14px; max-width:600px; margin-left:auto; margin-right:auto;">
+      <div style="font-size:13px; font-weight:700; color:#1a1d23; margin-bottom:10px;">相关移民资源</div>
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <a href="/projects/provincial-nomination/" style="font-size:14px; color:#d92d20; text-decoration:none;">→ 省提名计划（PNP）总览</a>
+        <a href="/projects/province/british-columbia/" style="font-size:14px; color:#d92d20; text-decoration:none;">→ BC 省提名（BCPNP）指南</a>
+        <a href="/projects/province/alberta/" style="font-size:14px; color:#d92d20; text-decoration:none;">→ 阿尔伯塔省提名（AAIP）指南</a>
+        <a href="/projects/province/quebec/" style="font-size:14px; color:#d92d20; text-decoration:none;">→ 魁北克省移民项目</a>
+        <a href="/projects/cec/" style="font-size:14px; color:#d92d20; text-decoration:none;">→ 加拿大经验类（CEC）</a>
+      </div>
+    </div>
+  </div>
+
+      <div class="page-share">
+        <ShareBar url="https://cachinavisa.com/projects/oinp/" title={"安大略省提名计划（OINP）详细指南"} />
+      </div>
+</BaseLayout>

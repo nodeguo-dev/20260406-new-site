@@ -1,0 +1,747 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PostCard from "@/components/PostCard.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+import { getAllPublishedPosts, getAllPublishedServices } from "@/utils/content";
+import { getPageSlice } from "@/utils/pagination";
+import { getCollection } from "astro:content";
+
+const posts    = await getAllPublishedPosts();
+const services = await getAllPublishedServices();
+const { items: latest } = getPageSlice(posts, 1, 6);
+const faqPages = (await getCollection("faq")).filter((p) => !p.data.draft);
+const faqItems = (faqPages[0]?.data.items ?? []).slice(0, 5);
+
+const pathways = [
+  { href: "/projects/federal-programs/", icon: "🍁", title: "联邦技术移民",   sub: "Express Entry · CEC · FSW",    tag: "主流路径", color: "#d92d20" },
+  { href: "/projects/provincial-nomination/", icon: "🏛️", title: "省提名 PNP", sub: "各省省提名 · 海洋四省 · 曼省",    tag: "高效通道", color: "#1a56c4" },
+  { href: "/visa/work-permit/",           icon: "💼", title: "雇主担保工签",  sub: "LMIA · 海洋省担保 · 豁免类",   tag: "工作移民", color: "#059669" },
+  { href: "/visa/study-permit/",          icon: "🎓", title: "留学转移民",    sub: "学签 · PGWP · 毕业生移民",      tag: "留学路径", color: "#7c3aed" },
+  { href: "/visa/visitor/",               icon: "✈️", title: "访问 & 探亲签", sub: "旅游签 · 探亲签 · 超级签证",    tag: "短期签证", color: "#d97706" },
+  { href: "/services/family-sponsorship-service/", icon: "👨‍👩‍👧", title: "家庭团聚",  sub: "配偶担保 · 父母移民 · 子女担保", tag: "家庭移民", color: "#db2777" },
+];
+
+const whyUs = [
+  { icon: "🎖️", title: "RCIC 持牌顾问",  desc: "持 CICC 官方注册顾问执照，具备合法代理移民申请资格，专业有保障。" },
+  { icon: "✅", title: "2500+ 成功案例", desc: "深耕加拿大移民领域八年，累计服务逾 2500 名客户，满意度高达 98%。" },
+  { icon: "🗺️", title: "量身定制方案",   desc: "根据您的背景、预算和时间要求，梳理出 2–3 条优先路径与备选方案，绝不套模板。" },
+  { icon: "🏢", title: "多伦多本地办公", desc: "在多伦多北约克设有正式注册公司，熟悉加拿大本地操作细节，实现中加双向无缝对接。" },
+  { icon: "🎓", title: "官方院校合作",   desc: "与多所加拿大知名高校建立官方招生合作关系，直接对接招生资源，助力留学移民规划。" },
+  { icon: "🔄", title: "全程专人跟进",   desc: "从初步评估、材料准备、递交申请到补件答复，每个环节均有专属顾问负责。" },
+];
+
+const cases = [
+  { icon: "🍁", tag: "联邦技术移民", title: "IT 工程师 EE 快速获批",    desc: "张先生，软件工程师，CRS 498 分，经 Express Entry 抽签获邀，家庭三口全程仅 6 个月完成登陆。",                     time: "6 个月" },
+  { icon: "🏢", tag: "省提名",       title: "安省雇主提名定居多伦多",   desc: "李女士，会计背景，获安大略省 OINP 雇主提名后顺利移民，现已在多伦多北约克定居，孩子就读当地公立学校。",        time: "10 个月" },
+  { icon: "🎓", tag: "留学转移民",   title: "硕士毕业经 CEC 成功获 PR", desc: "王同学在加完成硕士学业，凭 PGWP 工作满 12 个月后申请 CEC，PR 获批仅用 5 个月，现就职于温哥华一家科技企业。", time: "5 个月" },
+  { icon: "👨‍👩‍👧", tag: "家庭团聚",  title: "配偶担保全家在温哥华团聚", desc: "陈先生为配偶办理家庭团聚移民，从材料准备到抵加登陆全程一站式跟进，12 个月内全家顺利在温哥华团聚。",         time: "12 个月" },
+  { icon: "🚢", tag: "海洋省担保",   title: "新斯科舍省雇主担保快速落地", desc: "刘女士，餐饮管理背景，通过新斯科舍省雇主担保项目获得提名，手续简洁、周期较短，8 个月内完成全程。",           time: "8 个月" },
+  { icon: "💼", tag: "工签转 PR",   title: "LMIA 工签积累经验后成功移民", desc: "赵先生从事建筑行业，持 LMIA 工签在加工作两年后申请省提名，审批顺利，现已以永久居民身份定居阿省。",           time: "24 个月" },
+];
+
+const testimonials = [
+  { name: "张晓明", city: "多伦多 · 软件工程师", rating: 5, text: "顾问非常专业，把整个 EE 申请流程讲解得清晰透彻，帮我找准了 CRS 提分的关键方向。从首次咨询到收到 PR 邀请函，前后不到 6 个月，强烈推荐！" },
+  { name: "李雪梅", city: "温哥华 · 金融分析师", rating: 5, text: "经朋友介绍找到常春藤，服务让我很放心。顾问帮我选定了最适合自己情况的 BCPNP 路径，材料准备全程专业细致，几乎没有走弯路。" },
+  { name: "王建国", city: "卡尔加里 · 工程师",   rating: 5, text: "自己摸索了半年都没搞清楚，找到他们以后思路一下子清晰了。顾问为我量身规划了阿省省提名方案，目前已经顺利登陆，非常感谢！" },
+  { name: "陈慧敏", city: "多伦多 · 家庭主妇",   rating: 5, text: "配偶担保的整个过程比我预想的顺畅很多。顾问团队回复及时，遇到任何疑问都能第一时间给出解答，让人感觉非常踏实。" },
+];
+---
+
+<BaseLayout
+  title={withSiteTitle("加拿大移民与签证咨询 | 常春藤国际")}
+  description={site.description}
+  fullWidth={true}
+>
+
+<!-- ═══════════════════════ HERO ═══════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-noise"></div>
+  <div class="hero-orb hero-orb-1"></div>
+  <div class="hero-orb hero-orb-2"></div>
+  <div class="hero-orb hero-orb-3"></div>
+
+  <div class="container hero-layout">
+    <!-- Left: copy -->
+    <div class="hero-copy animate-fade-up">
+      <div class="hero-badges">
+        <span class="hbadge green">
+          <span class="hbadge-dot"></span> RCIC 持牌顾问
+        </span>
+        <span class="hbadge">🍁 专注加拿大移民 · 8年+</span>
+      </div>
+
+      <h1 class="hero-h1">
+        专业加拿大移民<br />
+        <span class="hero-gradient">一站式顾问服务</span>
+      </h1>
+
+      <p class="hero-desc">
+        RCIC 持牌顾问团队，覆盖技术移民、省提名、雇主担保、工签、学签及家庭团聚全类别。
+        2500+ 成功案例，98% 客户满意度。
+      </p>
+
+      <div class="hero-actions">
+        <a href="/contact/" class="btn-primary hero-btn-main">
+          免费获取评估
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <a href="/projects/" class="btn-ghost hero-btn-ghost">了解移民项目</a>
+      </div>
+
+      <div class="hero-phones">
+        <a href={`tel:${site.contact.phoneCA.replace(/[^+0-9]/g,'')}`} class="hero-phone">
+          <span class="hp-flag">🇨🇦</span>
+          <span>{site.contact.phoneCA}</span>
+        </a>
+        <span class="hero-phone-sep">·</span>
+        <a href={`tel:${site.contact.phoneCNPlain}`} class="hero-phone">
+          <span class="hp-flag">🇨🇳</span>
+          <span>{site.contact.phoneCN}</span>
+        </a>
+        <span class="hero-phone-sep">·</span>
+        <span class="hero-phone">💬 {site.contact.wechat}</span>
+      </div>
+    </div>
+
+    <!-- Right: stats cards -->
+    <div class="hero-stats animate-fade-up delay-2" data-hero-stats>
+      {site.stats.map((s, i) => {
+        const count =
+          i === 0 ? { end: 2500, suffix: "+" } :
+          i === 1 ? { end: 98, suffix: "%" } :
+          i === 2 ? { end: 8, suffix: "年+" } :
+          null;
+        return (
+        <div class="hero-stat-card">
+          <div
+            class:list={["hsc-value", count && "hsc-value-count"]}
+            {...(count
+              ? { "data-count-end": String(count.end), "data-suffix": count.suffix }
+              : {})}
+          >
+            {count ? `0${count.suffix}` : s.value}
+          </div>
+          <div class="hsc-label">{s.label}</div>
+        </div>
+        );
+      })}
+      <div class="hero-stat-card hero-stat-trust">
+        <div class="hsc-trust-row">
+          <span class="hsc-check">✓</span>
+          <span>CICC 正式认证</span>
+        </div>
+        <div class="hsc-trust-row">
+          <span class="hsc-check">✓</span>
+          <span>多伦多本地注册</span>
+        </div>
+        <div class="hsc-trust-row">
+          <span class="hsc-check">✓</span>
+          <span>中加双向服务</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ PATHWAY STRIP ═══════════════════════════ -->
+<section class="pathway-strip">
+  <div class="container">
+    <div class="pathway-grid">
+      {pathways.map((p) => (
+        <a class="pathway-card" href={p.href} style={`--pc-color:${p.color}`}>
+          <div class="pc-top">
+            <span class="pc-icon">{p.icon}</span>
+            <span class="pc-tag" style={`background:${p.color}18;color:${p.color}`}>{p.tag}</span>
+          </div>
+          <div class="pc-title">{p.title}</div>
+          <div class="pc-sub">{p.sub}</div>
+          <div class="pc-arrow">了解详情 →</div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ BODY ════════════════════════════════════ -->
+<div class="container home-body">
+
+  <!-- WHY US ──────────────────────────────────────────────────────── -->
+  <section class="home-section">
+    <div class="section-header">
+      <div>
+        <div class="kicker">为什么选择我们</div>
+        <h2 class="section-title">专业、诚信、高效，让移民之路少走弯路</h2>
+      </div>
+    </div>
+    <div class="why-grid">
+      {whyUs.map((w) => (
+        <div class="why-card">
+          <div class="why-icon-wrap"><span class="why-icon">{w.icon}</span></div>
+          <div class="why-title">{w.title}</div>
+          <div class="why-desc">{w.desc}</div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- CASES ───────────────────────────────────────────────────────── -->
+  <section class="home-section">
+    <div class="section-header">
+      <div>
+        <div class="kicker">真实案例</div>
+        <h2 class="section-title">2500+ 真实案例，以结果说明一切</h2>
+      </div>
+      <a class="see-all" href="/contact/">咨询更多 →</a>
+    </div>
+    <div class="cases-grid">
+      {cases.map((c) => (
+        <div class="case-card">
+          <div class="case-header">
+            <span class="case-icon">{c.icon}</span>
+            <div>
+              <span class="case-tag">{c.tag}</span>
+              <span class="case-time">⏱ {c.time}</span>
+            </div>
+          </div>
+          <div class="case-title">{c.title}</div>
+          <p class="case-desc">{c.desc}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- SERVICES ────────────────────────────────────────────────────── -->
+  {services.length > 0 && (
+    <section class="home-section">
+      <div class="section-header">
+        <div>
+          <div class="kicker">我们的服务</div>
+          <h2 class="section-title">移民 · 签证 · 留学，全类别一站式服务</h2>
+        </div>
+        <a class="see-all" href="/services/">全部服务 →</a>
+      </div>
+      <div class="services-grid">
+        {services.slice(0, 6).map((s) => (
+          <a class="svc-card" href={`/services/${s.slug}/`}>
+            <div class="svc-title">{s.data.title}</div>
+            <div class="svc-excerpt">{s.data.excerpt}</div>
+            <span class="svc-link">了解详情 →</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <!-- TESTIMONIALS ─────────────────────────────────────────────────── -->
+  <section class="home-section">
+    <div class="section-header">
+      <div>
+        <div class="kicker">客户评价</div>
+        <h2 class="section-title">客户亲历，口碑见证</h2>
+      </div>
+    </div>
+    <div class="testimonials-grid">
+      {testimonials.map((t) => (
+        <div class="testi-card">
+          <div class="testi-stars">{"★".repeat(t.rating)}</div>
+          <p class="testi-text">"{t.text}"</p>
+          <div class="testi-author">
+            <div class="testi-avatar">{t.name[0]}</div>
+            <div>
+              <div class="testi-name">{t.name}</div>
+              <div class="testi-city">{t.city}</div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- LATEST POSTS ─────────────────────────────────────────────────── -->
+  <section class="home-section">
+    <div class="section-header">
+      <div>
+        <div class="kicker">最新资讯</div>
+        <h2 class="section-title">政策解读 · 申请指南 · 移民动态</h2>
+      </div>
+      <a class="see-all" href="/blog/">查看全部 →</a>
+    </div>
+    <div class="posts-grid">
+      {latest.map((p) => <PostCard post={p} variant="card" />)}
+    </div>
+    <div class="more-bar">
+      <a class="btn-outline" href="/blog/">查看全部移民资讯 →</a>
+    </div>
+  </section>
+
+  <!-- FAQ ─────────────────────────────────────────────────────────── -->
+  {faqItems.length > 0 && (
+    <section class="home-section">
+      <div class="section-header">
+        <div>
+          <div class="kicker">常见问题</div>
+          <h2 class="section-title">移民签证高频问答</h2>
+        </div>
+        <a class="see-all" href="/faq/">查看全部 →</a>
+      </div>
+      <div class="faq-list">
+        {faqItems.map((item: { question: string; answer: string }) => (
+          <details class="faq-item">
+            <summary class="faq-q">
+              <span>{item.question}</span>
+              <span class="faq-chevron">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+            </summary>
+            <div class="faq-a">{item.answer}</div>
+          </details>
+        ))}
+      </div>
+    </section>
+  )}
+
+</div>
+
+<!-- ═══════════════════════ CTA BANNER ══════════════════════════════ -->
+<section class="cta-section">
+  <div class="cta-orb cta-orb-1"></div>
+  <div class="cta-orb cta-orb-2"></div>
+  <div class="container cta-inner">
+    <div class="cta-badge">🚀 立即迈出第一步</div>
+    <h2 class="cta-title">随时可以开始您的加拿大移民之旅</h2>
+    <p class="cta-desc">
+      每一个成功登陆的故事，都始于一次对话。<br />
+      现在联系我们，免费获取专属移民路径分析。
+    </p>
+    <div class="cta-actions">
+      <a href="/contact/" class="btn-primary cta-btn-main">
+        立即免费咨询
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <a href={`tel:${site.contact.phoneCA.replace(/[^+0-9]/g,'')}`} class="btn-ghost cta-btn-phone">
+        📞 {site.contact.phoneCA}
+      </a>
+    </div>
+    <div class="cta-contacts">
+      <span>🇨🇳 {site.contact.phoneCN}</span>
+      <span class="cta-dot">·</span>
+      <span>💬 微信：{site.contact.wechat}</span>
+      <span class="cta-dot">·</span>
+      <span>✉️ {site.contact.email}</span>
+    </div>
+  </div>
+</section>
+
+</BaseLayout>
+
+<style>
+/* ── HERO ─────────────────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  background: linear-gradient(135deg, #0a1628 0%, #0f2040 50%, #1a1040 100%);
+  overflow: hidden;
+  padding: 80px 0 100px;
+}
+.hero-noise {
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.3;
+}
+.hero-orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(80px); pointer-events: none;
+}
+.hero-orb-1 { width: 500px; height: 500px; background: rgba(217,45,32,0.15); top: -100px; right: -100px; animation: float 8s ease-in-out infinite; }
+.hero-orb-2 { width: 300px; height: 300px; background: rgba(26,86,196,0.12); bottom: -50px; left: 10%; animation: float 10s ease-in-out infinite reverse; }
+.hero-orb-3 { width: 200px; height: 200px; background: rgba(124,58,237,0.1); top: 30%; left: 40%; animation: float 12s ease-in-out infinite 2s; }
+
+.hero-layout {
+  position: relative; z-index: 2;
+  display: grid; grid-template-columns: 1fr;
+  gap: 48px; align-items: center;
+}
+@media (min-width: 960px) { .hero-layout { grid-template-columns: 1.2fr 1fr; gap: 60px; } }
+
+/* Hero copy */
+.hero-badges { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+.hbadge {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 6px 14px; border-radius: 999px;
+  background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8);
+  font-size: 12px; font-weight: 600; border: 1px solid rgba(255,255,255,0.15);
+  backdrop-filter: blur(8px);
+}
+.hbadge.green { background: rgba(16,185,129,0.15); color: #6ee7b7; border-color: rgba(16,185,129,0.3); }
+.hbadge-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: #10b981;
+  box-shadow: 0 0 8px rgba(16,185,129,0.6);
+  animation: pulse-trust 2s ease infinite;
+}
+.hero-h1 {
+  font-size: clamp(36px, 5vw, 62px);
+  font-weight: 900; line-height: 1.1;
+  letter-spacing: -0.03em; color: #fff;
+  margin: 0 0 20px;
+}
+.hero-gradient {
+  background: linear-gradient(135deg, #f87171 0%, #fbbf24 50%, #f87171 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 4s ease infinite;
+}
+.hero-desc {
+  font-size: 17px; color: rgba(255,255,255,0.7);
+  line-height: 1.8; margin: 0 0 32px; max-width: 520px;
+}
+.hero-actions {
+  display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 28px;
+}
+.hero-btn-main { padding: 15px 32px; font-size: 16px; }
+.hero-btn-ghost { padding: 15px 28px; font-size: 16px; }
+.hero-phones {
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+}
+.hero-phone {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 13px; color: rgba(255,255,255,0.6);
+  text-decoration: none; transition: color 0.15s;
+}
+.hero-phone:hover { color: rgba(255,255,255,0.9); text-decoration: none; }
+.hp-flag { font-size: 14px; }
+.hero-phone-sep { color: rgba(255,255,255,0.25); }
+
+/* Hero stats */
+.hero-stats {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.hero-stat-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 16px; padding: 20px;
+  backdrop-filter: blur(12px);
+  transition: background 0.2s, transform 0.2s;
+}
+.hero-stat-card:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px); }
+.hsc-value {
+  font-size: 32px; font-weight: 900; color: #fff;
+  letter-spacing: -0.03em; line-height: 1;
+  background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.7) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  font-variant-numeric: tabular-nums;
+}
+.hsc-value-count {
+  min-width: 3.2em;
+  display: inline-block;
+}
+.hsc-label { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 6px; font-weight: 500; }
+.hero-stat-trust { grid-column: 1 / -1; }
+.hsc-trust-row {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; color: rgba(255,255,255,0.7);
+  padding: 4px 0;
+}
+.hsc-check {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: rgba(16,185,129,0.2); color: #10b981;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; flex-shrink: 0;
+}
+
+/* ── PATHWAY STRIP ───────────────────────────────────────────────── */
+.pathway-strip {
+  background: #fff;
+  border-bottom: 1px solid rgba(13,17,23,0.08);
+  padding: 32px 0;
+}
+.pathway-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+}
+@media (min-width: 640px)  { .pathway-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1024px) { .pathway-grid { grid-template-columns: repeat(6, 1fr); } }
+
+.pathway-card {
+  display: flex; flex-direction: column; gap: 6px;
+  padding: 16px; border-radius: 14px;
+  border: 1px solid rgba(13,17,23,0.08);
+  text-decoration: none;
+  transition: all 0.2s var(--ease);
+  background: #fff;
+  position: relative; overflow: hidden;
+}
+.pathway-card::before {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: var(--pc-color, #d92d20);
+  transform: scaleX(0); transition: transform 0.2s var(--ease);
+}
+.pathway-card:hover {
+  border-color: var(--pc-color, #d92d20);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+.pathway-card:hover::before { transform: scaleX(1); }
+.pc-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.pc-icon { font-size: 20px; }
+.pc-tag {
+  font-size: 10px; font-weight: 700; padding: 2px 8px;
+  border-radius: 999px; letter-spacing: 0.02em;
+}
+.pc-title { font-size: 14px; font-weight: 700; color: #0d1117; line-height: 1.3; }
+.pc-sub   { font-size: 11px; color: rgba(13,17,23,0.5); line-height: 1.4; }
+.pc-arrow { font-size: 11px; color: var(--pc-color, #d92d20); font-weight: 600; margin-top: 4px; }
+
+/* ── HOME BODY ───────────────────────────────────────────────────── */
+.home-body { padding-top: 56px; padding-bottom: 24px; }
+.home-section { margin-bottom: 72px; }
+
+/* WHY US */
+.why-grid {
+  display: grid; grid-template-columns: 1fr;
+  gap: 14px;
+}
+@media (min-width: 600px) { .why-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 960px) { .why-grid { grid-template-columns: repeat(3, 1fr); } }
+
+.why-card {
+  background: #fff; border: 1px solid rgba(13,17,23,0.08);
+  border-radius: 16px; padding: 24px;
+  transition: all 0.2s var(--ease);
+}
+.why-card:hover {
+  border-color: rgba(217,45,32,0.2);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+.why-icon-wrap {
+  width: 44px; height: 44px; border-radius: 12px;
+  background: rgba(217,45,32,0.08); display: flex;
+  align-items: center; justify-content: center;
+  margin-bottom: 14px; font-size: 22px;
+}
+.why-title { font-size: 16px; font-weight: 700; color: #0d1117; margin-bottom: 8px; }
+.why-desc  { font-size: 14px; color: rgba(13,17,23,0.6); line-height: 1.7; }
+
+/* CASES */
+.cases-grid {
+  display: grid; grid-template-columns: 1fr;
+  gap: 14px;
+}
+@media (min-width: 600px) { .cases-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 960px) { .cases-grid { grid-template-columns: repeat(3, 1fr); } }
+
+.case-card {
+  background: #fff; border: 1px solid rgba(13,17,23,0.08);
+  border-radius: 16px; padding: 22px;
+  transition: all 0.2s var(--ease);
+  position: relative; overflow: hidden;
+}
+.case-card::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, #d92d20, #f87171);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.25s var(--ease);
+}
+.case-card:hover {
+  box-shadow: 0 6px 24px rgba(0,0,0,0.09);
+  transform: translateY(-2px);
+}
+.case-card:hover::after { transform: scaleX(1); }
+.case-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.case-icon { font-size: 22px; }
+.case-tag  { font-size: 11px; font-weight: 700; color: #d92d20; background: rgba(217,45,32,0.08); padding: 3px 10px; border-radius: 999px; }
+.case-time { font-size: 11px; color: rgba(13,17,23,0.5); margin-left: 6px; }
+.case-title { font-size: 15px; font-weight: 700; color: #0d1117; margin-bottom: 8px; line-height: 1.4; }
+.case-desc  { font-size: 13px; color: rgba(13,17,23,0.6); line-height: 1.7; margin: 0; }
+
+/* SERVICES */
+.services-grid {
+  display: grid; grid-template-columns: 1fr;
+  gap: 12px;
+}
+@media (min-width: 600px) { .services-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 960px) { .services-grid { grid-template-columns: repeat(3, 1fr); } }
+
+.svc-card {
+  display: flex; flex-direction: column; gap: 8px;
+  background: #fff; border: 1px solid rgba(13,17,23,0.08);
+  border-radius: 14px; padding: 20px;
+  text-decoration: none;
+  transition: all 0.2s var(--ease);
+}
+.svc-card:hover { border-color: rgba(217,45,32,0.25); box-shadow: 0 4px 16px rgba(0,0,0,0.08); transform: translateY(-2px); text-decoration: none; }
+.svc-title   { font-size: 16px; font-weight: 700; color: #0d1117; }
+.svc-excerpt { font-size: 13px; color: rgba(13,17,23,0.6); line-height: 1.65; flex: 1; }
+.svc-link    { font-size: 13px; font-weight: 600; color: #d92d20; margin-top: 4px; }
+
+/* TESTIMONIALS */
+.testimonials-grid {
+  display: grid; grid-template-columns: 1fr;
+  gap: 14px;
+}
+@media (min-width: 600px) { .testimonials-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 960px) { .testimonials-grid { grid-template-columns: repeat(4, 1fr); } }
+
+.testi-card {
+  background: #fff; border: 1px solid rgba(13,17,23,0.08);
+  border-radius: 16px; padding: 22px;
+  display: flex; flex-direction: column; gap: 12px;
+  transition: all 0.2s;
+}
+.testi-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.08); transform: translateY(-2px); }
+.testi-stars { color: #f59e0b; font-size: 16px; letter-spacing: 2px; }
+.testi-text  { font-size: 13px; color: rgba(13,17,23,0.7); line-height: 1.75; flex: 1; font-style: italic; margin: 0; }
+.testi-author { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+.testi-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, #d92d20, #f87171);
+  color: #fff; font-weight: 800; font-size: 15px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.testi-name { font-size: 14px; font-weight: 700; color: #0d1117; }
+.testi-city { font-size: 12px; color: rgba(13,17,23,0.5); }
+
+/* POSTS */
+.posts-grid {
+  display: grid; grid-template-columns: 1fr;
+  gap: 14px; margin-bottom: 24px;
+}
+@media (min-width: 600px) { .posts-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 960px) { .posts-grid { grid-template-columns: repeat(3, 1fr); } }
+
+.more-bar { display: flex; justify-content: center; }
+
+/* FAQ */
+.faq-list { display: flex; flex-direction: column; gap: 8px; }
+.faq-item {
+  background: #fff; border: 1px solid rgba(13,17,23,0.09);
+  border-radius: 12px; overflow: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.faq-item[open] { border-color: rgba(217,45,32,0.25); box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+.faq-q {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 16px 20px;
+  cursor: pointer; list-style: none; font-size: 15px; font-weight: 600;
+  color: #0d1117; user-select: none;
+  transition: color 0.15s;
+}
+.faq-q::-webkit-details-marker { display: none; }
+.faq-item[open] .faq-q { color: #d92d20; }
+.faq-chevron { flex-shrink: 0; color: rgba(13,17,23,0.4); transition: transform 0.2s; }
+.faq-item[open] .faq-chevron { transform: rotate(180deg); color: #d92d20; }
+.faq-a {
+  padding: 0 20px 16px; font-size: 14px; color: rgba(13,17,23,0.7);
+  line-height: 1.8; border-top: 1px solid rgba(13,17,23,0.06);
+  padding-top: 14px;
+}
+
+/* ── CTA SECTION ────────────────────────────────────────────────── */
+.cta-section {
+  position: relative;
+  background: linear-gradient(135deg, #0a1628 0%, #1a0828 50%, #0a1628 100%);
+  background-size: 200% 200%;
+  animation: gradient-shift 8s ease infinite;
+  overflow: hidden;
+  padding: 80px 0;
+  text-align: center;
+}
+.cta-orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(80px); pointer-events: none;
+}
+.cta-orb-1 { width: 400px; height: 400px; background: rgba(217,45,32,0.2); top: -100px; left: -80px; }
+.cta-orb-2 { width: 300px; height: 300px; background: rgba(26,86,196,0.15); bottom: -80px; right: -60px; }
+.cta-inner { position: relative; z-index: 2; }
+.cta-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 16px; background: rgba(217,45,32,0.2);
+  border: 1px solid rgba(217,45,32,0.35); border-radius: 999px;
+  color: #f87171; font-size: 13px; font-weight: 700;
+  margin-bottom: 20px;
+}
+.cta-title {
+  font-size: clamp(24px, 4vw, 40px);
+  font-weight: 900; color: #fff; letter-spacing: -0.025em;
+  line-height: 1.2; margin: 0 0 16px;
+}
+.cta-desc {
+  font-size: 16px; color: rgba(255,255,255,0.65);
+  line-height: 1.8; margin: 0 0 32px; max-width: 520px;
+  margin-left: auto; margin-right: auto;
+}
+.cta-actions {
+  display: flex; justify-content: center; gap: 14px;
+  flex-wrap: wrap; margin-bottom: 24px;
+}
+.cta-btn-main { padding: 16px 36px; font-size: 16px; }
+.cta-btn-phone { padding: 16px 24px; font-size: 16px; }
+.cta-contacts {
+  display: flex; justify-content: center;
+  gap: 10px; flex-wrap: wrap;
+  font-size: 13px; color: rgba(255,255,255,0.5);
+}
+.cta-dot { opacity: 0.4; }
+</style>
+
+<script is:inline>
+  (function () {
+    function easeOutCubic(t) {
+      return 1 - Math.pow(1 - t, 3);
+    }
+    function runCount(el, duration) {
+      var end = parseInt(el.getAttribute("data-count-end") || "0", 10);
+      var suffix = el.getAttribute("data-suffix") || "";
+      var start = performance.now();
+      function frame(now) {
+        var t = Math.min(1, (now - start) / duration);
+        var eased = easeOutCubic(t);
+        var val = Math.round(eased * end);
+        el.textContent = val + suffix;
+        if (t < 1) requestAnimationFrame(frame);
+        else el.textContent = end + suffix;
+      }
+      requestAnimationFrame(frame);
+    }
+    var root = document.querySelector("[data-hero-stats]");
+    if (!root) return;
+    var els = root.querySelectorAll(".hsc-value-count[data-count-end]");
+    if (!els.length) return;
+    var started = false;
+    var durations = [2200, 1600, 1200];
+    function start() {
+      if (started) return;
+      started = true;
+      els.forEach(function (el, i) {
+        runCount(el, durations[i] || 1800);
+      });
+    }
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) {
+              start();
+              io.disconnect();
+            }
+          });
+        },
+        { threshold: 0.25 }
+      );
+      io.observe(root);
+    } else {
+      start();
+    }
+  })();
+</script>

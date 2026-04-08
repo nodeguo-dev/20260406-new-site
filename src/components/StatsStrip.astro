@@ -1,0 +1,23 @@
+---
+import { site } from "@/config/site";
+type Props = { title?: string };
+const { title = "数据概览" } = Astro.props;
+---
+
+<section class="card" aria-label={title}>
+  <div class="card-inner">
+    <h2 class="h2">{title}</h2>
+    <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px;">
+      {site.stats.map((s) => (
+        <div class="list-item" style="padding:12px">
+          <div style="font-weight:800; font-size:18px; color:var(--accent)">{s.value}</div>
+          <div class="muted" style="font-size:13px">{s.label}</div>
+        </div>
+      ))}
+    </div>
+    <p class="muted" style="margin:10px 0 0; font-size:13px">
+      以上为官网信息展示位，可按实际情况调整表述与口径。
+    </p>
+  </div>
+</section>
+

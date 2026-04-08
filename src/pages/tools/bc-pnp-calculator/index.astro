@@ -1,0 +1,164 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民打分", href: "/tools/" },
+  { name: "BC PNP · SIRS", href: "/tools/bc-pnp-calculator/" },
+];
+---
+<BaseLayout
+  title={withSiteTitle("BC PNP SIRS 打分计算器（200分）")}
+  description="BC 省技术移民 Skills Immigration 注册系统（SIRS）分值估算：直接相关经验、学历、语言、时薪与地区等，满分 200。"
+  canonical="https://cachinavisa.com/tools/bc-pnp-calculator/"
+>
+  <div class="container calc-wrap">
+    <Breadcrumbs items={breadcrumbs} />
+    <header class="calc-head">
+      <h1 class="calc-h1">BC PNP · SIRS 计算器</h1>
+      <p class="calc-lead">
+        适用于需注册入池的 BC Skills Immigration 类别（含 Skilled Worker / EE 等）。评分结构参考 BC 公开材料；时薪档为 $16–$70+ 逐级计分、大温以外地区等规则以
+        <a href="https://www.welcomebc.ca/" target="_blank" rel="noopener noreferrer">WelcomeBC</a>
+        最新说明为准。
+      </p>
+    </header>
+
+    <form class="calc-form" id="bc-form">
+      <fieldset class="fs">
+        <legend>直接相关工作经验</legend>
+        <label>年限（与 BC job offer 职业直接相关）
+          <select name="relatedYears">
+            <option value="none">无</option>
+            <option value="1_2">1 年 – 不足 2 年</option>
+            <option value="2_3">2 年 – 不足 3 年</option>
+            <option value="3_4">3 年 – 不足 4 年</option>
+            <option value="4_5">4 年 – 不足 5 年</option>
+            <option value="5p" selected>5 年及以上</option>
+          </select>
+        </label>
+        <label class="chk"><input type="checkbox" name="cdn1y" /> 至少 1 年加拿大工作经验</label>
+        <label class="chk"><input type="checkbox" name="currentJob" checked /> 目前受雇于该 job offer 全职岗位</label>
+      </fieldset>
+
+      <fieldset class="fs">
+        <legend>学历</legend>
+        <select name="education">
+          <option value="hs">高中或以下</option>
+          <option value="cert_diploma">大专/证书</option>
+          <option value="associate">Associate</option>
+          <option value="bachelor" selected>本科</option>
+          <option value="postgrad_cert">研究生文凭/证书</option>
+          <option value="masters">硕士</option>
+          <option value="doctoral">博士</option>
+        </select>
+        <label class="chk"><input type="checkbox" name="bcBonus" /> 在 BC 完成高等教育</label>
+        <label class="chk"><input type="checkbox" name="ocBonus" /> 在加拿大其他省份完成高等教育（若与 BC 同选，以 BC 为准）</label>
+        <label class="chk"><input type="checkbox" name="healthBonus" /> 符合医疗/技工等加分情形（按 BC 当前定义）</label>
+      </fieldset>
+
+      <fieldset class="fs">
+        <legend>语言</legend>
+        <label>主申语言四项中<strong>最低</strong> CLB
+          <select name="clb">
+            <option>4</option><option>5</option><option>6</option><option>7</option><option>8</option>
+            <option selected>9</option>
+          </select>
+        </label>
+        <label class="chk"><input type="checkbox" name="bilingual" /> 英法双语均高于 CLB 4（可另加最多 10 分，本模块总分仍封顶 40）</label>
+      </fieldset>
+
+      <fieldset class="fs">
+        <legend>Job offer 时薪与地区</legend>
+        <label>时薪（加元 / 小时）
+          <input type="number" name="wage" min="0" max="200" step="0.01" value="42" />
+        </label>
+        <label>工作地区
+          <select name="region">
+            <option value="metro_vancouver">大温都会区（Metro Vancouver）</option>
+            <option value="area2">Squamish / Abbotsford / Agassiz / Mission / Chilliwack</option>
+            <option value="area3_other_bc" selected>BC 其他区域</option>
+          </select>
+        </label>
+        <label class="chk"><input type="checkbox" name="bcOutside" /> 过去曾在<strong>大温以外</strong>BC 地区累计全职工作 1 年+，或 3 年内在当地学习（符合 SIRS「额外地区」加分）</label>
+      </fieldset>
+
+      <button type="button" class="btn-calc" id="btn-bc">计算 SIRS 分数</button>
+    </form>
+
+    <section class="result-panel" id="bc-result" hidden>
+      <div class="score-big"><span id="bc-total">0</span> <span class="sub">/ 200</span></div>
+      <ul class="break-list" id="bc-break"></ul>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .calc-wrap { max-width: 720px; padding-top: 18px; padding-bottom: 56px; }
+  .calc-head { margin-bottom: 24px; }
+  .calc-h1 { font-size: clamp(24px, 3.5vw, 32px); font-weight: 900; margin: 0 0 12px; letter-spacing: -0.03em; }
+  .calc-lead { margin: 0; font-size: 15px; color: var(--muted); line-height: 1.75; }
+  .calc-form { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 22px 24px 28px; }
+  .fs { border: none; margin: 0 0 20px; padding: 0; }
+  .fs legend { font-weight: 800; font-size: 14px; margin-bottom: 12px; }
+  .fs label { display: block; font-size: 13px; color: var(--text-2); margin-bottom: 14px; }
+  .fs select, .fs input[type="number"] {
+    display: block; width: 100%; margin-top: 6px; padding: 10px 12px;
+    border-radius: 10px; border: 1px solid var(--border-2); font-size: 15px;
+  }
+  .chk { display: flex; align-items: flex-start; gap: 8px; }
+  .chk input { margin-top: 4px; }
+  .btn-calc {
+    width: 100%; padding: 14px; font-size: 16px; font-weight: 800;
+    border: none; border-radius: 12px; cursor: pointer;
+    background: linear-gradient(135deg, #1a56c4, #3b82f6); color: #fff;
+  }
+  .result-panel {
+    margin-top: 24px; padding: 24px; background: linear-gradient(135deg, #0a1628, #0f2740);
+    border-radius: 16px; color: #fff;
+  }
+  .score-big { font-size: 42px; font-weight: 900; }
+  .score-big .sub { font-size: 18px; opacity: 0.7; }
+  .break-list { list-style: none; margin: 16px 0 0; padding: 0; font-size: 14px; }
+  .break-list li { display: flex; justify-content: space-between; gap: 12px; border-top: 1px solid rgba(255,255,255,0.12); padding: 8px 0; }
+</style>
+
+<script>
+  import { calculateBcSirs, type BcSirsInput } from "@/lib/calculators/bcSirs";
+
+  const form = document.getElementById("bc-form") as HTMLFormElement;
+  document.getElementById("btn-bc")?.addEventListener("click", () => {
+    const f = form.elements;
+    const input: BcSirsInput = {
+      relatedYearsBand: (f.namedItem("relatedYears") as HTMLSelectElement).value as BcSirsInput["relatedYearsBand"],
+      canadianExperience1yrPlus: (f.namedItem("cdn1y") as HTMLInputElement).checked,
+      currentlyFullTimeInOfferJob: (f.namedItem("currentJob") as HTMLInputElement).checked,
+      education: (f.namedItem("education") as HTMLSelectElement).value as BcSirsInput["education"],
+      bcPostSecondaryBonus: (f.namedItem("bcBonus") as HTMLInputElement).checked,
+      otherCanadaPostSecondaryBonus:
+        (f.namedItem("ocBonus") as HTMLInputElement).checked &&
+        !(f.namedItem("bcBonus") as HTMLInputElement).checked,
+      healthcareOrEligibleTradeBonus: (f.namedItem("healthBonus") as HTMLInputElement).checked,
+      primaryClb: Number((f.namedItem("clb") as HTMLSelectElement).value),
+      bilingualAboveClb4: (f.namedItem("bilingual") as HTMLInputElement).checked,
+      hourlyWage: Number((f.namedItem("wage") as HTMLInputElement).value),
+      region: (f.namedItem("region") as HTMLSelectElement).value as BcSirsInput["region"],
+      bcOutsideMetroWorkOrStudy: (f.namedItem("bcOutside") as HTMLInputElement).checked,
+    };
+    const r = calculateBcSirs(input);
+    const totalEl = document.getElementById("bc-total");
+    const breakEl = document.getElementById("bc-break");
+    const panel = document.getElementById("bc-result");
+    if (totalEl) totalEl.textContent = String(r.total);
+    if (breakEl) {
+      breakEl.innerHTML = "";
+      for (const [k, v] of Object.entries(r.breakdown)) {
+        const li = document.createElement("li");
+        li.innerHTML = `<span>${k}</span><span>${v}</span>`;
+        breakEl.appendChild(li);
+      }
+    }
+    panel?.removeAttribute("hidden");
+  });
+</script>

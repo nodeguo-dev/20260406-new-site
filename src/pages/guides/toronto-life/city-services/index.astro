@@ -1,0 +1,125 @@
+---
+import "@/styles/toronto-life-guides.css";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import TorontoLifeSubNav from "@/components/guides/TorontoLifeSubNav.astro";
+import TorontoLifePartnerBand from "@/components/guides/TorontoLifePartnerBand.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+import { torontoLifePageBands } from "@/data/torontoLifeSponsors";
+
+const pageKey = "city-services";
+const bands = torontoLifePageBands[pageKey]!;
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "多伦多生活指南", href: "/guides/toronto-life/" },
+  { name: "市政日常", href: "/guides/toronto-life/city-services/" },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("多伦多市政与日常生活 | 311 · 垃圾回收 · 社区中心")}
+  description="垃圾与回收日历、311 市政服务、图书馆与社区中心；内含装修、园艺等本地服务合作展示位。"
+  canonical="https://cachinavisa.com/guides/toronto-life/city-services/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <div class="container tl-page">
+    <Breadcrumbs items={breadcrumbs} />
+    <header class="tl-hero">
+      <p class="tl-kicker">多伦多生活指南 · 分册</p>
+      <h1 class="tl-h1">市政与日常</h1>
+      <p class="tl-lead">
+        各市垃圾回收规则、大件收集日与绿桶/蓝桶分类不同；公共图书馆与社区中心提供廉价课程与场地。以下以多伦多市为常见例子，周边市镇请以本地政府网站为准。
+      </p>
+      <TorontoLifeSubNav activeKey="city-services" />
+    </header>
+
+    <TorontoLifePartnerBand band={bands.top} bandId="city-top" />
+
+    <div class="tl-prose">
+      <h2>311 与在线服务</h2>
+      <p>
+        多伦多 311 可处理路灯、道路坑洞、噪音投诉等请求；部分业务可在线跟踪工单。搬家后记得更新驾照地址与选民登记（如适用）。
+      </p>
+      <p class="tl-inline-tip">
+        需要<strong>室内装修、Handyman、园艺或冬季铲雪</strong>等上门服务的住户，可通过
+        <a href="/contact/?topic=toronto-life-referral&vertical=city">合作本地服务商推荐</a>
+        获取报价线索（合作推广；请核实承包商保险与牌照）。
+      </p>
+
+      <h2>图书馆与社区中心</h2>
+      <p>
+        图书证通常免费办理；数字借阅与语言学习资源较丰富。社区中心开设游泳、健身与儿童课程，热门时段需提前报名。
+      </p>
+    </div>
+
+    <TorontoLifePartnerBand band={bands.mid} bandId="city-mid" />
+
+    <div class="tl-prose">
+      <h2>回收与大件垃圾</h2>
+      <p>住宅回收日历可按地址查询；大件垃圾有指定收集周或需预约。违规堆放可能被罚款。</p>
+      <p class="tl-muted">
+        搬家过渡期若担心旧地址仍有信件，可参考站内
+        <a href="/blog/newcomer-student-toronto-moving-address-complete-guide/">《地址更新超全清单》</a>
+        中关于 Canada Post 转寄等提示；需要 GTA 本地搬家服务可了解
+        <a href="https://www.gtmoving.ca/zh/" target="_blank" rel="noopener noreferrer sponsored">GTMoving 国泰搬运</a>。
+      </p>
+    </div>
+
+    <TorontoLifePartnerBand band={bands.bottom} bandId="city-bottom" />
+
+    <p class="tl-back">
+      <a href="/guides/toronto-life/">← 返回总览</a>
+      ·
+      <a href="https://www.toronto.ca/" target="_blank" rel="noopener noreferrer">Toronto.ca 官网</a>
+    </p>
+
+    <aside class="tl-disclaimer" role="note">市政规则以当地政府更新为准；承包商类合作方须自行展示保险与资质信息。</aside>
+  </div>
+</BaseLayout>
+
+<style>
+  .tl-inline-tip {
+    font-size: 14px;
+    line-height: 1.65;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: rgba(26, 86, 196, 0.06);
+    border-left: 3px solid rgba(26, 86, 196, 0.35);
+    color: rgba(26, 29, 35, 0.78);
+    margin: 16px 0;
+  }
+  .tl-inline-tip a {
+    color: #1a56c4;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .tl-inline-tip a:hover {
+    text-decoration: underline;
+  }
+  .tl-back {
+    font-size: 14px;
+    margin-top: 28px;
+  }
+  .tl-back a {
+    color: var(--red);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .tl-back a:hover {
+    text-decoration: underline;
+  }
+</style>

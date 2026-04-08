@@ -1,0 +1,285 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "加拿大签证", href: "/visa/" },
+  { name: "工作签证（工签）", href: "/visa/work-permit/" },
+];
+
+const faqItems = [
+  {
+    q: "加拿大工签有哪几种，区别是什么？",
+    a: "主要分两类：封闭式工签（CWPP）和开放式工签（OWP）。封闭式工签指定雇主、职位和工作地点，换工作需要重新申请；开放式工签则可以为任何雇主工作，配偶/伴侣工签、PGWP、IEC青年工签都属于开放式。大多数人需要先找到雇主才能申请封闭式工签，开放式工签获取途径较少但更灵活。"
+  },
+  {
+    q: "LMIA是什么？一定需要吗？",
+    a: "劳动力市场影响评估（LMIA）是雇主证明自己找不到加拿大人或PR做这份工作的批准文件。有了正面LMIA，外国人才能申请相应的工签。但很多工签类别是LMIA豁免的，比如：CUSMA/USMCA专业人员类别、跨国公司内部调动（ICT）、国际协议类（如IEC）、PGWP毕业生等。申请前先确认自己是否符合豁免条件，能省去大量时间和费用。"
+  },
+  {
+    q: "我现在在中国，怎么找到愿意帮我申请LMIA的雇主？",
+    a: "这是很多人最难的一步。常见方式包括：通过专业猎头或就业顾问匹配；先以访客身份来加拿大面试（访客身份不能工作，但可以参加面试）；或者选择留学路径，在加拿大读书、打工实习后找本地雇主。雇主需要承担LMIA申请成本（政府费用$1,000 CAD），有些雇主不愿为境外申请人做，因此找到合适雇主需要一定时间和策略。"
+  },
+  {
+    q: "工签到期了还没拿到PR，工签还能再续吗？",
+    a: "可以续，条件是：有有效雇主（封闭式），或仍符合开放式工签的申请条件。只要在工签到期前提交了续签申请，就可以依「维持身份」（Maintained Status）原则继续在原工作岗位工作，直到IRCC作出决定。建议工签到期前8–12周就着手准备续签。"
+  },
+  {
+    q: "工签期间可以换工作吗？",
+    a: "持封闭式工签，原则上不能擅自换雇主，需要先申请更新工签上的雇主信息。持开放式工签则可以自由换。持有效封闭式工签期间，如果对方雇主解雇了你，你需要尽快寻找新雇主并更新工签，否则不能合法工作。"
+  },
+  {
+    q: "工签可以带家人吗？配偶和子女能来吗？",
+    a: "可以。封闭式工签持有人的配偶/伴侣可以申请开放式工作许可（2024年起有部分限制：主申请人的职位须为TEER 0/1/2/3类别，或为TEER 4/5但配偶有单独获批资格的情况）。未满18岁的子女可以申请访客签证或学签随行入读加拿大学校。"
+  },
+  {
+    q: "我用工签在加拿大工作了几年，可以申请PR吗？",
+    a: "可以，这是最常见的移民路径之一。积累加拿大工作经验后，通常可以通过加拿大经验类（CEC）或省提名计划（PNP）申请永久居留。CEC通常要求至少12个月符合NOC TEER 0/1/2/3类别的全职工作经验；各省提名有不同要求，部分省份对工作经验年限要求更低。"
+  },
+  {
+    q: "IEC青年工签是什么？我符合条件吗？",
+    a: "国际经验加拿大计划（IEC）是中国目前暂未开放的项目（中国不在IEC国家名单内）。如果你持有另一国护照或居留权，可以核查该国是否与加拿大有IEC协议。香港SAR护照持有人部分情况下可以参与，建议咨询顾问评估个人情况。"
+  },
+];
+
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((i) => ({
+    "@type": "Question",
+    name: i.q,
+    acceptedAnswer: { "@type": "Answer", text: i.a },
+  })),
+};
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+---
+<BaseLayout
+  title={withSiteTitle("加拿大工作签证（工签）申请指南 | LMIA·PGWP·开放工签全解析")}
+  description="加拿大工签完整指南：封闭式与开放式工签区别、LMIA流程、LMIA豁免类别、PGWP毕业生工签、配偶随行工签资格及8个高频问题解答。"
+  canonical="https://cachinavisa.com/visa/work-permit/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={faqLd} />
+  <Breadcrumbs items={breadcrumbs} />
+  <div class="grid" style="margin-top:16px">
+    <article class="content-card">
+      <div class="page-header">
+        <div class="page-kicker">工作许可 · Work Permit</div>
+        <h1 class="page-h1">加拿大工作签证（工签）申请指南</h1>
+        <p class="page-intro">在加拿大合法工作，需要持有工作许可（Work Permit）。工签分封闭式和开放式两大类，申请路径因人而异：有些需要雇主先获得LMIA，有些符合豁免条件、有些通过留学或移民项目附带获得。这里整理了主要工签类别和常见问题。</p>
+      </div>
+
+      <div class="content-sections">
+
+        <div class="section-block">
+          <h2>工签类型一览</h2>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-card-label">封闭式工签（CWPP）</div>
+              <div class="info-card-value">指定雇主、职位和工作地点，换工作须重新申请</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">开放式工签（OWP）</div>
+              <div class="info-card-value">可为任何符合条件的雇主工作，不受岗位限制</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">PGWP（毕业生工签）</div>
+              <div class="info-card-value">完成DLI学业后申请，最长3年，是留学生主要工签</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">配偶开放工签</div>
+              <div class="info-card-value">符合条件的留学生或工签持有人配偶可申请</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">法语流动工签</div>
+              <div class="info-card-value">IMP / C16，魁省外工作、TEER 与法语听说（如 NCLC 5+）等符合 IRCC 要求时可免 LMIA → <a href="/visa/french-mobility-work-permit/">专题</a></div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">C11 重大利益工签</div>
+              <div class="info-card-value">R205(a) 创业或特殊贡献个案论证 → <a href="/visa/c11-work-permit/">专题</a></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2>LMIA需求工签：找雇主是关键</h2>
+          <p>大多数封闭式工签要求雇主持有正面LMIA（劳动力市场影响评估）。流程如下：</p>
+          <ol class="step-list">
+            <li><span class="step-text"><strong>雇主发布职位</strong>——在Job Bank及其他平台发布职位，证明未能招到加拿大本地人</span></li>
+            <li><span class="step-text"><strong>雇主向ESDC申请LMIA</strong>——提交证明材料，缴纳$1,000 CAD申请费，等待审批（通常数周到数月）</span></li>
+            <li><span class="step-text"><strong>获得正面LMIA</strong>——雇主将LMIA号码提供给申请人</span></li>
+            <li><span class="step-text"><strong>申请人凭LMIA申请工签</strong>——提交工签申请至IRCC，附上LMIA号、职位offer letter、个人材料</span></li>
+          </ol>
+          <div class="tip-box">申请人切勿向任何人支付LMIA"购买费"——LMIA买卖是违法行为，既不能保证获批，还会让你面临身份被拒的风险。</div>
+        </div>
+
+        <div class="section-block">
+          <h2>LMIA豁免类别</h2>
+          <p>以下情况可以不需要LMIA，直接申请工签：</p>
+          <ul class="req-list">
+            <li><strong>CUSMA/USMCA（原NAFTA）专业人员</strong>——适用于墨西哥或美国公民，或通过CUSMA职业类别的人才</li>
+            <li><strong>跨国公司内部调动（ICT）</strong>——在同一跨国公司内，以管理/专业人员身份调至加拿大</li>
+            <li><strong>国际协议豁免</strong>——依据双边协议（如自贸协定）工作</li>
+            <li><strong>重大利益（C11 / significant benefit）</strong>——创业者或能为加拿大带来重大经济、社会或文化利益者，材料要求高，详见 <a href="/visa/c11-work-permit/">C11 工签专题</a></li>
+            <li><strong>法语流动（Mobilité francophone，C16）</strong>——魁北克以外工作、岗位 TEER 等符合要求且申请人法语听说达到 IRCC 标准（近年常见为 NCLC 5+）时可免 LMIA；岗位日常工作语言不必为法语（以递交日 IRCC 说明为准），详见 <a href="/visa/french-mobility-work-permit/">法语流动工签专题</a></li>
+            <li><strong>学术研究人员、记者等特定职业</strong>——由R205或R186条款涵盖的特定职业</li>
+            <li><strong>PGWP持有人</strong>——在校毕业后申请，不需要LMIA即可全职工作</li>
+          </ul>
+        </div>
+
+        <div class="section-block">
+          <h2>在境内申请 vs. 在境外申请</h2>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-card-label">境外申请</div>
+              <div class="info-card-value">需在本国或第三国申请签证，获批后入境加拿大</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">境内申请</div>
+              <div class="info-card-value">已在加拿大境内，可直接在线提交转换或续签申请</div>
+            </div>
+          </div>
+          <p style="margin-top:12px">境内申请通常要求你目前持有合法身份（如有效学签、访客身份）。部分工签类别（如封闭式特定类别）要求在境外申请，无法在境内完成。</p>
+        </div>
+
+        <div class="section-block">
+          <h2>费用与处理时间</h2>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-card-label">工签申请费</div>
+              <div class="info-card-value">$155 CAD / 人</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">开放工签附加费</div>
+              <div class="info-card-value">$100 CAD（如为开放工签）</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">境外申请处理时间</div>
+              <div class="info-card-value">通常 4–12 周（视类别）</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">境内申请处理时间</div>
+              <div class="info-card-value">通常 2–8 周</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2>工签与移民路径</h2>
+          <p>加拿大工签不仅是工作许可，更是很多人通往永久居留的重要跳板：</p>
+          <ul class="req-list">
+            <li><strong>积累CEC工作经验</strong>——在加拿大工作满12个月后，可通过加拿大经验类（CEC）申请PR</li>
+            <li><strong>省提名项目（PNP）</strong>——部分省份有专门面向工签持有人的省提名项目，门槛比联邦低</li>
+            <li><strong>雇主担保PR</strong>——雇主在为你申请多年工签后，可进一步通过LMIA担保你申请PR</li>
+            <li><strong>技术移民（Express Entry）</strong>——在加拿大工作期间同时提升EE分数，争取ITA邀请</li>
+          </ul>
+        </div>
+
+        <div class="section-block">
+          <h2>常见问题（FAQ）</h2>
+          {faqItems.map((item) => (
+            <details class="faq-item">
+              <summary class="faq-q">{item.q}</summary>
+              <p class="faq-a">{item.a}</p>
+            </details>
+          ))}
+        </div>
+
+      </div>
+      <div class="page-share">
+        <ShareBar url="https://cachinavisa.com/visa/work-permit/" title={"加拿大工作签证（工签）申请指南 | LMIA·PGWP·开放工签全解析"} />
+      </div>
+
+
+      <div class="cta-inline">
+        <div class="cta-text">不确定走哪条路申请工签？我们帮你梳理最适合的方案。</div>
+        <a class="cta-btn" href="/contact/">免费咨询 →</a>
+      </div>
+    </article>
+
+    <aside class="sidebar-stack">
+      <ContactCard />
+      <div class="sidebar-nav-card">
+        <div class="snc-title">签证子栏目</div>
+        <div class="snc-links">
+          <a class="snc-link" href="/visa/visitor/">访问签 / 旅游签</a>
+          <a class="snc-link" href="/visa/family-visit/">探亲签证</a>
+          <a class="snc-link" href="/visa/super-visa/">超级签证（父母/祖父母）</a>
+          <a class="snc-link" href="/visa/study-permit/">学习许可（学签）</a>
+          <a class="snc-link active" href="/visa/work-permit/">工作签证（工签）</a>
+          <a class="snc-link" href="/visa/french-mobility-work-permit/">法语流动工签</a>
+          <a class="snc-link" href="/visa/c11-work-permit/">C11 重大利益工签</a>
+          <a class="snc-link" href="/visa/extend/">续签 / 延期 / 境内转换</a>
+        </div>
+      </div>
+      <div class="sidebar-nav-card">
+        <div class="snc-title">移民路径</div>
+        <div class="snc-links">
+          <a class="snc-link" href="/projects/federal/">联邦技术移民（EE）</a>
+          <a class="snc-link" href="/projects/provincial-nomination/">省提名项目（PNP）</a>
+          <a class="snc-link" href="/inland/status-extension/">境内身份续签</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+.grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 920px) { .grid { grid-template-columns: 1fr 300px; align-items: start; } }
+.content-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 16px; overflow: hidden; }
+.page-header { padding: 28px 28px 24px; border-bottom: 1px solid rgba(26,29,35,0.08); background: linear-gradient(135deg, #fafbff, #fff); }
+.page-kicker { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #d92d20; margin-bottom: 8px; }
+.page-h1 { font-size: clamp(22px, 4vw, 30px); font-weight: 800; color: #1a1d23; margin: 0 0 12px; letter-spacing: -0.02em; }
+.page-intro { font-size: 15px; color: rgba(26,29,35,0.62); line-height: 1.7; margin: 0; }
+.content-sections { padding: 24px 28px; display: grid; gap: 32px; }
+.section-block h2 { font-size: 18px; font-weight: 750; color: #1a1d23; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 2px solid rgba(217,45,32,0.12); }
+.section-block p { font-size: 14px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0 0 12px; }
+.req-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.req-list li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; background: rgba(26,29,35,0.025); border-radius: 10px; font-size: 14px; color: rgba(26,29,35,0.75); line-height: 1.55; }
+.req-list li::before { content: "✓"; color: #d92d20; font-weight: 700; flex-shrink: 0; }
+.step-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; counter-reset: steps; }
+.step-list li { display: flex; gap: 14px; align-items: flex-start; counter-increment: steps; }
+.step-list li::before { content: counter(steps); display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #d92d20; color: #fff; font-weight: 700; font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+.step-text { font-size: 14px; color: rgba(26,29,35,0.75); line-height: 1.6; padding-top: 3px; }
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.info-card { padding: 14px 16px; background: rgba(26,29,35,0.03); border-radius: 12px; border: 1px solid rgba(26,29,35,0.07); }
+.info-card-label { font-size: 12px; color: rgba(26,29,35,0.45); margin-bottom: 4px; }
+.info-card-value { font-size: 14px; font-weight: 600; color: #1a1d23; }
+.info-card-value a { color: #d92d20; font-weight: 700; }
+.info-card-value a:hover { text-decoration: underline; }
+.tip-box { padding: 14px 16px; background: rgba(217,45,32,0.05); border-left: 3px solid #d92d20; border-radius: 0 10px 10px 0; font-size: 13px; color: rgba(26,29,35,0.7); line-height: 1.65; margin-top: 12px; }
+.faq-item { border: 1px solid rgba(26,29,35,0.09); border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+.faq-q { padding: 13px 16px; font-weight: 650; font-size: 14px; cursor: pointer; list-style: none; display: flex; justify-content: space-between; color: #1a1d23; }
+.faq-q::after { content: "+"; font-size: 18px; color: rgba(26,29,35,0.4); }
+details[open] .faq-q::after { content: "−"; }
+.faq-q::-webkit-details-marker { display: none; }
+.faq-a { padding: 0 16px 13px; font-size: 13.5px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0; }
+.cta-inline { margin: 0 28px 28px; padding: 20px 24px; background: linear-gradient(135deg, #0a1628, #0f1f38); border-radius: 14px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.cta-text { font-size: 15px; font-weight: 700; color: #fff; }
+.cta-btn { display: inline-flex; padding: 10px 20px; border-radius: 10px; background: #d92d20; color: #fff; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; }
+.cta-btn:hover { background: #b52418; text-decoration: none; }
+.sidebar-stack { display: grid; gap: 16px; position: sticky; top: 80px; }
+.sidebar-nav-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 14px; padding: 18px 20px; }
+.snc-title { font-size: 14px; font-weight: 700; color: #1a1d23; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(26,29,35,0.08); }
+.snc-links { display: flex; flex-direction: column; gap: 2px; }
+.snc-link { display: block; padding: 8px 10px; font-size: 13.5px; color: #374151; text-decoration: none; border-radius: 8px; }
+.snc-link:hover { background: rgba(217,45,32,0.06); color: #d92d20; text-decoration: none; }
+.snc-link.active { background: rgba(217,45,32,0.07); color: #d92d20; font-weight: 600; }
+</style>

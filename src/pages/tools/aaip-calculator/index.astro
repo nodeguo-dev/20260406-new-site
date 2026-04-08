@@ -1,0 +1,151 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民打分", href: "/tools/" },
+  { name: "AAIP Worker EOI", href: "/tools/aaip-calculator/" },
+];
+---
+<BaseLayout
+  title={withSiteTitle("阿省 AAIP Worker EOI 打分计算器（100分）")}
+  description="Alberta Advantage Immigration Program Worker Expression of Interest 分值估算（满分 100），与阿省官网 Worker EOI 打分表一致，用于 Alberta Express Entry Stream 等 Worker 类通道参考。"
+  canonical="https://cachinavisa.com/tools/aaip-calculator/"
+>
+  <div class="container calc-wrap">
+    <Breadcrumbs items={breadcrumbs} />
+    <header class="calc-head">
+      <h1 class="calc-h1">AAIP · Worker EOI 计算器</h1>
+      <p class="calc-lead">
+        依据阿省公布的
+        <a href="https://www.alberta.ca/aaip-alberta-express-entry-stream-how-to-apply" target="_blank" rel="noopener noreferrer">Worker EOI 打分表</a>
+        （100 分）。邀请还受职业、行业、配额等影响，分数高不代表必然获邀。
+      </p>
+    </header>
+
+    <form class="calc-form" id="aaip-form">
+      <fieldset class="fs">
+        <legend>学历</legend>
+        <label>最高学历
+          <select name="edu">
+            <option value="doctoral">博士</option>
+            <option value="masters" selected>硕士</option>
+            <option value="bachelor">本科</option>
+            <option value="trades_cert">技工证书</option>
+            <option value="diploma_cert">大专/证书</option>
+            <option value="secondary">高中及以下</option>
+          </select>
+        </label>
+        <label>学历取得地
+          <select name="eduLoc">
+            <option value="alberta">阿尔伯塔省院校</option>
+            <option value="other_canada" selected>加拿大其他省份</option>
+            <option value="foreign">加拿大以外</option>
+          </select>
+        </label>
+      </fieldset>
+
+      <fieldset class="fs">
+        <legend>语言</legend>
+        <label>英语 CLB（四项最低分）
+          <input type="number" name="clb" min="0" max="12" value="7" />
+        </label>
+        <label>法语 NCLC（四项最低分，未考填 0）
+          <input type="number" name="nclc" min="0" max="12" value="0" />
+        </label>
+      </fieldset>
+
+      <fieldset class="fs">
+        <legend>工作经验（月）</legend>
+        <label>累计技术类工作（加拿大+海外）
+          <input type="number" name="totalM" min="0" value="24" />
+        </label>
+        <label>在阿省工作月数
+          <input type="number" name="abM" min="0" value="12" />
+        </label>
+        <label>在加拿大其他省份工作月数
+          <input type="number" name="ocM" min="0" value="0" />
+        </label>
+      </fieldset>
+
+      <fieldset class="fs">
+        <legend>其他</legend>
+        <label>年龄
+          <input type="number" name="age" min="18" max="99" value="32" />
+        </label>
+        <label class="chk"><input type="checkbox" name="family" /> 有符合要求的阿省亲属</label>
+        <label class="chk"><input type="checkbox" name="job" checked /> 持有符合条件的阿省全职长期 job offer</label>
+        <label class="chk"><input type="checkbox" name="rural" /> 雇主工作地位于卡尔加里/埃德蒙顿大都会区以外</label>
+        <label class="chk"><input type="checkbox" name="reg" /> 持有效阿省监管职业或技工证书（按 AAIP 定义）</label>
+      </fieldset>
+
+      <button type="button" class="btn-calc" id="btn-aaip">计算 Worker EOI</button>
+    </form>
+
+    <section class="result-panel" id="aaip-result" hidden>
+      <div class="score-big"><span id="aaip-total">0</span> <span class="sub">/ 100</span></div>
+      <ul class="break-list" id="aaip-break"></ul>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .calc-wrap { max-width: 720px; padding-top: 18px; padding-bottom: 56px; }
+  .calc-head { margin-bottom: 24px; }
+  .calc-h1 { font-size: clamp(24px, 3.5vw, 32px); font-weight: 900; margin: 0 0 12px; }
+  .calc-lead { margin: 0; font-size: 15px; color: var(--muted); line-height: 1.75; }
+  .calc-form { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 22px 24px 28px; }
+  .fs { border: none; margin: 0 0 20px; padding: 0; }
+  .fs legend { font-weight: 800; font-size: 14px; margin-bottom: 12px; }
+  .fs label { display: block; font-size: 13px; margin-bottom: 14px; }
+  .fs select, .fs input[type="number"] {
+    display: block; width: 100%; margin-top: 6px; padding: 10px 12px;
+    border-radius: 10px; border: 1px solid var(--border-2); font-size: 15px;
+  }
+  .chk { display: flex; align-items: flex-start; gap: 8px; }
+  .btn-calc {
+    width: 100%; padding: 14px; font-size: 16px; font-weight: 800;
+    border: none; border-radius: 12px; cursor: pointer;
+    background: linear-gradient(135deg, #b45309, #f59e0b); color: #fff;
+  }
+  .result-panel { margin-top: 24px; padding: 24px; background: linear-gradient(135deg, #1a0a0a, #422006); border-radius: 16px; color: #fff; }
+  .score-big { font-size: 42px; font-weight: 900; }
+  .score-big .sub { font-size: 18px; opacity: 0.7; }
+  .break-list { list-style: none; margin: 16px 0 0; padding: 0; font-size: 14px; }
+  .break-list li { display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.12); padding: 8px 0; }
+</style>
+
+<script>
+  import { calculateAaipEoi, type AaipEoiInput } from "@/lib/calculators/aaipEoi";
+
+  document.getElementById("btn-aaip")?.addEventListener("click", () => {
+    const f = (document.getElementById("aaip-form") as HTMLFormElement).elements;
+    const nclc = Number((f.namedItem("nclc") as HTMLInputElement).value);
+    const input: AaipEoiInput = {
+      education: (f.namedItem("edu") as HTMLSelectElement).value as AaipEoiInput["education"],
+      educationLocation: (f.namedItem("eduLoc") as HTMLSelectElement).value as AaipEoiInput["educationLocation"],
+      englishClb: Number((f.namedItem("clb") as HTMLInputElement).value),
+      frenchNclc: nclc > 0 ? nclc : null,
+      totalSkilledMonths: Number((f.namedItem("totalM") as HTMLInputElement).value),
+      albertaWorkMonths: Number((f.namedItem("abM") as HTMLInputElement).value),
+      otherCanadaWorkMonths: Number((f.namedItem("ocM") as HTMLInputElement).value),
+      age: Number((f.namedItem("age") as HTMLInputElement).value),
+      familyInAlberta: (f.namedItem("family") as HTMLInputElement).checked,
+      hasAlbertaJobOffer: (f.namedItem("job") as HTMLInputElement).checked,
+      jobOutsideCalgaryEdmonton: (f.namedItem("rural") as HTMLInputElement).checked,
+      regulatedOccupationPoints: (f.namedItem("reg") as HTMLInputElement).checked,
+    };
+    const r = calculateAaipEoi(input);
+    document.getElementById("aaip-total")!.textContent = String(r.total);
+    const ul = document.getElementById("aaip-break")!;
+    ul.innerHTML = "";
+    for (const [k, v] of Object.entries(r.breakdown)) {
+      const li = document.createElement("li");
+      li.innerHTML = `<span>${k}</span><span>${v}</span>`;
+      ul.appendChild(li);
+    }
+    document.getElementById("aaip-result")?.removeAttribute("hidden");
+  });
+</script>

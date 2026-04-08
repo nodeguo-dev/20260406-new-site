@@ -1,0 +1,231 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { projectsHubSections } from "@/data/projectsHub";
+import { withSiteTitle } from "@/utils/seo";
+import { getCollection } from "astro:content";
+
+const projects = (await getCollection("projects"))
+  .filter((p) => !p.data.draft)
+  .sort(
+    (a, b) =>
+      new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime(),
+  );
+
+const groups = new Map<string, typeof projects>();
+for (const p of projects) {
+  const key = p.data.projectType;
+  groups.set(key, [...(groups.get(key) ?? []), p]);
+}
+const groupKeys = Array.from(groups.keys());
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民项目", href: "/projects/" },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("加拿大移民项目 | 联邦·省提名·雇主担保·EE 定向（专题入口）")}
+  description="移民项目枢纽：联邦 EE、CEC、各省 PNP、LMIA、留学转移民等专题页一站式入口；下方另有项目库长文目录。适合人群、条件与材料以各专题页为准。"
+  canonical="https://cachinavisa.com/projects/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <div class="grid">
+    <section class="card">
+      <div class="card-inner">
+        <Breadcrumbs items={breadcrumbs} />
+        <div class="kicker" style="margin-top:10px">移民项目</div>
+        <h1 class="h1">加拿大移民项目：专题入口 + 项目库</h1>
+        <p class="muted" style="margin:10px 0 0">
+          本站把「高频路径」做成<strong>专题拆解页</strong>（联邦、EE 定向、各省提名、LMIA 等），把部分主题同时整理成<strong>项目库长文</strong>（统一结构：适合人群 → 条件 → 材料证据链 → 时间线 →
+          风险点）。你可以先从下方专题入口进入；需要深度阅读时再查文末目录。
+        </p>
+        <div class="hr"></div>
+
+        <div class="ph-quick">
+          <span class="ph-quick-label">快速跳转：</span>
+          <div class="meta">
+            {projectsHubSections.map((s) => (
+              <a class="pill" href={`#${s.id}`}>
+                {s.title.split("（")[0].trim()}
+              </a>
+            ))}
+            <a class="pill" href="#library">
+              项目库长文
+            </a>
+          </div>
+        </div>
+
+        {projectsHubSections.map((section) => (
+          <div class="ph-section" id={section.id}>
+            <h2 class="h2">{section.title}</h2>
+            {section.intro ? <p class="muted ph-intro">{section.intro}</p> : null}
+            <div class="ph-grid">
+              {section.links.map((link) => (
+                <a class="ph-card" href={link.href}>
+                  <div class="ph-card-title">{link.label}</div>
+                  {link.desc ? <div class="ph-card-desc">{link.desc}</div> : null}
+                  <div class="ph-card-cta">查看专题 →</div>
+                </a>
+              ))}
+            </div>
+          </div>
+        ))}
+
+        <div class="hr" />
+        <div id="library" class="ph-section">
+          <h2 class="h2">项目库长文目录</h2>
+          <p class="muted ph-intro">
+            以下为内容库中的项目类长文（按类型分组）。若与上方专题页主题重复，以<strong>专题页</strong>的版式更新为准；长文可作补充阅读。
+          </p>
+          <div class="meta">
+            {groupKeys.map((k) => (
+              <a class="pill" href={`#t-${encodeURIComponent(k)}`}>
+                {k}
+              </a>
+            ))}
+          </div>
+          <div class="hr" />
+          <div class="list">
+            {groupKeys.map((k) => (
+              <section id={`t-${k}`} class="card" style="background:transparent; box-shadow:none;">
+                <div class="card-inner" style="padding:0">
+                  <h3 class="h2" style="font-size:1.25rem">{k}</h3>
+                  <div class="list">
+                    {(groups.get(k) ?? []).map((p) => (
+                      <a class="list-item" href={`/projects/${p.slug}/`}>
+                        <div style="font-weight:750; font-size:18px">{p.data.title}</div>
+                        <div class="muted" style="margin-top:8px">{p.data.excerpt}</div>
+                        <div class="meta">
+                          {p.data.region ? <span class="pill">地区：{p.data.region}</span> : null}
+                          {p.data.tags?.slice(0, 4).map((t) => <span class="pill">#{t}</span>)}
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+    <aside class="list">
+      <ContactCard title="不知道选哪个项目？" />
+      <section class="card">
+        <div class="card-inner">
+          <h2 class="h2">移民打分工具</h2>
+          <p class="muted" style="margin:0 0 12px; font-size:14px">
+            入池前可先自助估算 CRS 或各省 EOI，再对照专题页里的门槛与邀请逻辑。
+          </p>
+          <div class="meta">
+            <a class="pill" href="/tools/crs-calculator/">CRS</a>
+            <a class="pill" href="/tools/bc-pnp-calculator/">BC SIRS</a>
+            <a class="pill" href="/tools/oinp-calculator/">OINP EOI</a>
+            <a class="pill" href="/tools/aaip-calculator/">AAIP EOI</a>
+          </div>
+          <div class="hr" />
+          <a class="btn" href="/tools/">进入：打分工具总览</a>
+        </div>
+      </section>
+      <section class="card">
+        <div class="card-inner">
+          <h2 class="h2">新手与政策</h2>
+          <div class="muted">
+            还不确定从哪条通道起步时，建议先看「移民资讯」聚合与新手必读，再回本项目页对照条件。
+          </div>
+          <div class="hr" />
+          <a class="btn" href="/immigration/guide/">新手必读（保姆级）</a>
+          <a
+            class="btn-outline"
+            style="margin-top:10px; width:100%; justify-content:center"
+            href="/immigration/"
+          >
+            移民资讯总览
+          </a>
+        </div>
+      </section>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+  .ph-quick {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 14px;
+    margin-bottom: 8px;
+  }
+  .ph-quick-label {
+    font-size: 14px;
+    font-weight: 650;
+    color: var(--text-2);
+  }
+  .ph-section {
+    margin-top: 28px;
+  }
+  .ph-intro {
+    margin: 8px 0 14px;
+    max-width: 52rem;
+    font-size: 15px;
+  }
+  .ph-grid {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+  .ph-card {
+    display: flex;
+    flex-direction: column;
+    padding: 14px 16px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    box-shadow: var(--shadow-sm);
+    text-decoration: none;
+    color: inherit;
+    transition:
+      border-color 0.15s var(--ease),
+      box-shadow 0.15s var(--ease);
+  }
+  .ph-card:hover {
+    border-color: var(--border-2);
+    box-shadow: var(--shadow);
+    text-decoration: none;
+  }
+  .ph-card-title {
+    font-weight: 750;
+    font-size: 15px;
+    color: var(--link);
+    line-height: 1.35;
+  }
+  .ph-card-desc {
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.55;
+    flex: 1;
+  }
+  .ph-card-cta {
+    margin-top: 10px;
+    font-size: 12px;
+    font-weight: 650;
+    color: var(--red);
+  }
+</style>

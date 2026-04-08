@@ -1,0 +1,45 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import { withSiteTitle } from "@/utils/seo";
+import { getCollection } from "astro:content";
+
+const entries = (await getCollection("baike"))
+  .filter((e) => !e.data.draft)
+  .sort(
+    (a, b) =>
+      new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime(),
+  );
+---
+
+<BaseLayout
+  title={withSiteTitle("百科 | 加拿大移民签证术语与材料知识库")}
+  description="把移民/签证/留学里最常见的术语、材料与流程做成可查阅的知识库，方便你快速理解并减少信息误读。"
+  canonical="https://cachinavisa.com/baike/"
+>
+  <div class="grid">
+    <section class="card">
+      <div class="card-inner prose">
+        <h1 class="h1">百科（知识库）</h1>
+        <p class="muted">
+          我们会把高频术语与材料逻辑拆成“短条目 + 举例 + 自查要点”，方便你快速定位到你正在处理的问题。
+        </p>
+        <h2>最新条目</h2>
+        <div class="list" style="margin-top:10px">
+          {entries.map((e) => (
+            <a class="list-item" href={`/baike/${e.slug}/`}>
+              <div style="font-weight:750; font-size:18px">{e.data.title}</div>
+              <div class="muted" style="margin-top:8px">{e.data.description}</div>
+              <div class="meta">
+                {e.data.tags?.slice(0, 4).map((t) => <span class="pill">#{t}</span>)}
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+    <aside class="list">
+      <ContactCard />
+    </aside>
+  </div>
+</BaseLayout>

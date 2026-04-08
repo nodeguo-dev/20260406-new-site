@@ -1,0 +1,300 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "加拿大签证", href: "/visa/" },
+  { name: "学习许可（学签）", href: "/visa/study-permit/" },
+];
+
+const faqItems = [
+  {
+    q: "拿到录取通知书（LOA）就能申请学签了吗？",
+    a: "基本上是的，LOA是学签申请的核心材料之一。但在提交申请之前，还需要确认学校是DLI（指定学习机构），准备好资金证明，并决定走普通通道还是SDS快速通道。一些省份和项目受到招生上限影响，建议先确认学校的DLI状态再开始申请流程。"
+  },
+  {
+    q: "SDS通道是什么？我能用吗？",
+    a: "SDS（Student Direct Stream）是针对特定国家（包括中国）申请人的快速学签通道，通常20个工作日内给结果。条件是：就读DLI指定的大专或大学项目；雅思学术类总分6.0（各项不低于6.0）；在加拿大指定银行预存一年的生活费（$20,635 CAD）。如果你满足这些条件，走SDS明显比普通通道快。"
+  },
+  {
+    q: "资金证明要多少钱才够？",
+    a: "2024年起IRCC更新了最低生活费标准：本人$20,635 CAD/年（原来是$10,000，涨了一倍多）。此外还需要第一年学费。有随行配偶再加$4,000，每个子女再加$3,000。如果走SDS，这笔钱必须预存在指定银行账户里；普通通道则需要银行存款证明或担保人收入证明。"
+  },
+  {
+    q: "学签里的学习许可条件（study permit conditions）是什么意思？",
+    a: "学签上会印有条件限制，典型的包括：不得在未经授权的情况下工作、必须就读指定学校的指定项目等。一旦违反这些条件，身份可能失效，需要提出恢复申请，并可能影响后续签证。每次更换学校或专业，都需要评估是否需要更新学签上的条件。"
+  },
+  {
+    q: "在读期间可以工作吗？每周最多几小时？",
+    a: "全日制课程学生在学期期间（非假期）可以在校外工作，自2024年4月起限制为每周24小时（此前曾临时开放40小时）。假期期间（包括寒暑假和计划中的校际假期）可全职工作，没有小时数限制。未来政策可能再次调整，建议以IRCC官网最新规定为准。"
+  },
+  {
+    q: "我学完了，PGWP怎么申请？",
+    a: "毕业后可以申请毕业后工作许可（PGWP），有效期通常与就读项目等长（最长3年）。申请条件：持有效学签完成全部学业；毕业后在护照和学签仍有效的情况下提交申请；就读学校须为具备PGWP资格的DLI。2024年起部分类别的学校（如私立学校）的PGWP资格有所变化，申请前需确认。"
+  },
+  {
+    q: "我学签快到期了，忘了续签怎么办？",
+    a: "如果在学签到期前已经提交了续签申请，你可以依据「维持身份」（Maintained Status）原则继续学习，直到IRCC对你的申请作出决定。如果学签已经到期才想到续签，你实际上已经失去了合法身份，需要提交恢复申请，处理结果并不确定。建议在学签到期前至少6–8周提交续签申请。"
+  },
+  {
+    q: "配偶可以陪读吗？能工作吗？",
+    a: "学签申请人在读期间，符合条件的配偶可以申请开放式工作许可（OWP）。2024年起政策有收紧：只有就读硕士、博士项目或特定热门本科和专科项目的学生，其配偶才有资格申请OWP。就读语言课程或普通本科的学生，配偶目前暂时无法申请工签。政策较复杂，建议以IRCC最新公告为准。"
+  },
+  {
+    q: "我想换学校或换专业，需要重新申请学签吗？",
+    a: "不一定需要重新申请，但需要确认：学签上列明的条件是否限制了你只能就读特定学校；新学校是否也是DLI；如果只是换专业但学校不变，通常无需申请新学签，但如果学签上写明了学校，换学校就需要更新。建议换学校/专业前先咨询，避免不知情违规。"
+  },
+];
+
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((i) => ({
+    "@type": "Question",
+    name: i.q,
+    acceptedAnswer: { "@type": "Answer", text: i.a },
+  })),
+};
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+---
+<BaseLayout
+  title={withSiteTitle("加拿大学习许可（学签）申请指南 | DLI·SDS·PGWP全解析")}
+  description="加拿大学签完整指南：DLI指定院校选择、2024年最新资金要求、SDS快速通道条件、在读工作权限、毕业后PGWP申请及9个常见问题解答。"
+  canonical="https://cachinavisa.com/visa/study-permit/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={faqLd} />
+  <Breadcrumbs items={breadcrumbs} />
+  <div class="grid" style="margin-top:16px">
+    <article class="content-card">
+      <div class="page-header">
+        <div class="page-kicker">学习许可 · Study Permit</div>
+        <h1 class="page-h1">加拿大学习许可（学签）申请指南</h1>
+        <p class="page-intro">在加拿大就读超过6个月的课程，需要持有学习许可（Study Permit）。从选择DLI指定学校、申请SDS快速通道，到在读期间的工作权限和毕业后的PGWP，这里提供基于IRCC 2024–2025年政策的完整说明。</p>
+      </div>
+
+      <div class="content-sections">
+
+        <div class="section-block">
+          <h2>第一步：确认就读学校是DLI</h2>
+          <p>只有IRCC认可的<strong>指定学习机构（DLI）</strong>，毕业生才能持学签就读，也才有资格申请PGWP。申请前需确认：</p>
+          <ul class="req-list">
+            <li>所有公立大学和学院基本都是DLI，但仍建议在IRCC官网核查DLI编号</li>
+            <li>部分私立语言学校和职业学院需要特别核查</li>
+            <li>2024年起，部分私立学校失去了PGWP资格，但保留DLI资格——如果你想毕业后留下来工作，这个区别非常重要</li>
+            <li>就读非DLI机构，学签申请会被直接拒绝</li>
+          </ul>
+          <div class="tip-box">在IRCC官网搜索"DLI list"即可查到最新认可院校名单，输入学校名称核查其DLI编号，确认后再开始申请流程。</div>
+        </div>
+
+        <div class="section-block">
+          <h2>核心申请条件</h2>
+          <ul class="req-list">
+            <li><strong>录取通知书（LOA）</strong>——来自DLI的正式录取通知书，需包含项目名称、开学日期、DLI编号</li>
+            <li><strong>资金证明</strong>——证明能够负担学费及在加期间的生活费（见下方详细说明）</li>
+            <li><strong>语言能力证明</strong>——雅思/托福等成绩（院校要求的语言标准通常也作为IRCC评估依据之一）</li>
+            <li><strong>健康状况</strong>——部分申请人（特定国家或项目超过6个月）需进行移民体检</li>
+            <li><strong>无不良记录</strong>——无犯罪记录，无加拿大移民法违规历史</li>
+            <li><strong>离境意向</strong>——能证明学习完成后会离开加拿大（除非有合法延期或PR路径）</li>
+          </ul>
+        </div>
+
+        <div class="section-block">
+          <h2>资金证明要求（2024年最新标准）</h2>
+          <p>IRCC于2024年1月大幅提高了生活费最低要求：</p>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-card-label">学费（第一年）</div>
+              <div class="info-card-value">全额学费（录取通知书上显示）</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">申请人生活费</div>
+              <div class="info-card-value">$20,635 CAD / 年（2024年新标准）</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">随行配偶生活费</div>
+              <div class="info-card-value">另加 $4,000 CAD / 年</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">每名随行子女</div>
+              <div class="info-card-value">另加 $3,000 CAD / 年</div>
+            </div>
+          </div>
+          <div class="tip-box">2024年前的旧标准是$10,000 CAD，现在翻了一倍多。所有2024年后提交的申请都适用新标准，资金不足是常见被拒原因之一。</div>
+        </div>
+
+        <div class="section-block">
+          <h2>SDS快速通道（Student Direct Stream）</h2>
+          <p>中国（及其他特定国家）申请人可以通过SDS通道提交，通常20个工作日内处理完毕。SDS的申请条件：</p>
+          <ul class="req-list">
+            <li>在加拿大公立或私立DLI的学士或研究生项目（部分专科也适用）</li>
+            <li>雅思学术类（IELTS Academic）总分6.0，且每个子项均不低于6.0</li>
+            <li>在加拿大指定银行（TD、BMO等）预先存入$20,635 CAD并提供存款证明信（GIC）</li>
+            <li>已完成移民体检（Medical Exam）</li>
+            <li>申请所有材料准备齐全，无历史拒签记录（有拒签记录不一定不能用SDS，但需要咨询）</li>
+          </ul>
+        </div>
+
+        <div class="section-block">
+          <h2>在读期间的工作权限</h2>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-card-label">学期中（校外）</div>
+              <div class="info-card-value">每周最多 24 小时（2024年4月起）</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">假期期间（暑假/寒假）</div>
+              <div class="info-card-value">无小时限制，可全职工作</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">校内工作</div>
+              <div class="info-card-value">不受小时数限制</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">配偶工签资格</div>
+              <div class="info-card-value">2024年起部分收紧（仅限研究生等特定项目）</div>
+            </div>
+          </div>
+          <div class="tip-box">2024年政策对校外工作时限进行了调整（从临时的40小时调回24小时）。如计划在读期间打工，务必了解最新规定，超时工作可能导致身份违规。</div>
+        </div>
+
+        <div class="section-block">
+          <h2>毕业后工作许可（PGWP）</h2>
+          <p>完成学业后，符合条件的国际学生可申请PGWP，在加拿大合法工作，也是很多人通往永久居留的重要一步。</p>
+          <ul class="req-list">
+            <li>就读具备PGWP资格的DLI项目（2024年起私立学校资质有变化，需确认）</li>
+            <li>全日制就读（除非特殊情况如疫情或院校要求）</li>
+            <li>在学签和护照仍在有效期内申请</li>
+            <li>PGWP有效期通常与项目时长一致，最长3年</li>
+            <li>PGWP期间积累的工作经验可用于快速移民（如CEC、省提名等）</li>
+          </ul>
+        </div>
+
+        <div class="section-block">
+          <h2>费用与处理时间</h2>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-card-label">学签申请费</div>
+              <div class="info-card-value">$150 CAD / 人</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">生物特征费</div>
+              <div class="info-card-value">$85 CAD / 人</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">普通通道处理时间</div>
+              <div class="info-card-value">8–16 周（因时期而异）</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">SDS快速通道</div>
+              <div class="info-card-value">约 20 个工作日</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2>常见问题（FAQ）</h2>
+          {faqItems.map((item) => (
+            <details class="faq-item">
+              <summary class="faq-q">{item.q}</summary>
+              <p class="faq-a">{item.a}</p>
+            </details>
+          ))}
+        </div>
+
+      </div>
+      <div class="page-share">
+        <ShareBar url="https://cachinavisa.com/visa/study-permit/" title={"加拿大学习许可（学签）申请指南 | DLI·SDS·PGWP全解析"} />
+      </div>
+
+
+      <div class="cta-inline">
+        <div class="cta-text">学签怎么准备才稳？我们帮你把每个细节做对。</div>
+        <a class="cta-btn" href="/contact/">免费咨询 →</a>
+      </div>
+    </article>
+
+    <aside class="sidebar-stack">
+      <ContactCard />
+      <div class="sidebar-nav-card">
+        <div class="snc-title">签证子栏目</div>
+        <div class="snc-links">
+          <a class="snc-link" href="/visa/visitor/">访问签 / 旅游签</a>
+          <a class="snc-link" href="/visa/family-visit/">探亲签证</a>
+          <a class="snc-link" href="/visa/super-visa/">超级签证（父母/祖父母）</a>
+          <a class="snc-link active" href="/visa/study-permit/">学习许可（学签）</a>
+          <a class="snc-link" href="/visa/work-permit/">工作签证（工签）</a>
+          <a class="snc-link" href="/visa/french-mobility-work-permit/">法语流动工签</a>
+          <a class="snc-link" href="/visa/c11-work-permit/">C11 重大利益工签</a>
+          <a class="snc-link" href="/visa/extend/">续签 / 延期 / 境内转换</a>
+        </div>
+      </div>
+      <div class="sidebar-nav-card">
+        <div class="snc-title">相关页面</div>
+        <div class="snc-links">
+          <a class="snc-link" href="/school/">免费申请学校</a>
+          <a class="snc-link" href="/inland/status-extension/">境内身份续签</a>
+          <a class="snc-link" href="/projects/">移民项目列表</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+.grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 920px) { .grid { grid-template-columns: 1fr 300px; align-items: start; } }
+.content-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 16px; overflow: hidden; }
+.page-header { padding: 28px 28px 24px; border-bottom: 1px solid rgba(26,29,35,0.08); background: linear-gradient(135deg, #fafbff, #fff); }
+.page-kicker { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #d92d20; margin-bottom: 8px; }
+.page-h1 { font-size: clamp(22px, 4vw, 30px); font-weight: 800; color: #1a1d23; margin: 0 0 12px; letter-spacing: -0.02em; }
+.page-intro { font-size: 15px; color: rgba(26,29,35,0.62); line-height: 1.7; margin: 0; }
+.content-sections { padding: 24px 28px; display: grid; gap: 32px; }
+.section-block h2 { font-size: 18px; font-weight: 750; color: #1a1d23; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 2px solid rgba(217,45,32,0.12); }
+.section-block p { font-size: 14px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0 0 12px; }
+.req-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.req-list li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; background: rgba(26,29,35,0.025); border-radius: 10px; font-size: 14px; color: rgba(26,29,35,0.75); line-height: 1.55; }
+.req-list li::before { content: "✓"; color: #d92d20; font-weight: 700; flex-shrink: 0; }
+.step-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; counter-reset: steps; }
+.step-list li { display: flex; gap: 14px; align-items: flex-start; counter-increment: steps; }
+.step-list li::before { content: counter(steps); display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #d92d20; color: #fff; font-weight: 700; font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+.step-text { font-size: 14px; color: rgba(26,29,35,0.75); line-height: 1.6; padding-top: 3px; }
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.info-card { padding: 14px 16px; background: rgba(26,29,35,0.03); border-radius: 12px; border: 1px solid rgba(26,29,35,0.07); }
+.info-card-label { font-size: 12px; color: rgba(26,29,35,0.45); margin-bottom: 4px; }
+.info-card-value { font-size: 14px; font-weight: 600; color: #1a1d23; }
+.tip-box { padding: 14px 16px; background: rgba(217,45,32,0.05); border-left: 3px solid #d92d20; border-radius: 0 10px 10px 0; font-size: 13px; color: rgba(26,29,35,0.7); line-height: 1.65; margin-top: 12px; }
+.faq-item { border: 1px solid rgba(26,29,35,0.09); border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+.faq-q { padding: 13px 16px; font-weight: 650; font-size: 14px; cursor: pointer; list-style: none; display: flex; justify-content: space-between; color: #1a1d23; }
+.faq-q::after { content: "+"; font-size: 18px; color: rgba(26,29,35,0.4); }
+details[open] .faq-q::after { content: "−"; }
+.faq-q::-webkit-details-marker { display: none; }
+.faq-a { padding: 0 16px 13px; font-size: 13.5px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0; }
+.cta-inline { margin: 0 28px 28px; padding: 20px 24px; background: linear-gradient(135deg, #0a1628, #0f1f38); border-radius: 14px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.cta-text { font-size: 15px; font-weight: 700; color: #fff; }
+.cta-btn { display: inline-flex; padding: 10px 20px; border-radius: 10px; background: #d92d20; color: #fff; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; }
+.cta-btn:hover { background: #b52418; text-decoration: none; }
+.sidebar-stack { display: grid; gap: 16px; position: sticky; top: 80px; }
+.sidebar-nav-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 14px; padding: 18px 20px; }
+.snc-title { font-size: 14px; font-weight: 700; color: #1a1d23; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(26,29,35,0.08); }
+.snc-links { display: flex; flex-direction: column; gap: 2px; }
+.snc-link { display: block; padding: 8px 10px; font-size: 13.5px; color: #374151; text-decoration: none; border-radius: 8px; }
+.snc-link:hover { background: rgba(217,45,32,0.06); color: #d92d20; text-decoration: none; }
+.snc-link.active { background: rgba(217,45,32,0.07); color: #d92d20; font-weight: 600; }
+</style>

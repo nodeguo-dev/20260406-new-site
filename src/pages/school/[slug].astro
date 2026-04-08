@@ -1,0 +1,100 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import Disclaimer from "@/components/Disclaimer.astro";
+import FaqBlock from "@/components/FaqBlock.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { formatDateCN } from "@/utils/dates";
+import { withSiteTitle } from "@/utils/seo";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const entries = (await getCollection("schools")).filter((e) => !e.data.draft);
+  return entries.map((e) => ({ params: { slug: e.slug } }));
+}
+
+const entries = (await getCollection("schools")).filter((e) => !e.data.draft);
+const entry = entries.find((e) => e.slug === Astro.params.slug);
+if (!entry) throw new Error(`School entry not found: ${Astro.params.slug}`);
+
+const { Content } = await entry.render();
+const publish = new Date(entry.data.publishDate);
+const updated = entry.data.updatedDate ? new Date(entry.data.updatedDate) : undefined;
+const canonical =
+  entry.data.canonical ?? new URL(`/school/${entry.slug}/`, site.url).toString();
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "免费申请学校", href: "/school/" },
+  { name: entry.data.title, href: `/school/${entry.slug}/` },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+
+const faqLd =
+  entry.data.faq?.length
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: entry.data.faq.map((i) => ({
+          "@type": "Question",
+          name: i.question,
+          acceptedAnswer: { "@type": "Answer", text: i.answer },
+        })),
+      }
+    : null;
+---
+
+<BaseLayout
+  title={withSiteTitle(entry.data.title)}
+  description={entry.data.description}
+  canonical={canonical}
+>
+  <JsonLd data={breadcrumbLd} />
+  {faqLd ? <JsonLd data={faqLd} /> : null}
+
+  <div class="grid">
+    <article class="card">
+      <div class="card-inner">
+        <Breadcrumbs items={breadcrumbs} />
+        <div style="margin-top:10px" class="kicker">学校与升学</div>
+        <h1 class="h1" style="margin-top:6px">{entry.data.title}</h1>
+        <div class="meta">
+          <span class="pill">发布：{formatDateCN(publish)}</span>
+          {updated ? <span class="pill">更新：{formatDateCN(updated)}</span> : null}
+          {entry.data.province ? <span class="pill">省份：{entry.data.province}</span> : null}
+          {entry.data.city ? <span class="pill">城市：{entry.data.city}</span> : null}
+          {entry.data.website ? (
+            <a class="pill" href={entry.data.website} rel="nofollow">
+              官方网站
+            </a>
+          ) : null}
+          {entry.data.tags?.slice(0, 6).map((t) => <span class="pill">#{t}</span>)}
+        </div>
+        <p class="muted" style="margin:14px 0 0">{entry.data.excerpt}</p>
+        <div class="hr"></div>
+        <div class="prose">
+          <Content />
+        </div>
+      </div>
+    </article>
+
+    <aside class="list">
+      <ContactCard title="想要选校清单与时间线？" />
+      {entry.data.faq?.length ? <FaqBlock items={entry.data.faq} /> : null}
+      <Disclaimer />
+    </aside>
+  </div>
+</BaseLayout>
+

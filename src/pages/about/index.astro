@@ -1,0 +1,297 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const orgLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: site.name,
+  url: site.url,
+  email: site.contact.email,
+  telephone: site.contact.phoneCA,
+  address: site.contact.locations.map((l) => ({
+    "@type": "PostalAddress",
+    addressLocality: l.value,
+    addressCountry: "CA",
+  })),
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("关于我们 | 常春藤国际咨询")}
+  description="常春藤国际咨询：8年+专注加拿大移民、签证、留学与境内事务。多伦多总部，深圳与成都设有办公室，提供专业、透明、可执行的移民咨询服务。"
+  canonical="https://cachinavisa.com/about/"
+  fullWidth={true}
+>
+  <JsonLd data={orgLd} />
+
+  <!-- Hero -->
+  <section class="about-hero">
+    <div class="ah-bg"></div>
+    <div class="container ah-inner">
+      <div class="ah-kicker">关于我们</div>
+      <h1 class="ah-title">深耕加拿大移民 8 年<br />值得信赖的专业团队</h1>
+      <p class="ah-desc">常春藤国际咨询秉承"透明、专业、可执行"的服务理念，将复杂的移民政策转化为清晰的材料清单与时间规划，帮助每一位客户做出更明智的决定。</p>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <div class="about-stats-wrap">
+    <div class="container">
+      <div class="about-stats">
+        {site.stats.map((s) => (
+          <div class="ast-item">
+            <div class="ast-value">{s.value}</div>
+            <div class="ast-label">{s.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <div class="container about-body">
+
+    <!-- Our Story -->
+    <section class="ab-section">
+      <div class="ab-section-inner story-grid">
+        <div>
+          <div class="ab-kicker">我们的故事</div>
+          <h2 class="ab-h2">从亲历者到专业顾问</h2>
+          <p>常春藤国际咨询创立于加拿大多伦多，创始团队本身就是移民经历者。正因为亲身经历过信息不透明、材料准备混乱、时间节点被动等种种困境，我们决心用更系统、更透明的方式，帮助后来人走得更稳。</p>
+          <p>历经八年积累，我们已为来自中国大陆、香港、台湾及东南亚的 2500 余名客户提供服务，覆盖技术移民、省提名、家庭团聚、学签、工签及境内事务全类别。</p>
+          <p>我们不作"保证获批"的承诺，但我们承诺：在路径判断、材料证据链和时间规划上做到足够扎实，让您在每一个环节都清楚自己在做什么、为什么这样做。</p>
+        </div>
+        <div class="story-highlights">
+          <div class="sh-item">
+            <div class="sh-icon">🏢</div>
+            <div class="sh-title">多伦多总部</div>
+            <div class="sh-desc">北约克中心，加拿大本地团队全程跟进</div>
+          </div>
+          <div class="sh-item">
+            <div class="sh-icon">🇨🇳</div>
+            <div class="sh-title">中国双城布局</div>
+            <div class="sh-desc">深圳京基 100 · 成都东方天祥广场 B 座</div>
+          </div>
+          <div class="sh-item">
+            <div class="sh-icon">📅</div>
+            <div class="sh-title">7×12小时服务</div>
+            <div class="sh-desc">周一至周日 9:00–21:00，中加时区均可对接</div>
+          </div>
+          <div class="sh-item">
+            <div class="sh-icon">🌐</div>
+            <div class="sh-title">全类别覆盖</div>
+            <div class="sh-desc">技术移民、省提名、团聚、学签、工签、境内事务</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How we work -->
+    <section class="ab-section">
+      <div class="ab-kicker">我们的方法论</div>
+      <h2 class="ab-h2">四步可复用服务框架</h2>
+      <div class="method-grid">
+        {[
+          { step: "01", title: "信息梳理",     desc: "将您的关键信息整理成清单：当前身份、学历、语言成绩、工作经历、资金状况、家庭情况与目标时间线。信息越完整，判断越准确。" },
+          { step: "02", title: "路径优先级排序", desc: "基于您的背景筛选出 2–3 条最可行的路径，从成功概率、时间成本、费用与风险几个维度综合排序，给出明确建议，而非模糊的「每条都可以试」。" },
+          { step: "03", title: "材料证据链搭建", desc: "每项关键结论都必须有文件依据。我们提前帮您找出材料缺口与表述不一致之处，从源头降低后续补件或修改的概率。" },
+          { step: "04", title: "时间节点管理",   desc: "将递交节点、续签窗口与补件预案纳入统一计划，全程跟踪进度，在关键时间节点主动提醒，防范因疏漏引发的身份风险。" },
+        ].map((m) => (
+          <div class="method-card">
+            <div class="method-step">{m.step}</div>
+            <div class="method-title">{m.title}</div>
+            <div class="method-desc">{m.desc}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Services overview -->
+    <section class="ab-section">
+      <div class="ab-kicker">服务范围</div>
+      <h2 class="ab-h2">全类别移民与签证服务</h2>
+      <div class="services-grid">
+        {[
+          { icon: "🍁", title: "联邦快速通道（EE）", desc: "Express Entry 三大类别（FSW / CEC / FST），涵盖分数提升策略、入池优化与邀请后全流程申请服务。" },
+          { icon: "🏛️", title: "省提名计划（PNP）", desc: "覆盖安省 OINP、BC 省 BCPNP、阿省 AAIP、魁省等主要省份提名项目的资格评估与申请办理。" },
+          { icon: "💼", title: "LMIA 雇主担保",    desc: "协助雇主完成 LMIA 申请、工签申办，并规划后续移民衔接路径。" },
+          { icon: "👨‍👩‍👧", title: "家庭团聚移民",   desc: "为担保人评估资格，并为配偶、子女、父母及祖父母的团聚移民申请提供全套材料规划。" },
+          { icon: "📋", title: "各类签证申请",    desc: "包括旅游签、探亲签、超级签证、学签与工签的材料策略制定与申请递交服务。" },
+          { icon: "🏠", title: "境内身份事务",    desc: "处理续签衔接、桥梁开放工签（BOWP）、证件更新、PR 卡申请及登陆后定居规划。" },
+        ].map((s) => (
+          <div class="service-item">
+            <div class="si-icon">{s.icon}</div>
+            <div class="si-title">{s.title}</div>
+            <div class="si-desc">{s.desc}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Highlights (why choose us) -->
+    <section class="ab-section">
+      <div class="ab-kicker">为什么选择我们</div>
+      <h2 class="ab-h2">专业、透明、可执行</h2>
+      <div class="why-grid">
+        {site.highlights.map((h) => (
+          <div class="why-card">
+            <div class="wc-title">{h.title}</div>
+            <div class="wc-desc">{h.desc}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Offices -->
+    <section class="ab-section">
+      <div class="ab-kicker">办公地点</div>
+      <h2 class="ab-h2">我们在哪里</h2>
+      <div class="offices-grid">
+        {site.contact.locations.map((loc) => (
+          <div class="office-card">
+            <div class="oc-flag">{loc.label.includes("多伦多") ? "🇨🇦" : "🇨🇳"}</div>
+            <div class="oc-label">{loc.label}</div>
+            <div class="oc-value">{loc.value}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="about-cta">
+      <div class="acta-left">
+        <div class="acta-title">现在就开始您的移民咨询</div>
+        <div class="acta-desc">服务时间：{site.contact.hours}</div>
+        <div class="acta-contacts">
+          <a href={`tel:${site.contact.phoneCA}`} class="acta-contact-item">📞 加拿大：{site.contact.phoneCA}</a>
+          <a href={`tel:${site.contact.phoneCN}`} class="acta-contact-item">🇨🇳 国内：{site.contact.phoneCN}</a>
+          <span class="acta-contact-item">💬 微信：{site.contact.wechat}</span>
+          <a href={`mailto:${site.contact.email}`} class="acta-contact-item">✉️ {site.contact.email}</a>
+        </div>
+      </div>
+      <a class="acta-btn" href="/contact/">免费评估咨询</a>
+    </section>
+
+    <!-- Disclaimer -->
+    <p class="about-disclaimer">免责声明：{site.disclaimer}</p>
+
+  </div>
+</BaseLayout>
+
+<style>
+/* ── HERO ─────────────────────────────────────────────────────── */
+.about-hero {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0a1628 0%, #0f2040 50%, #1a0828 100%);
+  padding: 80px 0 80px;
+}
+.ah-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 60% at 80% 20%, rgba(217,45,32,0.18) 0%, transparent 60%),
+              radial-gradient(ellipse 50% 60% at 10% 80%, rgba(26,86,196,0.1) 0%, transparent 60%);
+  pointer-events: none;
+}
+.ah-inner { position: relative; z-index: 1; max-width: 700px; }
+.ah-kicker {
+  display: inline-block; padding: 5px 14px; border-radius: 999px;
+  background: rgba(217,45,32,0.2); border: 1px solid rgba(217,45,32,0.3);
+  color: #f87171; font-size: 12px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 16px;
+}
+.ah-title { font-size: clamp(30px, 5vw, 52px); font-weight: 900; color: #fff; margin: 0 0 18px; line-height: 1.15; letter-spacing: -0.03em; }
+.ah-desc { font-size: 17px; color: rgba(255,255,255,0.65); line-height: 1.8; margin: 0; max-width: 560px; }
+
+/* ── STATS ────────────────────────────────────────────────────── */
+.about-stats-wrap { background: #fff; border-bottom: 1px solid rgba(26,29,35,0.08); }
+.about-stats { display: grid; grid-template-columns: repeat(2, 1fr); }
+@media (min-width: 600px) { .about-stats { grid-template-columns: repeat(4, 1fr); } }
+.ast-item { padding: 22px 16px; text-align: center; border-right: 1px solid rgba(26,29,35,0.07); }
+.ast-item:last-child { border-right: none; }
+.ast-value { font-size: 28px; font-weight: 800; color: #d92d20; line-height: 1; }
+.ast-label { font-size: 12px; color: rgba(26,29,35,0.5); margin-top: 5px; }
+
+/* ── BODY ─────────────────────────────────────────────────────── */
+.about-body { padding-top: 48px; padding-bottom: 48px; }
+.ab-section { margin-bottom: 56px; }
+.ab-kicker { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #d92d20; margin-bottom: 8px; }
+.ab-h2 { font-size: clamp(20px, 3vw, 26px); font-weight: 800; color: #1a1d23; margin: 0 0 24px; }
+.ab-section p { font-size: 15px; color: rgba(26,29,35,0.68); line-height: 1.8; margin: 0 0 14px; }
+
+/* ── STORY ────────────────────────────────────────────────────── */
+.story-grid { display: grid; grid-template-columns: 1fr; gap: 32px; }
+@media (min-width: 860px) { .story-grid { grid-template-columns: 1.2fr 1fr; } }
+.story-highlights { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-content: start; }
+.sh-item { padding: 18px 16px; background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 14px; }
+.sh-icon { font-size: 22px; margin-bottom: 8px; }
+.sh-title { font-size: 14px; font-weight: 700; color: #1a1d23; margin-bottom: 4px; }
+.sh-desc { font-size: 12px; color: rgba(26,29,35,0.55); line-height: 1.5; }
+
+/* ── METHOD ───────────────────────────────────────────────────── */
+.method-grid { display: grid; gap: 14px; grid-template-columns: 1fr; }
+@media (min-width: 640px) { .method-grid { grid-template-columns: 1fr 1fr; } }
+.method-card {
+  padding: 22px 20px;
+  background: #fff;
+  border: 1px solid rgba(26,29,35,0.09);
+  border-radius: 16px;
+  border-left: 3px solid #d92d20;
+}
+.method-step { font-size: 11px; font-weight: 800; color: #d92d20; letter-spacing: 0.1em; margin-bottom: 8px; }
+.method-title { font-size: 16px; font-weight: 750; color: #1a1d23; margin-bottom: 8px; }
+.method-desc { font-size: 13.5px; color: rgba(26,29,35,0.62); line-height: 1.7; }
+
+/* ── SERVICES ─────────────────────────────────────────────────── */
+.services-grid { display: grid; gap: 12px; grid-template-columns: 1fr; }
+@media (min-width: 640px) { .services-grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 960px) { .services-grid { grid-template-columns: repeat(3, 1fr); } }
+.service-item {
+  padding: 20px 18px;
+  background: #fff;
+  border: 1px solid rgba(26,29,35,0.09);
+  border-radius: 14px;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+.service-item:hover { border-color: rgba(217,45,32,0.25); box-shadow: 0 4px 14px rgba(217,45,32,0.07); }
+.si-icon { font-size: 24px; margin-bottom: 10px; }
+.si-title { font-size: 15px; font-weight: 700; color: #1a1d23; margin-bottom: 6px; }
+.si-desc { font-size: 13px; color: rgba(26,29,35,0.6); line-height: 1.65; }
+
+/* ── WHY US ───────────────────────────────────────────────────── */
+.why-grid { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; }
+@media (min-width: 860px) { .why-grid { grid-template-columns: repeat(4, 1fr); } }
+.why-card { padding: 20px 18px; background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 14px; }
+.wc-title { font-size: 15px; font-weight: 750; color: #1a1d23; margin-bottom: 8px; }
+.wc-desc { font-size: 13px; color: rgba(26,29,35,0.6); line-height: 1.65; }
+
+/* ── OFFICES ──────────────────────────────────────────────────── */
+.offices-grid { display: grid; gap: 12px; grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 600px) { .offices-grid { grid-template-columns: 1fr; } }
+.office-card { padding: 22px 20px; background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 14px; text-align: center; }
+.oc-flag { font-size: 28px; margin-bottom: 10px; }
+.oc-label { font-size: 13px; font-weight: 700; color: rgba(26,29,35,0.5); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+.oc-value { font-size: 15px; font-weight: 650; color: #1a1d23; }
+
+/* ── CTA ──────────────────────────────────────────────────────── */
+.about-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: 32px 36px;
+  background: linear-gradient(135deg, #0a1628, #0f1f38);
+  border-radius: 20px;
+  margin-bottom: 24px;
+}
+.acta-title { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+.acta-desc { font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 14px; }
+.acta-contacts { display: flex; flex-direction: column; gap: 6px; }
+.acta-contact-item { font-size: 13px; color: rgba(255,255,255,0.6); text-decoration: none; }
+.acta-contact-item:hover { color: #fff; }
+.acta-btn { display: inline-flex; padding: 14px 28px; border-radius: 12px; background: #d92d20; color: #fff; font-weight: 700; font-size: 15px; text-decoration: none; white-space: nowrap; transition: background 0.2s; flex-shrink: 0; }
+.acta-btn:hover { background: #b52418; text-decoration: none; }
+.about-disclaimer { font-size: 12px; color: rgba(26,29,35,0.4); line-height: 1.65; }
+</style>

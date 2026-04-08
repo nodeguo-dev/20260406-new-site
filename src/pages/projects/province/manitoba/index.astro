@@ -1,0 +1,240 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民项目", href: "/projects/" },
+  { name: "省提名计划（PNP）", href: "/projects/provincial-nomination/" },
+  { name: "曼省省提名（MPNP）", href: "/projects/province/manitoba/" },
+];
+
+const streams = [
+  {
+    name: "技术移民（Skilled Worker）",
+    color: "#b45309",
+    streams: [
+      {
+        title: "境内技术移民（Skilled Workers in Manitoba）",
+        en: "Skilled Workers in Manitoba",
+        req: ["在曼省有 6 个月全职工作经验，且雇主同意继续雇用", "或在曼省学习并工作（Student/Graduate 路径）", "工作职位为 TEER 0–3 类（NOC）", "达到语言基本要求（CLB 4–6 取决于职业）"],
+        target: "已在曼省工作的外国工人，雇主担保是核心",
+        processing: "6–12 个月",
+        notes: "曼省境内技术移民是全国性价比最高的省提名之一——只要雇主愿意留用，分数要求相对低，不需要高 CRS。",
+      },
+      {
+        title: "境外技术移民（Skilled Workers Overseas）",
+        en: "Skilled Workers Overseas",
+        req: ["来自曼省优先职业清单（Manitoba In-Demand Occupations List）", "至少 1 年对口职业工作经验（最近 10 年内）", "有合法有效的加拿大工签意愿或已接到工签邀请", "满足语言要求（CLB 6+）"],
+        target: "境外有技术经验但尚未来加拿大的申请人",
+        processing: "12–18 个月",
+        notes: "曼省每隔数月更新优先职业清单，建议申请前确认职业是否在名单内。",
+      },
+    ],
+  },
+  {
+    name: "国际教育流（International Education）",
+    color: "#059669",
+    streams: [
+      {
+        title: "曼省毕业生留省（International Student Entrepreneur Pilot）",
+        en: "Graduate Internship / Stay in Manitoba",
+        req: ["在曼省被认可院校完成至少 2 年学习", "持有 PGWP 工签", "在曼省有工作 offer 或已在曼省工作", "承诺定居曼省"],
+        target: "在曼省读书并希望留省就业的国际留学生",
+        processing: "6–12 个月",
+        notes: "留省意愿（承诺在曼省定居）是曼省国际学生通道的核心要素之一。",
+      },
+    ],
+  },
+  {
+    name: "商业移民（Business）",
+    color: "#1a56c4",
+    streams: [
+      {
+        title: "农业企业家（Farmer）",
+        en: "Farm Business Investor",
+        req: ["打算在曼省经营农场", "具备农业从业经验", "满足一定净资产要求"],
+        target: "有农业背景、希望在曼省购置农场的投资者",
+        processing: "12–18 个月",
+        notes: "曼省农场主移民对有农业背景的中国申请人相对友好，土地价格和生活成本低于 BC 省和安省。",
+      },
+    ],
+  },
+];
+
+const faqs = [
+  {
+    q: "曼省省提名（MPNP）最大的优势是什么？",
+    a: "曼省（Manitoba）省提名最大的特点是：① 对「留省意愿」的重视超过对高分数的要求，只要有真实的定居曼省计划和雇主担保，即使 CRS 分数不高也可以获得提名；② 雇主担保的权重大，拿到曼省雇主的工作 offer 是最稳健的进入路径；③ 技术移民通道中对境内工作经验要求（6 个月）相对较短；④ 曼省生活成本较低，适合初来加拿大的移民家庭。",
+  },
+  {
+    q: "曼省技术移民一定要有雇主担保吗？",
+    a: "境内技术移民通道（Skilled Workers in Manitoba）：是的，雇主担保是核心条件，需要雇主提供工作 offer 并承诺继续雇用。境外技术移民通道：不强制要求雇主担保，但职业须在曼省优先职业清单内，且满足工作经验要求。",
+  },
+  {
+    q: "在曼省读书的留学生可以直接申请 MPNP 吗？",
+    a: "可以，通过「国际毕业生通道」（International Student Entrepreneur Pilot 或其他学生类别）。条件：① 在曼省被认可的院校（Designated Learning Institution）完成至少 2 年学习；② 毕业后在曼省找到工作（建议是 TEER 0–3 职业）；③ 持有效 PGWP 工签；④ 承诺定居曼省。留学生在曼省读书期间积极找工作、维系当地人脉，是申请成功的关键。",
+  },
+  {
+    q: "曼省省提名和 EE 的关系是什么？",
+    a: "曼省省提名有两条提名路径：① 「MPNP-EE 通道」：曼省向 EE 候选池中的申请人发出 LAA（省提名意向邀请），被邀请者提交省提名申请，获批后再通过 EE 申请 PR，获得提名后 CRS 自动加 600 分确保拿到联邦 ITA；② 「MPNP 非 EE 通道」：走曼省省提名非 EE 流程，获得省提名证书（MPNP Certificate of Nomination）后向联邦单独提交 PR 申请（无需在 EE 候选池中）。大多数技术移民走 EE 通道，效率更高。",
+  },
+  {
+    q: "曼省的生活和就业环境怎么样？",
+    a: "曼省首府温尼伯（Winnipeg）是曼省最大城市，有相当规模的华人社区和亚裔聚居区（如 Elmwood、Transcona）。生活成本远低于多伦多和温哥华，房价更是大幅偏低（2024 年均价约 35–50 万加元）。就业方面：制造业、农业、医疗、教育、交通运输是主要行业，技工和医护职位需求旺盛。",
+  },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem", position: i + 1, name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+const faqLd = {
+  "@context": "https://schema.org", "@type": "FAQPage",
+  mainEntity: faqs.map((i) => ({ "@type": "Question", name: i.q, acceptedAnswer: { "@type": "Answer", text: i.a } })),
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("曼省省提名（MPNP）完整指南 | 技术移民·国际留学生·雇主担保")}
+  description="曼尼托巴省省提名计划（MPNP）详解：境内技术移民、境外技术移民、国际留学生通道完整条件，雇主担保是核心，曼省 EE 通道与非 EE 通道区别，以及曼省生活就业环境分析。"
+  canonical="https://cachinavisa.com/projects/province/manitoba/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={faqLd} />
+  <Breadcrumbs items={breadcrumbs} />
+
+  <div class="page-layout" style="margin-top:16px">
+    <main>
+      <div class="page-hero" style="background: linear-gradient(135deg,#1a0a04 0%,#3d1f02 55%,#0a1628 100%)">
+        <div class="hero-kicker">曼尼托巴省 · 省提名</div>
+        <h1 class="hero-title">曼省省提名<br /><span class="hero-title-en">Manitoba Provincial Nominee Program (MPNP)</span></h1>
+        <p class="hero-desc">
+          MPNP 是加拿大中西部最主要的省提名通道。
+          曼省对<strong>留省意愿强烈</strong>的申请人极为友好——只要有合适的雇主、在曼省有生活计划，
+          即使 CRS 分数不高也有机会获得提名。生活成本低、华人社区成熟，
+          是近年来越来越多移民家庭的新选择。
+        </p>
+        <div class="hero-tags">
+          <span class="htag amber">雇主担保为核心</span>
+          <span class="htag amber">留省意愿优先</span>
+          <span class="htag amber">低生活成本</span>
+          <span class="htag amber">对接 EE 加 600 分</span>
+        </div>
+      </div>
+
+      {streams.map((cat) => (
+        <div class="content-card">
+          <h2 class="cc-title" style={`border-color: ${cat.color}30`}>{cat.name}</h2>
+          {cat.streams.map((s) => (
+            <div class="stream-item">
+              <div class="si-header">
+                <div class="si-title">{s.title}</div>
+                <span class="si-time">处理时间：{s.processing}</span>
+              </div>
+              <div class="si-target">🎯 适合人群：{s.target}</div>
+              <div class="si-reqs">
+                {s.req.map((r) => <div class="si-req"><span class="req-dot" style={`background:${cat.color}`}></span>{r}</div>)}
+              </div>
+              {s.notes && <div class="si-note">💡 {s.notes}</div>}
+            </div>
+          ))}
+        </div>
+      ))}
+
+      <div class="content-card">
+        <h2 class="cc-title">常见问题（FAQ）</h2>
+        {faqs.map((item) => (
+          <details class="faq-item">
+            <summary class="faq-q">{item.q}</summary>
+            <p class="faq-a">{item.a}</p>
+          </details>
+        ))}
+      </div>
+
+      <div class="cta-block" style="background: linear-gradient(135deg,#1a0a04,#3d1f02)">
+        <div class="cta-text">
+          <div class="cta-title">免费评估你的 MPNP 申请资格</div>
+          <p class="cta-desc">是否有曼省工作经验或雇主担保？填写表单，顾问帮你判断最适合哪条通道。</p>
+        </div>
+        <a href="/contact/" class="cta-btn" style="background:#b45309">免费评估 →</a>
+      </div>
+    </main>
+
+    <aside class="page-sidebar">
+      <ContactCard title="咨询曼省移民" />
+      <div class="sidebar-card">
+        <div class="sc-title">其他省提名</div>
+        <div class="sc-links">
+          <a class="sc-link" href="/projects/province/ontario/">安省 OINP</a>
+          <a class="sc-link" href="/projects/province/british-columbia/">BC省 BCPNP</a>
+          <a class="sc-link" href="/projects/province/alberta/">阿省 AAIP</a>
+          <a class="sc-link active" href="/projects/province/manitoba/">曼省 MPNP（当前）</a>
+          <a class="sc-link" href="/projects/province/nova-scotia/">新省 NSNP</a>
+          <a class="sc-link" href="/projects/province/newfoundland/">纽省 NLNP</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+      <div class="page-share">
+        <ShareBar url="https://cachinavisa.com/projects/province/manitoba/" title={"曼省省提名（MPNP）完整指南 | 技术移民·国际留学生·雇主担保"} />
+      </div>
+</BaseLayout>
+
+<style>
+.page-layout { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: start; }
+@media (min-width: 960px) { .page-layout { grid-template-columns: 1fr 280px; } }
+.page-hero { border-radius: 20px; padding: 40px 36px; margin-bottom: 16px; position: relative; overflow: hidden; }
+.hero-kicker { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(253,186,116,0.8); margin-bottom: 12px; }
+.hero-title { font-size: clamp(24px, 4vw, 36px); font-weight: 900; color: #fff; margin: 0 0 14px; line-height: 1.15; }
+.hero-title-en { font-size: 0.48em; font-weight: 500; color: rgba(255,255,255,0.4); display: block; margin-top: 4px; }
+.hero-desc { font-size: 14.5px; color: rgba(255,255,255,0.65); line-height: 1.75; margin: 0 0 22px; max-width: 680px; }
+.hero-desc strong { color: #fcd34d; }
+.hero-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+.htag { padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; border: 1px solid transparent; }
+.htag.amber { background: rgba(180,83,9,0.2); border-color: rgba(180,83,9,0.35); color: #fcd34d; }
+
+.content-card { background: #fff; border: 1px solid rgba(13,17,23,0.09); border-radius: 18px; padding: 28px 30px; margin-bottom: 16px; }
+.cc-title { font-size: 18px; font-weight: 800; color: #0d1117; margin: 0 0 16px; padding-bottom: 10px; border-bottom: 2px solid; }
+
+.stream-item { border: 1px solid rgba(13,17,23,0.08); border-radius: 14px; padding: 16px 20px; margin-bottom: 12px; }
+.stream-item:last-child { margin-bottom: 0; }
+.si-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+.si-title { font-size: 14.5px; font-weight: 800; color: #0d1117; }
+.si-time { font-size: 12px; font-weight: 600; color: rgba(13,17,23,0.45); white-space: nowrap; }
+.si-target { font-size: 13px; color: rgba(13,17,23,0.6); margin-bottom: 10px; line-height: 1.5; }
+.si-reqs { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
+.si-req { display: flex; gap: 8px; font-size: 13px; color: rgba(13,17,23,0.7); line-height: 1.55; align-items: flex-start; }
+.req-dot { width: 7px; height: 7px; min-width: 7px; border-radius: 50%; margin-top: 5px; }
+.si-note { font-size: 12.5px; color: rgba(13,17,23,0.55); background: rgba(13,17,23,0.03); padding: 8px 12px; border-radius: 8px; border-left: 3px solid rgba(13,17,23,0.1); line-height: 1.55; }
+
+.faq-item { border: 1px solid rgba(13,17,23,0.08); border-radius: 12px; overflow: hidden; margin-bottom: 8px; }
+.faq-q { padding: 14px 18px; font-size: 14px; font-weight: 600; color: #0d1117; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.faq-q::after { content: '+'; font-size: 18px; color: #b45309; font-weight: 400; }
+details[open] .faq-q::after { content: '−'; }
+.faq-a { padding: 12px 18px 14px; font-size: 13.5px; color: rgba(13,17,23,0.65); line-height: 1.75; margin: 0; border-top: 1px solid rgba(13,17,23,0.06); }
+
+.cta-block { border-radius: 18px; padding: 28px 32px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.cta-title { font-size: 17px; font-weight: 800; color: #fff; margin-bottom: 7px; }
+.cta-desc { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.65; margin: 0; max-width: 500px; }
+.cta-btn { padding: 12px 26px; color: #fff; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
+.cta-btn:hover { opacity: 0.9; text-decoration: none; }
+
+.page-sidebar { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 88px; }
+.sidebar-card { background: #fff; border: 1px solid rgba(13,17,23,0.09); border-radius: 16px; overflow: hidden; }
+.sc-title { font-size: 13px; font-weight: 700; color: #0d1117; padding: 14px 18px 10px; border-bottom: 1px solid rgba(13,17,23,0.07); }
+.sc-links { padding: 6px 0; }
+.sc-link { display: block; padding: 8px 18px; font-size: 13px; color: rgba(13,17,23,0.7); text-decoration: none; transition: all 0.12s; }
+.sc-link:hover { background: rgba(180,83,9,0.04); color: #b45309; text-decoration: none; }
+.sc-link.active { background: rgba(180,83,9,0.07); color: #b45309; font-weight: 700; }
+</style>

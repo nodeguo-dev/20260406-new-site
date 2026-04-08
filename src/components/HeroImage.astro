@@ -1,0 +1,32 @@
+---
+type Props = {
+  src?: string;
+  alt?: string;
+};
+
+const { src = "/assets/hero-canada.svg", alt = "加拿大主题示意图" } = Astro.props;
+---
+
+<div class="hero-image card" aria-hidden="true">
+  <img
+    src={src}
+    alt={alt}
+    loading="eager"
+    decoding="async"
+    width="1100"
+    height="420"
+  />
+</div>
+
+<style>
+  .hero-image {
+    overflow: hidden;
+    border-radius: 16px;
+  }
+  .hero-image img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+</style>
+

@@ -1,0 +1,243 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民打分", href: "/tools/" },
+  { name: "安省 OINP EOI", href: "/tools/oinp-calculator/" },
+];
+---
+<BaseLayout
+  title={withSiteTitle("安省 OINP EOI 打分计算器")}
+  description="安省雇主类（Foreign Worker、International Student、In-Demand Skills）意向表达打分参考。Human Capital Priorities 等 Express Entry 类别以联邦 CRS 为准，请使用本站 CRS 计算器。"
+  canonical="https://cachinavisa.com/tools/oinp-calculator/"
+>
+  <div class="container calc-wrap">
+    <Breadcrumbs items={breadcrumbs} />
+    <header class="calc-head">
+      <h1 class="calc-h1">安省 OINP · EOI 计算器</h1>
+      <p class="calc-lead">
+        因子与分值以
+        <a href="http://www.ontario.ca/page/ontario-immigrant-nominee-program-expression-interest-system-streams" target="_blank" rel="noopener noreferrer">安省官网 EOI 说明</a>
+        为准。<strong>Human Capital Priorities / Skilled Trades / French-Speaking</strong> 等 EE 子类按<strong>联邦 CRS</strong>排名，请改用
+        <a href="/tools/crs-calculator/">CRS 计算器</a>。
+      </p>
+    </header>
+
+    <form class="calc-form" id="oinp-form">
+      <fieldset class="fs">
+        <legend>通道</legend>
+        <select name="stream" id="oinp-stream">
+          <option value="foreign_worker" selected>雇主担保：Foreign Worker</option>
+          <option value="international_student">雇主担保：International Student</option>
+          <option value="in_demand">雇主担保：In-Demand Skills</option>
+        </select>
+      </fieldset>
+
+      <fieldset class="fs" id="fw-block">
+        <legend>工作 offer（NOC 2021 TEER / 大类）</legend>
+        <label>TEER（仅 Foreign Worker / International Student）
+          <select name="teer">
+            <option value="0_1" selected>TEER 0 或 1</option>
+            <option value="2_3">TEER 2 或 3</option>
+            <option value="4">TEER 4</option>
+            <option value="5">TEER 5</option>
+          </select>
+        </label>
+        <label>NOC 广义大类（Broad occupational category）
+          <select name="boc">
+            <option value="0_2_3" selected>0 / 2 / 3 类</option>
+            <option value="7">7 类</option>
+            <option value="1_9">1 / 9 类</option>
+            <option value="4_8">4 / 8 类</option>
+            <option value="5_6">5 / 6 类</option>
+          </select>
+        </label>
+        <label>时薪（加元）
+          <input type="number" name="wage" min="0" max="200" step="0.01" value="42" />
+        </label>
+      </fieldset>
+
+      <fieldset class="fs">
+        <legend>身份与履历</legend>
+        <label class="chk"><input type="checkbox" name="permit" checked /> 持有效工签或学签</label>
+        <label class="chk"><input type="checkbox" name="tenure" /> 已在安省该雇主岗位任职满 6 个月</label>
+        <label class="chk"><input type="checkbox" name="noa" /> 近五年有 NOA 显示年收入 ≥ $40,000</label>
+      </fieldset>
+
+      <fieldset class="fs" id="lang-block">
+        <legend>语言（Foreign Worker / International Student）</legend>
+        <label>英语/法语主申成绩（CLB 档次）
+          <select name="clbBand">
+            <option value="9p" selected>CLB 9 及以上</option>
+            <option value="8">CLB 8</option>
+            <option value="7">CLB 7</option>
+            <option value="6p">CLB 6 及以下</option>
+          </select>
+        </label>
+        <label>官方语言数量
+          <select name="bilingual">
+            <option value="both_official" selected>英法均达最低要求（双语）</option>
+            <option value="one_official">仅一种官方语言</option>
+          </select>
+        </label>
+      </fieldset>
+
+      <fieldset class="fs" id="is-block" hidden>
+        <legend>International Student 额外项</legend>
+        <label>最高学历
+          <select name="isEdu">
+            <option value="phd_md">博士 / MD</option>
+            <option value="masters" selected>硕士</option>
+            <option value="bachelor">本科</option>
+            <option value="grad_cert">研究生文凭/证书</option>
+            <option value="undergrad_cert">本科层文凭/证书</option>
+            <option value="trade">技工证书</option>
+            <option value="lt_college">低于大专</option>
+          </select>
+        </label>
+        <label>专业领域
+          <select name="field">
+            <option value="stem_health_trades" selected>STEM / 医疗 / 技工等</option>
+            <option value="business_social_legal_edu">商科 / 社工 / 法律 / 教育等</option>
+            <option value="arts_bhase">文科 / BHASE 等</option>
+          </select>
+        </label>
+        <label>加拿大学历个数
+          <select name="cred">
+            <option value="two_plus">两个及以上加拿大学历</option>
+            <option value="one" selected>一个加拿大学历</option>
+            <option value="none">无</option>
+          </select>
+        </label>
+        <label>学习地点（实体课）
+          <select name="studyReg">
+            <option value="north">北安省</option>
+            <option value="outside_gta" selected>GTA 与多伦多以外</option>
+            <option value="gta_not_toronto">GTA（不含多伦多市）</option>
+            <option value="toronto">多伦多市</option>
+            <option value="online_only">无实体课</option>
+          </select>
+        </label>
+      </fieldset>
+
+      <fieldset class="fs">
+        <legend>地区（Job offer）</legend>
+        <select name="jobReg">
+          <option value="north">北安省</option>
+          <option value="outside_gta" selected>GTA 与多伦多以外</option>
+          <option value="gta_not_toronto">GTA（不含多伦多）</option>
+          <option value="toronto">多伦多市</option>
+        </select>
+      </fieldset>
+
+      <button type="button" class="btn-calc" id="btn-oinp">计算 EOI 分数</button>
+    </form>
+
+    <section class="result-panel" id="oinp-result" hidden>
+      <div class="score-big"><span id="oinp-total">0</span></div>
+      <ul class="break-list" id="oinp-break"></ul>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .calc-wrap { max-width: 720px; padding-top: 18px; padding-bottom: 56px; }
+  .calc-head { margin-bottom: 24px; }
+  .calc-h1 { font-size: clamp(24px, 3.5vw, 32px); font-weight: 900; margin: 0 0 12px; }
+  .calc-lead { margin: 0; font-size: 15px; color: var(--muted); line-height: 1.75; }
+  .calc-form { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 22px 24px 28px; }
+  .fs { border: none; margin: 0 0 20px; padding: 0; }
+  .fs legend { font-weight: 800; font-size: 14px; margin-bottom: 12px; }
+  .fs label { display: block; font-size: 13px; margin-bottom: 14px; }
+  .fs select, .fs input[type="number"] {
+    display: block; width: 100%; margin-top: 6px; padding: 10px 12px;
+    border-radius: 10px; border: 1px solid var(--border-2); font-size: 15px;
+  }
+  .chk { display: flex; align-items: flex-start; gap: 8px; }
+  .btn-calc {
+    width: 100%; padding: 14px; font-size: 16px; font-weight: 800;
+    border: none; border-radius: 12px; cursor: pointer;
+    background: linear-gradient(135deg, #0f766e, #14b8a6); color: #fff;
+  }
+  .result-panel { margin-top: 24px; padding: 24px; background: linear-gradient(135deg, #0a1628, #0f2040); border-radius: 16px; color: #fff; }
+  .score-big { font-size: 42px; font-weight: 900; }
+  .break-list { list-style: none; margin: 16px 0 0; padding: 0; font-size: 14px; }
+  .break-list li { display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.12); padding: 8px 0; }
+</style>
+
+<script>
+  import { calculateOinpEoi, type OinpEoiInput } from "@/lib/calculators/oinpEoi";
+
+  const streamSel = document.getElementById("oinp-stream") as HTMLSelectElement;
+  const isBlock = document.getElementById("is-block");
+  const langBlock = document.getElementById("lang-block");
+  const fwBlock = document.getElementById("fw-block");
+
+  function syncStream() {
+    const v = streamSel.value;
+    if (isBlock) isBlock.hidden = v !== "international_student";
+    if (langBlock) langBlock.hidden = v === "in_demand";
+    if (fwBlock) fwBlock.hidden = false;
+    const teer = fwBlock?.querySelector('[name="teer"]')?.parentElement as HTMLElement | undefined;
+    if (teer) teer.style.display = v === "in_demand" ? "none" : "";
+  }
+  streamSel.addEventListener("change", syncStream);
+  syncStream();
+
+  document.getElementById("btn-oinp")?.addEventListener("click", () => {
+    const f = (document.getElementById("oinp-form") as HTMLFormElement).elements;
+    const stream = streamSel.value as "foreign_worker" | "international_student" | "in_demand";
+    const common = {
+      nocTeer: (f.namedItem("teer") as HTMLSelectElement).value as OinpEoiInput["nocTeer"],
+      broadOcc: (f.namedItem("boc") as HTMLSelectElement).value as OinpEoiInput["broadOcc"],
+      wagePerHour: Number((f.namedItem("wage") as HTMLInputElement).value),
+      validWorkOrStudyPermit: (f.namedItem("permit") as HTMLInputElement).checked,
+      jobTenure6moPlusInOntario: (f.namedItem("tenure") as HTMLInputElement).checked,
+      earnings40kPlusNoa: (f.namedItem("noa") as HTMLInputElement).checked,
+    };
+
+    let input: OinpEoiInput;
+    if (stream === "foreign_worker") {
+      input = {
+        ...common,
+        stream: "foreign_worker",
+        clbBand: (f.namedItem("clbBand") as HTMLSelectElement).value as OinpEoiInput["clbBand"],
+        bilingual: (f.namedItem("bilingual") as HTMLSelectElement).value as OinpEoiInput["bilingual"],
+        jobRegion: (f.namedItem("jobReg") as HTMLSelectElement).value as OinpEoiInput["jobRegion"],
+      };
+    } else if (stream === "international_student") {
+      input = {
+        ...common,
+        stream: "international_student",
+        education: (f.namedItem("isEdu") as HTMLSelectElement).value as OinpEoiInput["education"],
+        field: (f.namedItem("field") as HTMLSelectElement).value as OinpEoiInput["field"],
+        canadianCredentials: (f.namedItem("cred") as HTMLSelectElement)
+          .value as OinpEoiInput["canadianCredentials"],
+        clbBand: (f.namedItem("clbBand") as HTMLSelectElement).value as OinpEoiInput["clbBand"],
+        bilingual: (f.namedItem("bilingual") as HTMLSelectElement).value as OinpEoiInput["bilingual"],
+        jobRegion: (f.namedItem("jobReg") as HTMLSelectElement).value as OinpEoiInput["jobRegion"],
+        studyRegion: (f.namedItem("studyReg") as HTMLSelectElement).value as OinpEoiInput["studyRegion"],
+      };
+    } else {
+      input = {
+        ...common,
+        stream: "in_demand",
+        jobRegion: (f.namedItem("jobReg") as HTMLSelectElement).value as OinpEoiInput["jobRegion"],
+      };
+    }
+
+    const r = calculateOinpEoi(input);
+    document.getElementById("oinp-total")!.textContent = String(r.total);
+    const ul = document.getElementById("oinp-break")!;
+    ul.innerHTML = "";
+    for (const [k, v] of Object.entries(r.breakdown)) {
+      const li = document.createElement("li");
+      li.innerHTML = `<span>${k}</span><span>${v}</span>`;
+      ul.appendChild(li);
+    }
+    document.getElementById("oinp-result")?.removeAttribute("hidden");
+  });
+</script>

@@ -1,0 +1,270 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "加拿大签证", href: "/visa/" },
+  { name: "探亲签证", href: "/visa/family-visit/" },
+];
+
+const faqItems = [
+  {
+    q: "被访人需要帮我写什么样的邀请信？",
+    a: "邀请信没有固定格式，但建议包括：被访人的姓名、地址、在加拿大的身份（公民/PR/工签等）；申请人与被访人的关系；预计探访日期和住宿安排；探访期间谁负担费用（自费还是邀请方承担）。邀请信不需要公证，但要真实且具体。"
+  },
+  {
+    q: "被访人的邀请信够吗，还需要什么？",
+    a: "邀请信只是辅助材料之一，不能替代你自己的申请材料。签证核心仍在于你的个人背景：工作证明、资金状况、家庭牵绊等。邀请信告诉签证官你去哪里，而你的材料要证明你有能力去、有理由回。"
+  },
+  {
+    q: "我父母年纪大了，不会填网上表格怎么办？",
+    a: "家人或顾问可以代替他们填写网上申请表，但需要在表格的指定位置如实填写协助填表者的信息。最终申请是以申请人本人的名义提交的，协助填表者不需要在IRCC申请上签字，但需确认所填内容准确。"
+  },
+  {
+    q: "探亲签证批了，父母能在加拿大住多久？",
+    a: "入境时由CBSA边境官决定授权停留期限，通常是6个月，也可能短于6个月。如需延长，须在授权到期前至少30天在网上申请延期停留（须缴费$100 CAD）。超期停留会影响父母日后的申请记录，要认真对待这个日期。"
+  },
+  {
+    q: "父母来了之后可以在加拿大看病吗？谁付钱？",
+    a: "访客身份不享受加拿大公共医疗保险（OHIP等省医保），所有医疗费用须自行承担。建议出行前购买旅行医疗保险。如父母通过超级签证入境，保险是申请条件之一（至少$10万加元）。"
+  },
+  {
+    q: "父母曾被拒过签证，这次还有机会吗？",
+    a: "有，但你需要分析上次被拒的真实原因，是约束力不够还是资金不足，还是被访人的身份存疑。单纯重新提交不太可能有不同结果。建议通过GCMS notes（需要提交隐私法请求）查看上次拒签原因，再针对性改善。"
+  },
+  {
+    q: "一个家庭可以一起申请吗，还是要分开提交？",
+    a: "可以作为一个家庭一起在线申请，共用同一个申请账号，系统会允许在一笔申请中添加多个家庭成员。但每人都需要独立填写申请表、提供各自的材料（护照、照片、生物特征等）并支付各自的申请费。"
+  },
+  {
+    q: "我的家人有某种疾病，会影响签证申请吗？",
+    a: "IRCC在评估时会考虑医疗因素，主要担心申请人是否会对加拿大公共医疗系统造成过重负担。在某些情况下，特别是需要进行体检的申请，如果检查结果显示申请人有需要大量医疗资源的疾病，可能影响结果。具体情况因人而异，建议咨询顾问评估。"
+  },
+];
+
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((i) => ({
+    "@type": "Question",
+    name: i.q,
+    acceptedAnswer: { "@type": "Answer", text: i.a },
+  })),
+};
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+---
+<BaseLayout
+  title={withSiteTitle("加拿大探亲签证申请指南 | 邀请信·材料·常见问题")}
+  description="加拿大探亲签证完整指南：申请条件、邀请信写法、材料清单、处理周期及8个高频问题解答，适用于探望子女、配偶等情况。"
+  canonical="https://cachinavisa.com/visa/family-visit/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={faqLd} />
+  <Breadcrumbs items={breadcrumbs} />
+  <div class="grid" style="margin-top:16px">
+    <article class="content-card">
+      <div class="page-header">
+        <div class="page-kicker">探亲访友签证</div>
+        <h1 class="page-h1">加拿大探亲签证申请指南</h1>
+        <p class="page-intro">探望在加拿大的子女、配偶、父母或朋友，需要申请临时居民签证（TRV）并提供探访关系的相关说明材料。探亲签证和普通旅游签证属于同一类别，核心逻辑相同——签证官需要相信你会按时离境，且来访目的属实。</p>
+      </div>
+
+      <div class="content-sections">
+
+        <div class="section-block">
+          <h2>与普通旅游签证的主要区别</h2>
+          <p>探亲签证不是一个独立的签证类别，而是访问签证（TRV）中注明了探亲目的的申请。主要区别体现在：</p>
+          <ul class="req-list">
+            <li>需要提交被访人在加拿大的身份证明（PR卡、公民护照、工签、学签等）</li>
+            <li>需要被访人写一份邀请信，说明关系、访问安排和费用承担</li>
+            <li>行程表与探亲行为相关（探访地点、住宿安排等）而非景点路线</li>
+            <li>约束力要求与旅游签相同，签证官同样会评估你是否会按时离境</li>
+          </ul>
+        </div>
+
+        <div class="section-block">
+          <h2>申请人需要满足的条件</h2>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-card-label">有效护照</div>
+              <div class="info-card-value">计划离境加拿大之日后至少仍有6个月有效期</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">资金能力</div>
+              <div class="info-card-value">能负担旅行和在加期间的费用</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">约束力</div>
+              <div class="info-card-value">工作、家庭、资产等证明你会按时回国</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">无不良记录</div>
+              <div class="info-card-value">无犯罪记录，无加拿大移民法违规历史</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2>申请材料清单</h2>
+          <ul class="req-list">
+            <li>有效护照原件及所有旧护照</li>
+            <li>IMM 5257 申请表（在线填写，附条形码打印页）</li>
+            <li>近期白底彩色证件照（35mm × 45mm）</li>
+            <li>生物特征预约确认（首次申请或上次采集已逾5年）</li>
+            <li><strong>被访人邀请信</strong>——注明关系、访问时间和住宿安排</li>
+            <li><strong>被访人在加拿大的身份证明</strong>——PR卡复印件、公民护照、有效工签或学签等</li>
+            <li>申请人在职证明或收入证明（体现经济能力）</li>
+            <li>近6个月银行流水及存款余额证明</li>
+            <li>家庭关系证明——与被访人的关系文件（结婚证、户口本等）</li>
+            <li>预计行程和住宿安排（如在被访人家中住宿，注明地址）</li>
+            <li>如父母来访，建议提交子女在职/收入证明（说明住宿和生活费用由子女提供）</li>
+          </ul>
+        </div>
+
+        <div class="section-block">
+          <h2>邀请信怎么写？</h2>
+          <p>邀请信没有官方格式要求，但要覆盖以下要点才有实际作用：</p>
+          <ul class="req-list">
+            <li>被访人的全名、加拿大地址、联系方式</li>
+            <li>被访人在加拿大的移民身份（公民、PR、工签持有人等）</li>
+            <li>申请人与被访人的关系（父子、夫妻、朋友等）</li>
+            <li>预计访问的具体时间段（出发日期和返程日期）</li>
+            <li>住宿安排（住在被访人家中或酒店，如住被访人家，注明地址）</li>
+            <li>旅行费用由谁承担（申请人自费还是邀请方支付部分/全部费用）</li>
+          </ul>
+          <div class="tip-box">邀请信用中文写没有问题，但需附上英文翻译（由翻译公司或具备翻译能力的人士出具，并附翻译者声明）。邀请信不需要公证，直接打印签名即可。</div>
+        </div>
+
+        <div class="section-block">
+          <h2>费用与处理时间</h2>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-card-label">签证申请费</div>
+              <div class="info-card-value">$100 CAD / 人</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">生物特征费</div>
+              <div class="info-card-value">$85 CAD / 人</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">处理时间</div>
+              <div class="info-card-value">一般 4–12 周（旺季延长）</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">签证有效期</div>
+              <div class="info-card-value">通常1–10年多次入境</div>
+            </div>
+          </div>
+          <div class="tip-box">父母年龄较大或有慢性疾病，可能被要求进行移民体检（Immigration Medical Exam），体检费用另计（约$300–$500 CNY不等，视城市和诊所而定）。</div>
+        </div>
+
+        <div class="section-block">
+          <h2>探亲签证与超级签证的区别</h2>
+          <p>如果你的父母或祖父母计划在加拿大长期居住（超过6个月），可以考虑申请<strong>超级签证</strong>（Super Visa）。两者的主要区别：</p>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-card-label">普通探亲签证</div>
+              <div class="info-card-value">每次入境最多6个月，无医疗保险硬性要求</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">超级签证</div>
+              <div class="info-card-value">每次可停留最多5年，需购买至少$10万加元医疗保险</div>
+            </div>
+          </div>
+          <p style="margin-top:12px">超级签证适合希望长期陪伴子女的父母；普通探亲签证则更灵活，适合短期探访。详见 <a href="/visa/super-visa/" style="color:#d92d20">超级签证申请指南</a>。</p>
+        </div>
+
+        <div class="section-block">
+          <h2>常见问题（FAQ）</h2>
+          {faqItems.map((item) => (
+            <details class="faq-item">
+              <summary class="faq-q">{item.q}</summary>
+              <p class="faq-a">{item.a}</p>
+            </details>
+          ))}
+        </div>
+
+      </div>
+      <div class="page-share">
+        <ShareBar url="https://cachinavisa.com/visa/family-visit/" title={"加拿大探亲签证申请指南 | 邀请信·材料·常见问题"} />
+      </div>
+
+
+      <div class="cta-inline">
+        <div class="cta-text">想让父母来加拿大？我们帮你评估最适合的签证类型。</div>
+        <a class="cta-btn" href="/contact/">免费咨询 →</a>
+      </div>
+    </article>
+
+    <aside class="sidebar-stack">
+      <ContactCard />
+      <div class="sidebar-nav-card">
+        <div class="snc-title">签证子栏目</div>
+        <div class="snc-links">
+          <a class="snc-link" href="/visa/visitor/">访问签 / 旅游签</a>
+          <a class="snc-link active" href="/visa/family-visit/">探亲签证</a>
+          <a class="snc-link" href="/visa/super-visa/">超级签证（父母/祖父母）</a>
+          <a class="snc-link" href="/visa/study-permit/">学习许可（学签）</a>
+          <a class="snc-link" href="/visa/work-permit/">工作签证（工签）</a>
+          <a class="snc-link" href="/visa/french-mobility-work-permit/">法语流动工签</a>
+          <a class="snc-link" href="/visa/c11-work-permit/">C11 重大利益工签</a>
+          <a class="snc-link" href="/visa/extend/">续签 / 延期 / 境内转换</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+.grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 920px) { .grid { grid-template-columns: 1fr 300px; align-items: start; } }
+.content-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 16px; overflow: hidden; }
+.page-header { padding: 28px 28px 24px; border-bottom: 1px solid rgba(26,29,35,0.08); background: linear-gradient(135deg, #fafbff, #fff); }
+.page-kicker { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #d92d20; margin-bottom: 8px; }
+.page-h1 { font-size: clamp(22px, 4vw, 30px); font-weight: 800; color: #1a1d23; margin: 0 0 12px; letter-spacing: -0.02em; }
+.page-intro { font-size: 15px; color: rgba(26,29,35,0.62); line-height: 1.7; margin: 0; }
+.content-sections { padding: 24px 28px; display: grid; gap: 32px; }
+.section-block h2 { font-size: 18px; font-weight: 750; color: #1a1d23; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 2px solid rgba(217,45,32,0.12); }
+.section-block p { font-size: 14px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0 0 12px; }
+.req-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.req-list li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; background: rgba(26,29,35,0.025); border-radius: 10px; font-size: 14px; color: rgba(26,29,35,0.75); line-height: 1.55; }
+.req-list li::before { content: "✓"; color: #d92d20; font-weight: 700; flex-shrink: 0; }
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.info-card { padding: 14px 16px; background: rgba(26,29,35,0.03); border-radius: 12px; border: 1px solid rgba(26,29,35,0.07); }
+.info-card-label { font-size: 12px; color: rgba(26,29,35,0.45); margin-bottom: 4px; }
+.info-card-value { font-size: 14px; font-weight: 600; color: #1a1d23; }
+.tip-box { padding: 14px 16px; background: rgba(217,45,32,0.05); border-left: 3px solid #d92d20; border-radius: 0 10px 10px 0; font-size: 13px; color: rgba(26,29,35,0.7); line-height: 1.65; margin-top: 12px; }
+.faq-item { border: 1px solid rgba(26,29,35,0.09); border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+.faq-q { padding: 13px 16px; font-weight: 650; font-size: 14px; cursor: pointer; list-style: none; display: flex; justify-content: space-between; color: #1a1d23; }
+.faq-q::after { content: "+"; font-size: 18px; color: rgba(26,29,35,0.4); }
+details[open] .faq-q::after { content: "−"; }
+.faq-q::-webkit-details-marker { display: none; }
+.faq-a { padding: 0 16px 13px; font-size: 13.5px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0; }
+.cta-inline { margin: 0 28px 28px; padding: 20px 24px; background: linear-gradient(135deg, #0a1628, #0f1f38); border-radius: 14px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.cta-text { font-size: 15px; font-weight: 700; color: #fff; }
+.cta-btn { display: inline-flex; padding: 10px 20px; border-radius: 10px; background: #d92d20; color: #fff; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; }
+.cta-btn:hover { background: #b52418; text-decoration: none; }
+.sidebar-stack { display: grid; gap: 16px; position: sticky; top: 80px; }
+.sidebar-nav-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 14px; padding: 18px 20px; }
+.snc-title { font-size: 14px; font-weight: 700; color: #1a1d23; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(26,29,35,0.08); }
+.snc-links { display: flex; flex-direction: column; gap: 2px; }
+.snc-link { display: block; padding: 8px 10px; font-size: 13.5px; color: #374151; text-decoration: none; border-radius: 8px; }
+.snc-link:hover { background: rgba(217,45,32,0.06); color: #d92d20; text-decoration: none; }
+.snc-link.active { background: rgba(217,45,32,0.07); color: #d92d20; font-weight: 600; }
+</style>

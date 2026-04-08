@@ -1,0 +1,47 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import { withSiteTitle } from "@/utils/seo";
+---
+
+<BaseLayout
+  title={withSiteTitle("申请人如何把经历对上 NOC | 经验匹配指南")}
+  description="教申请人如何把工作经历对照到 NOC：职责、工时、工资单、雇主信、税务材料和常见错误。"
+  canonical="https://cachinavisa.com/noc/how-to-match-your-experience/"
+>
+  <div class="grid">
+    <main class="card">
+      <div class="card-inner prose">
+        <div class="kicker">申请人指南</div>
+        <h1 class="h1">如何把自己的工作经历对上 NOC</h1>
+        <p class="lead">
+          关键不是你“做没做过”，而是你的工作内容能不能被写成一条合规、可核查、可解释的职业经历。
+        </p>
+
+        <h2>先看四件事</h2>
+        <ol>
+          <li>主要职责是否和 NOC 主职责一致。</li>
+          <li>工时是否能证明为全职或等量兼职。</li>
+          <li>工资单、T4、ROE、雇主信是否互相对应。</li>
+          <li>你的岗位 title 是否与实际职责同向，而不是只挂名。</li>
+        </ol>
+
+        <h2>最常见的误区</h2>
+        <ul>
+          <li>只写职位名，不写职责。</li>
+          <li>把所有工地工作都写成同一个 NOC。</li>
+          <li>没有保留工资单、排班和雇主联系信息。</li>
+          <li>等到递交申请前才开始补材料。</li>
+        </ul>
+
+        <h2>建议的整理顺序</h2>
+        <p>岗位 title → 真实职责 → 每月工时 → 工资单 / T4 / ROE → 雇主信 → 申请路径（EE / PNP / 技工）</p>
+      </div>
+    </main>
+
+    <aside class="list">
+      <ContactCard />
+    </aside>
+  </div>
+</BaseLayout>
+

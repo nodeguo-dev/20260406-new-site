@@ -1,0 +1,327 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import RelatedToolsCard from "@/components/RelatedToolsCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民项目", href: "/projects/" },
+  { name: "联邦移民项目总览", href: "/projects/federal-programs/" },
+];
+
+const programs = [
+  {
+    name: "加拿大经验类（CEC）",
+    href: "/projects/cec/",
+    tag: "最热门",
+    tagColor: "#d92d20",
+    desc: "适合已在加拿大拥有至少12个月技术类全职工作经验的人士，处理速度快，通常6个月内完成。",
+    conditions: ["加拿大境内NOC 0/A/B类全职工作经验≥12个月", "语言分数CLB 7+（管理类CLB 9+）", "无需工作offer（建议有）"],
+  },
+  {
+    name: "联邦技术工人（FSW）",
+    href: "/projects/federal/",
+    tag: "境外申请",
+    tagColor: "#0f766e",
+    desc: "主要面向境外具备高技能职业背景的人士，以积分系统（67分门槛）筛选候选人后进入EE候选池。",
+    conditions: ["NOC 0/A/B类工作经验≥1年（过去10年内）", "语言达CLB 7+", "学历经验打分综合67分以上", "在EE候选池等待ITA"],
+  },
+  {
+    name: "联邦技术工匠（FST）",
+    href: "/projects/federal/",
+    tag: "技术工种",
+    tagColor: "#1a56c4",
+    desc: "针对水电工、机械师、焊接工等特定技术工匠类职业（NOC B），要求有效工作offer或加拿大工匠认证。",
+    conditions: ["过去5年内≥2年全职技术工匠类工作经验", "有效加拿大全职工作offer（或认证）", "语言达CLB 5+"],
+  },
+  {
+    name: "省提名计划（PNP）",
+    href: "/projects/provincial-nomination/",
+    tag: "各省通道",
+    tagColor: "#7c3aed",
+    desc: "各省/地区根据本地劳工需求设立的移民通道，与EE配合使用可获+600分CRS大幅提升竞争力。",
+    conditions: ["各省条件不同，需分别研究", "部分类别要求在目标省份有工签或工作offer", "Enhanced通道与EE候选池配合使用"],
+  },
+  {
+    name: "大西洋省份移民计划（AIP）",
+    href: "/projects/federal/",
+    tag: "海洋四省",
+    tagColor: "#b45309",
+    desc: "由纽宾士域、爱德华王子岛、新斯科舍、纽芬兰四省共同参与的移民计划，雇主担保为主，接受率相对较高。",
+    conditions: ["指定雇主全职工作offer", "学历及语言满足职位要求", "意愿在大西洋省份定居（settlement plan）"],
+  },
+  {
+    name: "农村和北方移民（RNIP）",
+    href: "/projects/federal/",
+    tag: "偏远地区",
+    tagColor: "#065f46",
+    desc: "鼓励移民在指定的中小型城市或北方地区定居，由当地社区推荐，各社区有各自的接收条件和配额。",
+    conditions: ["指定社区内有全职工作offer（或自营业计划）", "满足社区具体要求", "签署定居该社区的意愿声明"],
+  },
+];
+
+const faqItems = [
+  {
+    q: "什么是 Express Entry（EE）候选池？",
+    a: "Express Entry 是 IRCC 管理联邦技术类移民（CEC/FSW/FST）的综合积分系统。符合条件的申请人在系统中创建档案（Profile），IRCC 定期从中邀请综合排名分数（CRS）最高的候选人申请永久居民，邀请通知即 ITA（Invitation to Apply）。",
+  },
+  {
+    q: "CRS 分数是怎么计算的？",
+    a: "CRS 核心分数基于四大维度：技能（语言、学历、工作经验）、配偶技能加分、以及额外加分（工作offer、省提名、学历认证等）。满分1200分，实际竞争区间多在450–550分之间。省提名可加600分，工作offer可加50–200分（视NOC类别）。",
+  },
+  {
+    q: "境外申请人可以申请 CEC 吗？",
+    a: "不可以。CEC 要求申请人在提交PR申请时拥有加拿大境内积累的工作经验，境外工作经验不纳入CEC的核心条件。但境外申请人可以通过FSW项目进入EE候选池，或者先来加拿大持工签工作后再申请CEC。",
+  },
+  {
+    q: "ITA 后需要多久提交 PR 申请？",
+    a: "收到ITA后有60天时间完成并提交全套PR申请材料，包括体检报告、警察证明、英法语言成绩、学历及工作证明文件等。务必提前准备，避免材料缺失影响进度。",
+  },
+  {
+    q: "多久能拿到 PR？",
+    a: "IRCC 目标处理时间为6个月（EE系统通道）。实际情况因审核队列和个案复杂度而异，部分案件可能更快，也有因背景调查等原因超期的情况。提交完整无误的材料是加快处理的最关键因素。",
+  },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem", position: i + 1, name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((i) => ({
+    "@type": "Question", name: i.q,
+    acceptedAnswer: { "@type": "Answer", text: i.a },
+  })),
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("联邦移民项目总览 | EE / CEC / FSW / PNP 全解析")}
+  description="加拿大联邦移民项目完整指南：Express Entry 体系（CEC / FSW / FST）、省提名（PNP）、大西洋省份及农村移民计划，各路径适合人群与核心条件对比。"
+  canonical="https://cachinavisa.com/projects/federal-programs/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={faqLd} />
+  <Breadcrumbs items={breadcrumbs} />
+
+  <div class="grid" style="margin-top:16px">
+    <article class="content-card">
+      <div class="page-header">
+        <div class="page-kicker">联邦移民 · Express Entry</div>
+        <h1 class="page-h1">联邦移民项目总览</h1>
+        <p class="page-intro">
+          加拿大联邦移民主要通过 <strong>Express Entry（EE）</strong> 系统管理，下设三大类别：
+          加拿大经验类（CEC）、联邦技术工人（FSW）和联邦技术工匠（FST）。
+          此外，各省通过省提名计划（PNP）与 EE 联动，为特定候选人提供额外移民配额。
+        </p>
+      </div>
+
+      <div class="content-sections">
+
+        <div class="section-block">
+          <h2>Express Entry 体系概览</h2>
+          <p>EE 是联邦技术移民的核心平台，申请人建立档案后系统根据综合排名分（CRS）筛选候选人。IRCC 定期举行抽签（Draw），分数达到或超过当期截止分数线（Cut-off）的候选人收到 ITA，从而进入正式PR申请流程。</p>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-card-label">候选池建立方式</div>
+              <div class="info-card-value">创建 EE Profile</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">PR申请时间目标</div>
+              <div class="info-card-value">6个月内处理完成</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">ITA 有效期</div>
+              <div class="info-card-value">60天内提交材料</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">CRS 满分</div>
+              <div class="info-card-value">1200 分</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2>主要联邦移民路径</h2>
+          <div class="programs-grid">
+            {programs.map((p) => (
+              <a class="program-card" href={p.href}>
+                <div class="prog-top">
+                  <div class="prog-name">{p.name}</div>
+                  <span class="prog-tag" style={`background: ${p.tagColor}22; color: ${p.tagColor};`}>{p.tag}</span>
+                </div>
+                <p class="prog-desc">{p.desc}</p>
+                <div class="prog-conditions">
+                  {p.conditions.map((c) => (
+                    <div class="prog-cond">
+                      <span class="prog-cond-dot">✓</span>
+                      <span>{c}</span>
+                    </div>
+                  ))}
+                </div>
+                <div class="prog-link">了解详情 →</div>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2>如何选择适合自己的路径</h2>
+          <div class="path-table">
+            <div class="pt-row pt-header">
+              <div>我的情况</div>
+              <div>推荐路径</div>
+              <div>关键条件</div>
+            </div>
+            <div class="pt-row">
+              <div>已在加拿大有工签工作经验</div>
+              <div><a href="/projects/cec/">CEC</a></div>
+              <div>12个月 NOC 0/A/B 工作经验 + CLB 7</div>
+            </div>
+            <div class="pt-row">
+              <div>境外，高学历高技能</div>
+              <div><a href="/projects/federal/">FSW（EE）</a></div>
+              <div>工作经验 + 综合打分 67 分</div>
+            </div>
+            <div class="pt-row">
+              <div>境外，技工类职业背景</div>
+              <div><a href="/projects/federal/">FST</a></div>
+              <div>认证技工职业 + 工作 offer</div>
+            </div>
+            <div class="pt-row">
+              <div>有特定省份工作 offer</div>
+              <div><a href="/projects/provincial-nomination/">PNP</a></div>
+              <div>满足该省提名类别要求</div>
+            </div>
+            <div class="pt-row">
+              <div>愿意在大西洋四省定居</div>
+              <div>AIP</div>
+              <div>指定雇主 offer + 定居意愿</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2>常见问题（FAQ）</h2>
+          {faqItems.map((item) => (
+            <details class="faq-item">
+              <summary class="faq-q">{item.q}</summary>
+              <p class="faq-a">{item.a}</p>
+            </details>
+          ))}
+        </div>
+
+      </div>
+      <div class="page-share">
+        <ShareBar url="https://cachinavisa.com/projects/federal-programs/" title={"联邦移民项目总览 | EE / CEC / FSW / PNP 全解析"} />
+      </div>
+
+
+      <div class="cta-inline">
+        <div class="cta-text">不确定哪条路径最适合你？我们帮你做分析。</div>
+        <a class="cta-btn" href="/contact/">免费评估 →</a>
+      </div>
+    </article>
+
+    <aside class="sidebar-stack">
+      <ContactCard />
+      <RelatedToolsCard
+        title="相关打分工具"
+        subtitle="联邦项目里，最常见的入口就是 CRS。"
+        items={[
+          { href: "/tools/crs-calculator/", label: "联邦 CRS 计算器", desc: "EE / CEC / FSW 的基础自测工具。" },
+          { href: "/tools/", label: "打分工具总览", desc: "把省提名和联邦工具一起看更清楚。" },
+          { href: "/projects/provincial-nomination/", label: "省提名总览", desc: "如果 CRS 不够，顺手看 PNP 补分。" },
+        ]}
+        footerHref="/tools/"
+        footerLabel="查看全部打分工具"
+      />
+      <div class="sidebar-nav-card">
+        <div class="snc-title">联邦移民路径</div>
+        <div class="snc-links">
+          <a class="snc-link active" href="/projects/federal-programs/">联邦项目总览</a>
+          <a class="snc-link" href="/projects/cec/">加拿大经验类（CEC）</a>
+          <a class="snc-link" href="/projects/lmia-overview/">LMIA 雇主担保</a>
+          <a class="snc-link" href="/projects/lmia-exemptions/">LMIA 豁免类别</a>
+          <a class="snc-link" href="/projects/provincial-nomination/">省提名总览</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+.grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 920px) { .grid { grid-template-columns: 1fr 300px; align-items: start; } }
+.content-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 16px; overflow: hidden; }
+.page-header { padding: 28px 28px 24px; border-bottom: 1px solid rgba(26,29,35,0.08); background: linear-gradient(135deg, #fafbff, #fff); }
+.page-kicker { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #d92d20; margin-bottom: 8px; }
+.page-h1 { font-size: clamp(22px, 4vw, 30px); font-weight: 800; color: #1a1d23; margin: 0 0 12px; letter-spacing: -0.02em; }
+.page-intro { font-size: 15px; color: rgba(26,29,35,0.62); line-height: 1.7; margin: 0; }
+.content-sections { padding: 24px 28px; display: grid; gap: 32px; }
+.section-block h2 { font-size: 18px; font-weight: 750; color: #1a1d23; margin: 0 0 14px; padding-bottom: 8px; border-bottom: 2px solid rgba(217,45,32,0.12); }
+.section-block p { font-size: 14px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0 0 14px; }
+
+.info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 16px; }
+.info-card { padding: 14px 16px; background: rgba(26,29,35,0.03); border-radius: 12px; border: 1px solid rgba(26,29,35,0.07); }
+.info-card-label { font-size: 12px; color: rgba(26,29,35,0.45); margin-bottom: 4px; }
+.info-card-value { font-size: 14px; font-weight: 600; color: #1a1d23; }
+
+.programs-grid { display: grid; gap: 14px; }
+@media (min-width: 640px) { .programs-grid { grid-template-columns: 1fr 1fr; } }
+.program-card {
+  display: flex; flex-direction: column; gap: 10px;
+  padding: 18px 20px; border-radius: 14px;
+  border: 1.5px solid rgba(26,29,35,0.09);
+  background: #fff; text-decoration: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.program-card:hover { border-color: rgba(217,45,32,0.25); box-shadow: 0 4px 20px rgba(0,0,0,0.07); text-decoration: none; }
+.prog-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.prog-name { font-size: 14px; font-weight: 700; color: #1a1d23; }
+.prog-tag { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; white-space: nowrap; }
+.prog-desc { font-size: 13px; color: rgba(26,29,35,0.6); line-height: 1.6; margin: 0; }
+.prog-conditions { display: flex; flex-direction: column; gap: 5px; }
+.prog-cond { display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; color: rgba(26,29,35,0.65); }
+.prog-cond-dot { color: #059669; font-weight: 700; flex-shrink: 0; }
+.prog-link { font-size: 13px; font-weight: 600; color: #d92d20; margin-top: 4px; }
+
+.path-table { border-radius: 12px; overflow: hidden; border: 1px solid rgba(26,29,35,0.09); }
+.pt-row { display: grid; grid-template-columns: 1.6fr 1fr 2fr; gap: 0; border-bottom: 1px solid rgba(26,29,35,0.07); }
+.pt-row:last-child { border-bottom: none; }
+.pt-row > div { padding: 11px 14px; font-size: 13.5px; color: rgba(26,29,35,0.7); line-height: 1.5; border-right: 1px solid rgba(26,29,35,0.06); }
+.pt-row > div:last-child { border-right: none; }
+.pt-header { background: rgba(26,29,35,0.04); }
+.pt-header > div { font-weight: 700; color: #1a1d23; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.05em; }
+.pt-row a { color: #d92d20; text-decoration: none; font-weight: 600; }
+
+.faq-item { border: 1px solid rgba(26,29,35,0.08); border-radius: 12px; overflow: hidden; margin-bottom: 8px; }
+.faq-q { padding: 14px 18px; font-size: 14px; font-weight: 600; color: #1a1d23; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+.faq-q::after { content: '+'; font-size: 18px; color: #d92d20; font-weight: 400; }
+details[open] .faq-q::after { content: '−'; }
+.faq-a { padding: 0 18px 14px; font-size: 13.5px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0; border-top: 1px solid rgba(26,29,35,0.06); padding-top: 12px; }
+
+.cta-inline { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 28px; background: linear-gradient(135deg, rgba(217,45,32,0.05), rgba(217,45,32,0.02)); border-top: 1px solid rgba(217,45,32,0.1); }
+.cta-text { font-size: 15px; font-weight: 600; color: #1a1d23; }
+.cta-btn { padding: 10px 22px; background: #d92d20; color: #fff; border-radius: 10px; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; }
+.cta-btn:hover { background: #b52418; text-decoration: none; }
+
+.sidebar-stack { display: grid; gap: 16px; position: sticky; top: 80px; }
+.sidebar-nav-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 14px; padding: 18px 20px; }
+.snc-title { font-size: 14px; font-weight: 700; color: #1a1d23; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(26,29,35,0.08); }
+.snc-links { display: flex; flex-direction: column; gap: 2px; }
+.snc-link { display: block; padding: 8px 10px; font-size: 13.5px; color: #374151; text-decoration: none; border-radius: 8px; }
+.snc-link:hover { background: rgba(217,45,32,0.06); color: #d92d20; text-decoration: none; }
+.snc-link.active { background: rgba(217,45,32,0.07); color: #d92d20; font-weight: 600; }
+</style>

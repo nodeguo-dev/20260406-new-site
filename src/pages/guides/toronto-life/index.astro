@@ -1,0 +1,368 @@
+---
+import "@/styles/toronto-life-guides.css";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import TorontoLifeSubNav from "@/components/guides/TorontoLifeSubNav.astro";
+import TorontoLifePartnerBand from "@/components/guides/TorontoLifePartnerBand.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+import { getAllPublishedPosts } from "@/utils/content";
+import { torontoLifeHubBandA, torontoLifeHubBandB } from "@/data/torontoLifeSponsors";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "多伦多生活指南", href: "/guides/toronto-life/" },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+
+const posts = await getAllPublishedPosts();
+const torontoPosts = posts.filter((p) => p.data.category === "toronto-life").slice(0, 12);
+
+const themes = [
+  {
+    icon: "🏠",
+    title: "安居与租房",
+    href: "/guides/toronto-life/housing/",
+    desc: "房型、租约、押金、租客权益与常见社区（北约克、士嘉堡、密西沙加等）。",
+  },
+  {
+    icon: "🚇",
+    title: "交通与出行",
+    href: "/guides/toronto-life/transit/",
+    desc: "TTC、GO、PRESTO、冬季驾车与保险；驾照衔接提示。",
+  },
+  {
+    icon: "🏥",
+    title: "医疗与保险",
+    href: "/guides/toronto-life/health/",
+    desc: "OHIP 等候期、UHIP、家庭医生与 Walk-in、急诊药房常识。",
+  },
+  {
+    icon: "🎓",
+    title: "教育与育儿",
+    href: "/guides/toronto-life/education/",
+    desc: "公校教育局、入学注册、日托与课后班线索。",
+  },
+  {
+    icon: "🏦",
+    title: "金融与税务",
+    href: "/guides/toronto-life/finance/",
+    desc: "SIN、银行、信用记录、报税概念（非税务意见）。",
+  },
+  {
+    icon: "🏛️",
+    title: "市政与日常",
+    href: "/guides/toronto-life/city-services/",
+    desc: "垃圾回收、图书馆、社区中心、311 与城市服务。",
+  },
+];
+---
+
+<BaseLayout
+  title={withSiteTitle("多伦多生活指南 | 新移民与留学生 GTA 落地专题")}
+  description="常春藤多伦多生活子站：租房、交通、医疗、教育、金融税务与市政日常分册指南；含合作推荐展示位。政策类内容请见移民新闻与资讯聚合。"
+  canonical="https://cachinavisa.com/guides/toronto-life/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <div class="container tl-page">
+    <Breadcrumbs items={breadcrumbs} />
+
+    <header class="tl-hero">
+      <p class="tl-kicker">本地生活子站 · 与移民新闻并列</p>
+      <h1 class="tl-h1">多伦多生活指南</h1>
+      <p class="tl-lead">
+        面向<strong>新移民、工签与留学家庭</strong>的 GTA 落地手册：分主题长页持续更新，并设有<strong>合作推广位</strong>，便于对接本地持牌或合规服务商（详见
+        <a href="/guides/toronto-life/partners/">商务合作说明</a>）。
+        签证与移民法条请见 <a href="/blog/">移民新闻</a>、<a href="/immigration/">移民资讯</a>。
+      </p>
+      <TorontoLifeSubNav activeKey="hub" />
+      <div class="tl-hero-actions">
+        <a class="tl-btn tl-btn-primary" href="/category/toronto-life/">多伦多生活 · 博客分类</a>
+        <a class="tl-btn tl-btn-ghost" href="/immigration/guide/">移民新手必读</a>
+        <a class="tl-btn tl-btn-ghost" href="/contact/">咨询常春藤顾问</a>
+      </div>
+    </header>
+
+    <section class="tl-section" aria-labelledby="spotlight-h">
+      <h2 id="spotlight-h" class="tl-section-title">生活专题导读</h2>
+      <p class="tl-muted">
+        除下方「本主题博客」自动列表外，这几篇与<strong>留学生、新移民</strong>落地衔接较紧，便于直接跳转。
+      </p>
+      <ul class="tl-spotlight-list">
+        <li>
+          <a href="/blog/downtown-toronto-catering-uoft-tmu-students/">多大 / TMU 周边团体餐与 catering（Downtown 餐厅官网汇总）</a>
+        </li>
+        <li>
+          <a href="/blog/toronto-newcomer-wellness-rmt-acupuncture-insurance-guide/">针灸、推拿与注册按摩 · 团险额度怎么理解</a>
+        </li>
+        <li>
+          <a href="/blog/newcomer-student-toronto-moving-address-complete-guide/">留学生与新移民 · 搬家后地址更新超全指南</a>
+        </li>
+      </ul>
+    </section>
+
+    <section class="tl-section" aria-labelledby="themes-h">
+      <h2 id="themes-h" class="tl-section-title">主题分册</h2>
+      <p class="tl-muted">
+        点击下方卡片进入各分册；每册内含正文、实用清单与<strong>多组合作展示带</strong>，便于您一站式浏览与比价（外链以合作方披露为准）。
+      </p>
+      <div class="tl-theme-grid">
+        {themes.map((t) => (
+          <a class="tl-theme-card" href={t.href}>
+            <span class="tl-theme-icon" aria-hidden="true">{t.icon}</span>
+            <span class="tl-theme-title">{t.title}</span>
+            <span class="tl-theme-desc">{t.desc}</span>
+            <span class="tl-theme-go">打开分册 →</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    {torontoPosts.length > 0 ? (
+      <section class="tl-section" aria-labelledby="posts-h">
+        <h2 id="posts-h" class="tl-section-title">本主题博客文章</h2>
+        <ul class="tl-post-list">
+          {torontoPosts.map((p) => (
+            <li>
+              <a class="tl-post-link" href={`/blog/${p.slug}/`}>
+                <span class="tl-post-title">{p.data.title}</span>
+                <span class="tl-post-excerpt">{p.data.excerpt}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <p class="tl-more">
+          <a class="tl-btn tl-btn-ghost" href="/category/toronto-life/">查看全部分类 →</a>
+        </p>
+      </section>
+    ) : (
+      <section class="tl-section" aria-labelledby="soon-h">
+        <h2 id="soon-h" class="tl-section-title">文章陆续上线</h2>
+        <p class="tl-muted">
+          发布文章时设置 <code class="tl-code">category: &quot;toronto-life&quot;</code> 即可收录至
+          <a href="/category/toronto-life/">分类页</a> 与本列表。
+        </p>
+      </section>
+    )}
+
+    <section class="tl-section tl-partner-wrap" aria-labelledby="partner-h">
+      <h2 id="partner-h" class="tl-section-title">合作展示</h2>
+      <p class="tl-muted">
+        以下为本专题的合作展示位，放在正文与工具内容之后，便于先满足读者的信息需求，再供本地合规服务商曝光。
+      </p>
+      <TorontoLifePartnerBand band={torontoLifeHubBandA} bandId="hub-a" />
+      <TorontoLifePartnerBand band={torontoLifeHubBandB} bandId="hub-b" />
+    </section>
+
+    <aside class="tl-disclaimer" role="note">
+      <strong>免责声明：</strong>生活类内容仅供一般参考，不构成法律、税务、医疗或投资建议。合作推广位所链第三方由广告主自行负责；本站不对其服务品质或收费承担担保责任。
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+  .tl-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .tl-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 650;
+    text-decoration: none;
+    transition: filter 0.15s, border-color 0.15s;
+  }
+  .tl-btn-primary {
+    background: var(--red);
+    color: #fff;
+    border: 1px solid transparent;
+  }
+  .tl-btn-primary:hover {
+    filter: brightness(0.92);
+    text-decoration: none;
+  }
+  .tl-btn-ghost {
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .tl-btn-ghost:hover {
+    border-color: rgba(217, 45, 32, 0.35);
+    text-decoration: none;
+  }
+  .tl-section {
+    margin-bottom: 8px;
+  }
+  .tl-partner-wrap {
+    margin-top: 24px;
+  }
+  .tl-section-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text);
+    margin: 0 0 10px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid rgba(217, 45, 32, 0.12);
+  }
+  .tl-muted {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--muted);
+    margin: 0 0 16px;
+  }
+  .tl-muted a {
+    color: var(--red);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .tl-muted a:hover {
+    text-decoration: underline;
+  }
+  .tl-theme-grid {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 560px) {
+    .tl-theme-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 900px) {
+    .tl-theme-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .tl-theme-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 18px 16px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: #fff;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.12s;
+  }
+  .tl-theme-card:hover {
+    border-color: rgba(217, 45, 32, 0.28);
+    box-shadow: var(--shadow);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+  .tl-theme-icon {
+    font-size: 26px;
+    margin-bottom: 8px;
+  }
+  .tl-theme-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .tl-theme-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    flex: 1;
+  }
+  .tl-theme-go {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--red);
+    margin-top: 10px;
+  }
+  .tl-post-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 10px;
+  }
+  .tl-post-link {
+    display: block;
+    padding: 16px 18px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .tl-post-link:hover {
+    border-color: rgba(217, 45, 32, 0.25);
+    box-shadow: var(--shadow);
+    text-decoration: none;
+  }
+  .tl-post-title {
+    display: block;
+    font-weight: 750;
+    font-size: 15px;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .tl-post-link:hover .tl-post-title {
+    color: var(--red);
+  }
+  .tl-post-excerpt {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.55;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .tl-more {
+    margin-top: 16px;
+  }
+  .tl-code {
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: rgba(26, 29, 35, 0.06);
+    font-family: ui-monospace, monospace;
+  }
+  .tl-spotlight-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .tl-spotlight-list a {
+    display: block;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: rgba(26, 86, 196, 0.04);
+    font-size: 14px;
+    font-weight: 650;
+    color: var(--text);
+    text-decoration: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .tl-spotlight-list a:hover {
+    border-color: rgba(217, 45, 32, 0.28);
+    box-shadow: var(--shadow);
+    color: var(--red);
+    text-decoration: none;
+  }
+</style>

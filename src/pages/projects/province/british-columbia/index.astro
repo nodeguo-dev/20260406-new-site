@@ -1,0 +1,251 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import RelatedToolsCard from "@/components/RelatedToolsCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民项目", href: "/projects/" },
+  { name: "省提名项目", href: "/projects/provincial-nomination/" },
+  { name: "不列颠哥伦比亚省（BC PNP）", href: "/projects/province/british-columbia/" },
+];
+
+const streams = [
+  { name: "Skilled Worker（一般技术工人）", desc: "有BC省雇主工作offer的技术工人，职位须为NOC TEER 0/1/2/3类别，雇主须满足BC PNP对雇主的资格要求。" },
+  { name: "International Graduate（国际毕业生）", desc: "在BC省指定院校毕业并有BC省雇主offer的国际学生，毕业后在特定时间窗口内申请。" },
+  { name: "BC PNP Tech Pilot（科技类专项）", desc: "专为29个科技类职业设计，处理时间快（约2–3个月），无需EOI排队，有效offer即可快速申请。对IT/工程类求职者非常友好。" },
+  { name: "Express Entry BC（与EE结合）", desc: "从EE候选池中征招符合BC经济需求的申请人，获提名后+600分CRS，适用于想走快速通道的EE候选人。" },
+  { name: "Entrepreneur Immigration（企业家类）", desc: "面向有创业意愿和资金实力（净资产≥$600K CAD，投资≥$200K）的申请人，先以临时身份经营企业，满足业绩指标后获提名。" },
+  { name: "International Post-Graduate（研究生类）", desc: "在BC省公立大学完成STEM相关硕士或博士学位的国际毕业生，无需工作offer，直接申请省提名。" },
+];
+
+const faqItems = [
+  {
+    q: "BC PNP Tech Pilot和普通技术工人类别有什么区别？",
+    a: "Tech Pilot专门针对29个指定科技职业（包括软件工程师、IT项目经理、数据分析师等），最大优势是不需要等待EOI排名，直接申请，处理速度也比普通类别快很多（约2–3个月）。如果你的职业在这29个之列，Tech Pilot通常是BC PNP的首选路径。"
+  },
+  {
+    q: "BC省雇主需要满足什么条件才能为我提名？",
+    a: "BC PNP对雇主有明确要求：必须是在BC省合法运营的企业，有至少一名全职雇员（不计申请人），职位必须是全职永久性岗位，工资需符合市场水平。部分类别还要求雇主在BC省运营超过一定年限。雇主在申请中需要提交一份雇主资格证明，BC省会核查雇主信息。"
+  },
+  {
+    q: "我的offer是临时合同工性质，还能申请BC PNP吗？",
+    a: "不行。BC PNP要求的offer必须是永久全职性质（Permanent Full-Time），合同制、临时工、兼职或自雇通常不符合要求。如果你目前是合同工，可以和雇主沟通是否能转为永久职位，再申请省提名。"
+  },
+  {
+    q: "International Post-Graduate类别适合什么情况？",
+    a: "这是BC PNP中少数不需要工作offer的类别，专门面向在BC省公立大学（如UBC、SFU）完成STEM相关研究生学位（硕士或博士）的毕业生。申请时需在毕业后特定窗口内（通常3年内）提交，且需满足语言要求（CLB 8）。适合刚毕业还没找到工作的研究生。"
+  },
+  {
+    q: "BC PNP企业家类大概需要多少资金？",
+    a: "Base category要求个人净资产至少$600K CAD，投资金额至少$200K CAD（大温地区），非大温地区要求$100K CAD。Regional Pilot（区域类）有不同的资金要求，通常更低一些。整个企业家移民过程约2–4年，需要先以临时居民身份来BC省实际经营企业，满足考核指标（如创造就业、达到销售额目标）后才获正式提名。"
+  },
+  {
+    q: "获得BC PNP提名后，PR处理需要多久？",
+    a: "走Express Entry BC（Enhanced通道）：+600分CRS后基本立即获ITA，60天内提交联邦PR申请，IRCC目标6个月内完成。走Base通道：直接向IRCC提交省提名PR申请，通常需要12–18个月。两者的主要区别在于是否有EE Profile。"
+  },
+];
+
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((i) => ({
+    "@type": "Question",
+    name: i.q,
+    acceptedAnswer: { "@type": "Answer", text: i.a },
+  })),
+};
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+---
+<BaseLayout
+  title={withSiteTitle("BC省提名（BC PNP）申请指南 | Tech Pilot·技术工人·国际毕业生")}
+  description="不列颠哥伦比亚省提名计划（BC PNP）完整指南：Tech Pilot科技类、技术工人、国际毕业生、企业家等类别详解及6个常见问题解答。"
+  canonical="https://cachinavisa.com/projects/province/british-columbia/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={faqLd} />
+  <Breadcrumbs items={breadcrumbs} />
+  <div class="grid" style="margin-top:16px">
+    <article class="content-card">
+      <div class="page-header">
+        <div class="page-kicker">省提名 · BC PNP</div>
+        <h1 class="page-h1">不列颠哥伦比亚省提名（BC PNP）申请指南</h1>
+        <p class="page-intro">不列颠哥伦比亚省（BC省）是加拿大西海岸最大的省份，以温哥华为中心，科技、影视、金融和旅游业发达。BC PNP是全国处理较快、科技类支持力度最大的省提名计划之一，尤其是Tech Pilot对IT类申请人非常友好。</p>
+      </div>
+
+      <div class="content-sections">
+
+        <div class="section-block">
+          <h2>BC省基本情况</h2>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-card-label">主要城市</div>
+              <div class="info-card-value">温哥华、维多利亚、本拿比、素里</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">主要产业</div>
+              <div class="info-card-value">科技、房地产、旅游、林业、金融</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">中文社区</div>
+              <div class="info-card-value">温哥华华人社区庞大，粤语/普通话均通</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">Tech Pilot职业数</div>
+              <div class="info-card-value">29个指定科技类职业（快速通道）</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2>主要申请类别</h2>
+          <div class="streams-list">
+            {streams.map((s) => (
+              <div class="stream-item">
+                <div class="stream-name">{s.name}</div>
+                <div class="stream-desc">{s.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2>Tech Pilot涵盖的29个职业（部分）</h2>
+          <ul class="req-list">
+            <li>软件工程师及设计师（NOC 21232）</li>
+            <li>计算机程序员及互动媒体开发者（NOC 21232）</li>
+            <li>数据科学家（NOC 21211）</li>
+            <li>网络及系统管理员（NOC 21222）</li>
+            <li>IT项目经理（NOC 21221）</li>
+            <li>数字化媒体设计师（NOC 52120）</li>
+            <li>电子工程师（NOC 21310）</li>
+            <li>（其余职业详见BC PNP官网最新Tech Pilot职业列表）</li>
+          </ul>
+          <div class="tip-box">Tech Pilot职业列表可能随政策更新变化，申请前请在BC PNP官网核查你的NOC代码是否在列。</div>
+        </div>
+
+        <div class="section-block">
+          <h2>申请流程</h2>
+          <ol class="step-list">
+            <li><span class="step-text"><strong>确认职业和雇主资格</strong>——核查NOC代码，确认雇主符合BC PNP对雇主的要求</span></li>
+            <li><span class="step-text"><strong>在BC PNP系统提交EOI或直接申请</strong>——Tech Pilot类别无需等待EOI邀请，可直接申请；其他类别需先提交EOI并等待NOI</span></li>
+            <li><span class="step-text"><strong>BC省审核并发出提名</strong>——BC PNP审核处理时间通常2–3个月（Tech Pilot），Base类别时间更长</span></li>
+            <li><span class="step-text"><strong>通过EE或直接向IRCC提交联邦PR申请</strong>——Enhanced通道走EE，获+600分CRS；Base通道直接提交</span></li>
+          </ol>
+        </div>
+
+        <div class="section-block">
+          <h2>常见问题（FAQ）</h2>
+          {faqItems.map((item) => (
+            <details class="faq-item">
+              <summary class="faq-q">{item.q}</summary>
+              <p class="faq-a">{item.a}</p>
+            </details>
+          ))}
+        </div>
+
+      </div>
+      <div class="page-share">
+        <ShareBar url="https://cachinavisa.com/projects/province/british-columbia/" title={"BC省提名（BC PNP）申请指南 | Tech Pilot·技术工人·国际毕业生"} />
+      </div>
+
+
+      <div class="cta-inline">
+        <div class="cta-text">想知道你的职业是否符合BC PNP Tech Pilot条件？</div>
+        <a class="cta-btn" href="/contact/">免费评估 →</a>
+      </div>
+    </article>
+
+    <aside class="sidebar-stack">
+      <ContactCard />
+      <RelatedToolsCard
+        title="相关打分工具"
+        subtitle="BC PNP 里最常见的就是 SIRS 注册打分，EE 也要同步看 CRS。"
+        items={[
+          { href: "/tools/bc-pnp-calculator/", label: "BC SIRS 计算器", desc: "BC 技术类与定向项目的核心打分。" },
+          { href: "/tools/crs-calculator/", label: "联邦 CRS 计算器", desc: "如果走 EE 相关路径，先把 CRS 算好。" },
+          { href: "/tools/", label: "打分工具总览", desc: "把 BC 和其他省提名工具放一起看。" },
+        ]}
+        footerHref="/tools/bc-pnp-calculator/"
+        footerLabel="直接计算 BC SIRS"
+      />
+      <div class="sidebar-nav-card">
+        <div class="snc-title">各省提名</div>
+        <div class="snc-links">
+          <a class="snc-link" href="/projects/province/ontario/">安大略省（OINP）</a>
+          <a class="snc-link active" href="/projects/province/british-columbia/">不列颠哥伦比亚省</a>
+          <a class="snc-link" href="/projects/province/quebec/">魁北克省</a>
+        </div>
+      </div>
+      <div class="sidebar-nav-card">
+        <div class="snc-title">相关移民路径</div>
+        <div class="snc-links">
+          <a class="snc-link" href="/projects/federal/">联邦技术移民（EE）</a>
+          <a class="snc-link" href="/projects/provincial-nomination/">省提名总览</a>
+          <a class="snc-link" href="/visa/work-permit/">工签如何积累经验</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+.grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 920px) { .grid { grid-template-columns: 1fr 300px; align-items: start; } }
+.content-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 16px; overflow: hidden; }
+.page-header { padding: 28px 28px 24px; border-bottom: 1px solid rgba(26,29,35,0.08); background: linear-gradient(135deg, #fafbff, #fff); }
+.page-kicker { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #d92d20; margin-bottom: 8px; }
+.page-h1 { font-size: clamp(22px, 4vw, 30px); font-weight: 800; color: #1a1d23; margin: 0 0 12px; letter-spacing: -0.02em; }
+.page-intro { font-size: 15px; color: rgba(26,29,35,0.62); line-height: 1.7; margin: 0; }
+.content-sections { padding: 24px 28px; display: grid; gap: 32px; }
+.section-block h2 { font-size: 18px; font-weight: 750; color: #1a1d23; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 2px solid rgba(217,45,32,0.12); }
+.section-block p { font-size: 14px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0 0 12px; }
+.streams-list { display: grid; gap: 10px; }
+.stream-item { padding: 14px 16px; background: rgba(26,29,35,0.025); border-radius: 12px; border: 1px solid rgba(26,29,35,0.07); }
+.stream-name { font-size: 14px; font-weight: 700; color: #1a1d23; margin-bottom: 5px; }
+.stream-desc { font-size: 13.5px; color: rgba(26,29,35,0.6); line-height: 1.55; }
+.req-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.req-list li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; background: rgba(26,29,35,0.025); border-radius: 10px; font-size: 14px; color: rgba(26,29,35,0.75); line-height: 1.55; }
+.req-list li::before { content: "✓"; color: #d92d20; font-weight: 700; flex-shrink: 0; }
+.step-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; counter-reset: steps; }
+.step-list li { display: flex; gap: 14px; align-items: flex-start; counter-increment: steps; }
+.step-list li::before { content: counter(steps); display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #d92d20; color: #fff; font-weight: 700; font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+.step-text { font-size: 14px; color: rgba(26,29,35,0.75); line-height: 1.6; padding-top: 3px; }
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.info-card { padding: 14px 16px; background: rgba(26,29,35,0.03); border-radius: 12px; border: 1px solid rgba(26,29,35,0.07); }
+.info-card-label { font-size: 12px; color: rgba(26,29,35,0.45); margin-bottom: 4px; }
+.info-card-value { font-size: 14px; font-weight: 600; color: #1a1d23; }
+.tip-box { padding: 14px 16px; background: rgba(217,45,32,0.05); border-left: 3px solid #d92d20; border-radius: 0 10px 10px 0; font-size: 13px; color: rgba(26,29,35,0.7); line-height: 1.65; margin-top: 12px; }
+.faq-item { border: 1px solid rgba(26,29,35,0.09); border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+.faq-q { padding: 13px 16px; font-weight: 650; font-size: 14px; cursor: pointer; list-style: none; display: flex; justify-content: space-between; color: #1a1d23; }
+.faq-q::after { content: "+"; font-size: 18px; color: rgba(26,29,35,0.4); }
+details[open] .faq-q::after { content: "−"; }
+.faq-q::-webkit-details-marker { display: none; }
+.faq-a { padding: 0 16px 13px; font-size: 13.5px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0; }
+.cta-inline { margin: 0 28px 28px; padding: 20px 24px; background: linear-gradient(135deg, #0a1628, #0f1f38); border-radius: 14px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.cta-text { font-size: 15px; font-weight: 700; color: #fff; }
+.cta-btn { display: inline-flex; padding: 10px 20px; border-radius: 10px; background: #d92d20; color: #fff; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; }
+.cta-btn:hover { background: #b52418; text-decoration: none; }
+.sidebar-stack { display: grid; gap: 16px; position: sticky; top: 80px; }
+.sidebar-nav-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 14px; padding: 18px 20px; }
+.snc-title { font-size: 14px; font-weight: 700; color: #1a1d23; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(26,29,35,0.08); }
+.snc-links { display: flex; flex-direction: column; gap: 2px; }
+.snc-link { display: block; padding: 8px 10px; font-size: 13.5px; color: #374151; text-decoration: none; border-radius: 8px; }
+.snc-link:hover { background: rgba(217,45,32,0.06); color: #d92d20; text-decoration: none; }
+.snc-link.active { background: rgba(217,45,32,0.07); color: #d92d20; font-weight: 600; }
+</style>

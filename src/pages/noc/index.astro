@@ -1,0 +1,387 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import RelatedToolsCard from "@/components/RelatedToolsCard.astro";
+import { nocLibrary, getNocLevelLabel } from "@/data/nocLibrary";
+import { nocStructure } from "@/data/nocStructure";
+import { withSiteTitle } from "@/utils/seo";
+
+const levelOrder = [1, 2, 3, 4, 5] as const;
+const levelMeta = {
+  1: { label: "大类", desc: "10 个 broad categories" },
+  2: { label: "大组", desc: "45 个 major groups" },
+  3: { label: "子大组", desc: "89 个 sub-major groups" },
+  4: { label: "小组", desc: "162 个 minor groups" },
+  5: { label: "具体职业", desc: "516 个 unit groups" },
+} as const;
+const levelCounts = Object.fromEntries(levelOrder.map((level) => [level, nocLibrary.filter((item) => item.level === level).length])) as Record<number, number>;
+const levelSections = levelOrder.map((level) => ({
+  level,
+  label: getNocLevelLabel(level),
+  count: levelCounts[level],
+  items: nocLibrary.filter((item) => item.level === level),
+}));
+---
+
+<BaseLayout
+  title={withSiteTitle("加拿大 NOC 职业库 | 职业分类、Job Bank 与 EE 对照")}
+  description="可搜索的加拿大 NOC 职业库：按代码、职位、TEER 和移民路径查找职业，并了解雇主发布岗位和申请人材料如何与 NOC 对齐。"
+  canonical="https://cachinavisa.com/noc/"
+>
+  <div class="grid">
+    <main class="card">
+      <div class="card-inner noc-hero">
+        <div class="kicker">职业库</div>
+        <h1 class="h1">加拿大 NOC 职业库</h1>
+        <p class="lead">
+          这是一个可搜索的基础数据库 + 解释页 + 雇主写法指南。你可以按 NOC code、职位名、TEER、Job Bank 关键词或移民路径查找对应职业，也可以从这里回链到 EE、PNP、技工与找工文章。现在页面会把 NOC 2021 的全部 822 个层级都收进来。
+        </p>
+
+        <div class="noc-search">
+          <span class="noc-search-icon">🔍</span>
+          <input id="nocSearch" type="search" placeholder="搜索 NOC code、职位名、TEER、Job Bank 关键词…" autocomplete="off" />
+        </div>
+
+        <div class="noc-quick">
+          <a href="/noc/job-bank-ad-guide/">雇主如何写 Job Bank 广告</a>
+          <a href="/noc/how-to-match-your-experience/">申请人如何对照职责</a>
+          <a href="/tools/crs-calculator/">CRS 打分工具</a>
+          <a href="/projects/ee-trades/">EE 技工类定向</a>
+        </div>
+
+        <div class="noc-stats">
+          <div class="noc-stat"><strong>{nocLibrary.length}</strong><span>NOC 条目</span></div>
+          <div class="noc-stat"><strong>{nocStructure.filter((item) => item.level === 1).length}</strong><span>大类</span></div>
+          <div class="noc-stat"><strong>{levelCounts[2]}</strong><span>大组</span></div>
+          <div class="noc-stat"><strong>{levelCounts[3]}</strong><span>子大组</span></div>
+          <div class="noc-stat"><strong>{levelCounts[4]}</strong><span>小组</span></div>
+          <div class="noc-stat"><strong>{levelCounts[5]}</strong><span>具体职业</span></div>
+        </div>
+
+        <div class="noc-level-nav">
+          {levelSections.map((section) => (
+            <a href={`#noc-level-${section.level}`}>
+              <strong>{section.label}</strong>
+              <span>{section.count} 项</span>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <div class="card-inner noc-list-wrap">
+        <div class="noc-section-head">
+          <div>
+            <div class="kicker">全库浏览</div>
+            <h2 class="h2">按层级浏览 NOC 结构</h2>
+          </div>
+          <p class="muted">先搜 code 或职业名，再点层级跳转。每个条目都能继续点进详情页。</p>
+        </div>
+
+        <div class="noc-browser-toolbar">
+          <div class="noc-browser-chips">
+            <button type="button" class="noc-chip is-active" data-filter-level="all">全部</button>
+            {levelSections.map((section) => (
+              <button type="button" class="noc-chip" data-filter-level={String(section.level)}>
+                {section.label}
+              </button>
+            ))}
+          </div>
+          <div class="noc-browser-count" id="nocBrowserCount">{nocLibrary.length} 项可浏览</div>
+        </div>
+
+        <div class="noc-list" id="nocList">
+          {levelSections.map((section) => (
+            <section class="noc-group" id={`noc-level-${section.level}`}>
+              <div class="noc-group-head">
+                <div>
+                  <h3 class="h3">{section.label}</h3>
+                  <p class="muted">{levelMeta[section.level].desc} · {section.count} 项</p>
+                </div>
+                <a class="noc-group-link" href="#nocList">返回顶部</a>
+              </div>
+              <div class="noc-grid">
+                {section.items.map((item) => (
+                  <a
+                    class="noc-card"
+                    href={`/noc/${item.code}/`}
+                    data-search={item.searchBlob}
+                    data-level={String(item.level)}
+                  >
+                    <div class="noc-card-top">
+                      <span class="noc-badge">NOC {item.code}</span>
+                      <span class="noc-pill">{getNocLevelLabel(item.level)}</span>
+                    </div>
+                    <div class="noc-card-title">{item.titleZh}</div>
+                    <div class="noc-card-en">{item.titleEn}</div>
+                    <div class="noc-card-family">{item.family}</div>
+                    <div class="noc-card-desc">{item.summary}</div>
+                  </a>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      </div>
+    </main>
+
+    <aside class="list noc-sidebar">
+      <ContactCard />
+      <RelatedToolsCard
+        title="与 NOC 配套的工具"
+        subtitle="先看打分，再看职业，对照会更快。"
+        items={[
+          { href: "/tools/crs-calculator/", label: "联邦 CRS 计算器", desc: "适合 EE 主线与定向路径预估。" },
+          { href: "/tools/oinp-calculator/", label: "安省 OINP · EOI", desc: "职业匹配安省时可先做预估。" },
+          { href: "/tools/aaip-calculator/", label: "阿省 AAIP · Worker EOI", desc: "偏技工/雇主类路径可先对照。" },
+          { href: "/tools/bc-pnp-calculator/", label: "BC PNP · SIRS", desc: "BC 路径常见的 200 分制参考。" },
+        ]}
+        footerHref="/tools/"
+        footerLabel="进入全部打分工具"
+      />
+      <div class="noc-side-card">
+        <div class="noc-side-title">建议你怎么用这个库</div>
+        <ul>
+          <li>先搜你的职位名，再查 code 和 TEER。</li>
+          <li>雇主写广告时，按职责而不是只按头衔。</li>
+          <li>申请材料要把工资单、雇主信、职责描述连起来。</li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <script type="module">
+    const input = document.getElementById("nocSearch");
+    const list = document.getElementById("nocList");
+    const countEl = document.getElementById("nocBrowserCount");
+    const chips = Array.from(document.querySelectorAll("[data-filter-level]"));
+    let activeLevel = "all";
+
+    const applyFilter = () => {
+      if (!input || !list) return;
+      const q = input.value.trim().toLowerCase();
+      const groups = Array.from(list.querySelectorAll(".noc-group"));
+      let visible = 0;
+
+      groups.forEach((group) => {
+        const cards = Array.from(group.querySelectorAll(".noc-card"));
+        let groupVisible = 0;
+
+        cards.forEach((card) => {
+          const blob = card.getAttribute("data-search") || "";
+          const level = card.getAttribute("data-level") || "";
+          const matchText = !q || blob.includes(q);
+          const matchLevel = activeLevel === "all" || activeLevel === level;
+          const show = matchText && matchLevel;
+          card.style.display = show ? "" : "none";
+          if (show) {
+            visible += 1;
+            groupVisible += 1;
+          }
+        });
+
+        group.style.display = groupVisible ? "" : "none";
+      });
+
+      if (countEl) {
+        countEl.textContent = `${visible} 项符合当前筛选`;
+      }
+    };
+
+    if (input && list) {
+      input.addEventListener("input", () => {
+        applyFilter();
+      });
+    }
+
+    chips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        chips.forEach((item) => item.classList.remove("is-active"));
+        chip.classList.add("is-active");
+        activeLevel = chip.getAttribute("data-filter-level") || "all";
+        applyFilter();
+      });
+    });
+
+    applyFilter();
+  </script>
+</BaseLayout>
+
+<style>
+  .noc-hero { display: grid; gap: 14px; }
+  .noc-search {
+    position: relative;
+    margin-top: 8px;
+  }
+  .noc-search input {
+    width: 100%;
+    padding: 15px 16px 15px 46px;
+    border-radius: 14px;
+    border: 1.5px solid rgba(13,17,23,0.12);
+    background: #fff;
+    font: inherit;
+  }
+  .noc-search input:focus { outline: none; border-color: rgba(217,45,32,0.4); box-shadow: 0 0 0 4px rgba(217,45,32,0.06); }
+  .noc-search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    opacity: 0.7;
+  }
+  .noc-quick {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .noc-quick a {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(217,45,32,0.06);
+    border: 1px solid rgba(217,45,32,0.12);
+    color: #b52418;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .noc-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .noc-stat {
+    padding: 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(13,17,23,0.08);
+    background: rgba(13,17,23,0.03);
+    display: grid;
+    gap: 4px;
+  }
+  .noc-stat strong { font-size: 18px; color: #0d1117; }
+  .noc-stat span { font-size: 12px; color: rgba(13,17,23,0.55); }
+  .noc-level-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .noc-level-nav a {
+    display: grid;
+    gap: 4px;
+    min-width: 120px;
+    padding: 11px 13px;
+    border-radius: 14px;
+    border: 1px solid rgba(13,17,23,0.08);
+    background: rgba(13,17,23,0.03);
+    text-decoration: none;
+    color: #0d1117;
+  }
+  .noc-level-nav strong { font-size: 14px; }
+  .noc-level-nav span { font-size: 12px; color: rgba(13,17,23,0.58); }
+  .noc-section-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: end;
+    margin-bottom: 14px;
+  }
+  .noc-list { display: grid; gap: 20px; }
+  .noc-group { display: grid; gap: 12px; }
+  .noc-group-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 12px;
+  }
+  .noc-group-link {
+    text-decoration: none;
+    color: #d92d20;
+    font-weight: 800;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  .noc-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .noc-card {
+    display: block;
+    border-radius: 16px;
+    padding: 16px;
+    border: 1px solid rgba(13,17,23,0.08);
+    background: linear-gradient(180deg, #fff, #fbfcff);
+    color: #0d1117;
+    text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  }
+  .noc-card:hover {
+    transform: translateY(-1px);
+    border-color: rgba(217,45,32,0.22);
+    box-shadow: 0 12px 26px rgba(13,17,23,0.08);
+    text-decoration: none;
+  }
+  .noc-card-top { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+  .noc-badge, .noc-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+  }
+  .noc-badge { background: rgba(217,45,32,0.08); color: #d92d20; }
+  .noc-pill { background: rgba(26,86,196,0.08); color: #1a56c4; }
+  .noc-card-title { font-size: 16px; font-weight: 900; margin-bottom: 4px; }
+  .noc-card-en { font-size: 12px; color: rgba(13,17,23,0.58); margin-bottom: 6px; }
+  .noc-card-family { font-size: 12px; font-weight: 700; color: rgba(13,17,23,0.72); margin-bottom: 8px; }
+  .noc-card-desc { font-size: 13px; line-height: 1.7; color: rgba(13,17,23,0.66); }
+  .noc-browser-toolbar {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .noc-browser-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .noc-chip {
+    appearance: none;
+    border: 1px solid rgba(13,17,23,0.1);
+    background: rgba(13,17,23,0.03);
+    color: #0d1117;
+    border-radius: 999px;
+    padding: 8px 12px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .noc-chip.is-active {
+    background: rgba(217,45,32,0.08);
+    border-color: rgba(217,45,32,0.22);
+    color: #d92d20;
+  }
+  .noc-browser-count {
+    font-size: 13px;
+    color: rgba(13,17,23,0.6);
+    white-space: nowrap;
+  }
+  .noc-side-card {
+    background: #fff;
+    border: 1px solid rgba(13,17,23,0.09);
+    border-radius: 16px;
+    padding: 18px;
+  }
+  .noc-side-title { font-size: 15px; font-weight: 800; margin-bottom: 10px; }
+  .noc-side-card ul { margin: 0; padding-left: 18px; color: rgba(13,17,23,0.66); line-height: 1.8; font-size: 14px; }
+  @media (max-width: 900px) {
+    .noc-section-head { flex-direction: column; align-items: flex-start; }
+    .noc-stats { grid-template-columns: 1fr; }
+    .noc-grid { grid-template-columns: 1fr; }
+    .noc-browser-toolbar { flex-direction: column; align-items: flex-start; }
+    .noc-group-head { flex-direction: column; align-items: flex-start; }
+  }
+</style>

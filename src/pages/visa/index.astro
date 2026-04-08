@@ -1,0 +1,260 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import FaqBlock from "@/components/FaqBlock.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+import { getAllPublishedPosts } from "@/utils/content";
+import { categoryMeta } from "@/data/categoryMeta";
+
+const visaHubTypes = [
+  {
+    href: "/visa/visitor/",
+    title: "访问签 / 旅游签",
+    desc: "短期观光、商务、过境；重点在行程可信与回国约束力。",
+  },
+  {
+    href: "/visa/family-visit/",
+    title: "探亲签证",
+    desc: "探望加拿大亲属；需邀请方身份与关系证明，逻辑与访问签一致。",
+  },
+  {
+    href: "/visa/super-visa/",
+    title: "超级签证（父母/祖父母）",
+    desc: "长期多次往返；需体检与符合要求的医疗保险等材料。",
+  },
+  {
+    href: "/visa/study-permit/",
+    title: "学签（Study Permit）",
+    desc: "录取、资金、学习计划与 DLI；可与 PGWP、省提名路径一起规划。",
+  },
+  {
+    href: "/visa/work-permit/",
+    title: "工签（Work Permit）",
+    desc: "雇主类、开放工签、配偶工签等；常需 LMIA 或豁免依据。",
+  },
+  {
+    href: "/visa/french-mobility-work-permit/",
+    title: "法语流动工签",
+    desc: "Mobilité francophone（C16）：魁省外工作 + 符合 TEER 与法语听说等要求时可免 LMIA。",
+  },
+  {
+    href: "/visa/c11-work-permit/",
+    title: "C11 重大利益工签",
+    desc: "R205(a) significant benefit：创业、特殊贡献等个案论证路径。",
+  },
+  {
+    href: "/visa/extend/",
+    title: "续签 / 延期 / 境内转换",
+    desc: "维持身份、学签续签、访客延期与部分境内换签要点。",
+  },
+] as const;
+
+const posts = await getAllPublishedPosts();
+const focusCategories = ["visa-programs", "study-permit", "work-permit-lmia", "policy"].filter((c) =>
+  posts.some((p) => p.data.category === c),
+);
+const pickPosts = posts.filter((p) => focusCategories.includes(p.data.category)).slice(0, 12);
+
+const faqItems = [
+  {
+    question: "签证被拒常见原因有哪些？",
+    answer:
+      "最常见是“目的不清晰、资金/约束力解释不足、材料信息不一致”。解决思路是：把访问/学习/工作目的写成可验证的时间线，并用证据支撑。",
+  },
+  {
+    question: "材料越多越好吗？",
+    answer:
+      "不一定。关键是“相关性 + 一致性”。堆无关材料可能反而增加矛盾点。我们更建议做成结构化材料包：一页目录 + 证据链。",
+  },
+  {
+    question: "学签/工签需要提前多久准备？",
+    answer:
+      "建议至少预留 8-12 周做材料与时间线规划（具体看项目与个人情况）。越早把学校/雇主/资金与背景解释打通，越能减少临时补件。",
+  },
+];
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "加拿大签证", href: "/visa/" },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((i) => ({
+    "@type": "Question",
+    name: i.question,
+    acceptedAnswer: { "@type": "Answer", text: i.answer },
+  })),
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("加拿大签证 | 学签/工签/访问签材料清单与拒签避坑（保姆级）")}
+  description="加拿大签证内容枢纽页：访问签、探亲签、学签、工签、法语流动工签、C11 重大利益工签、超级签证与续签延期；附材料与时间线思路。"
+  canonical="https://cachinavisa.com/visa/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={faqLd} />
+  <div class="grid">
+    <section class="card">
+      <div class="card-inner prose">
+        <Breadcrumbs items={breadcrumbs} />
+        <div class="kicker" style="margin-top:10px">签证服务</div>
+        <h1 class="h1">加拿大签证：材料不是“堆”，而是“证据链”</h1>
+        <p class="muted">
+          签证成功率的核心不是“材料越多越好”，而是：目的清晰、时间线一致、证据能相互佐证。下面按<strong>签证类型</strong>进入各专题页，另有通用准备框架与博客延伸阅读。
+        </p>
+
+        <h2>按签证类型进入专题</h2>
+        <p class="muted" style="margin-top:-6px">
+          每一类都有单独页面（清单、FAQ、常见拒签点）。若你尚未确定类别，可先约顾问做目的与时间线梳理。
+        </p>
+        <div class="vh-grid not-prose">
+          {visaHubTypes.map((v) => (
+            <a class="vh-card" href={v.href}>
+              <div class="vh-card-title">{v.title}</div>
+              <div class="vh-card-desc">{v.desc}</div>
+              <div class="vh-card-cta">打开专题 →</div>
+            </a>
+          ))}
+        </div>
+
+        <h2>签证准备 4 步法（建议照做）</h2>
+        <ol>
+          <li><b>写清目的</b>：访问/学习/工作要做什么、多久、为什么现在去。</li>
+          <li><b>画时间线</b>：从过去 12 个月到未来 6-12 个月，把关键节点写出来。</li>
+          <li><b>做证据链</b>：每个结论至少有 1-2 份证据支撑（资金/工作/学习/家庭）。</li>
+          <li><b>做一致性检查</b>：职位、收入、地址、日期等信息不允许相互打架。</li>
+        </ol>
+
+        <h2>常见拒签点（以及怎么补强）</h2>
+        <ul>
+          <li><b>目的不清</b>：用行程/学习计划/雇佣关系+时间线让目的可验证。</li>
+          <li><b>资金解释不足</b>：资金来源、流向、与计划的匹配要讲清。</li>
+          <li><b>约束力弱</b>：工作/家庭/资产/学业等，选最强的证据去讲。</li>
+          <li><b>信息不一致</b>：简历、表格、证明文件必须统一口径。</li>
+        </ul>
+
+        <div class="hr"></div>
+        <h2 class="h2">推荐阅读</h2>
+        <div class="list">
+          {pickPosts.map((p) => (
+            <a class="list-item" href={`/blog/${p.slug}/`}>
+              <div style="font-weight:650">{p.data.title}</div>
+              <div class="muted" style="font-size:13px; margin-top:6px">{p.data.excerpt}</div>
+            </a>
+          ))}
+        </div>
+
+        <div class="hr"></div>
+        <h2 class="h2">相关分类</h2>
+        <div class="meta">
+          {focusCategories.map((slug) => (
+            <a class="pill" href={`/category/${slug}/`}>
+              {categoryMeta[slug]?.title ?? slug}
+            </a>
+          ))}
+        </div>
+
+        <p class="muted" style="margin-top:1.5rem; font-size:14px">
+          政策、费用与表格以
+          <a href="https://www.canada.ca/en/immigration-refugees-citizenship.html" target="_blank" rel="noopener noreferrer"
+            >IRCC 官网</a
+          >
+          最新说明为准；本站内容仅供规划参考，不构成法律意见。
+        </p>
+      </div>
+    </section>
+
+    <aside class="list">
+      <ContactCard title="想先判断签证风险点？" />
+      <FaqBlock title="签证常见问题（节选）" items={faqItems} />
+      <section class="card">
+        <div class="card-inner">
+          <h2 class="h2">签证子栏目</h2>
+          <div class="meta">
+            <a class="pill" href="/visa/visitor/">访问签/旅游签</a>
+            <a class="pill" href="/visa/family-visit/">探亲签</a>
+            <a class="pill" href="/visa/super-visa/">超级签证</a>
+            <a class="pill" href="/visa/study-permit/">学签</a>
+            <a class="pill" href="/visa/work-permit/">工签</a>
+            <a class="pill" href="/visa/french-mobility-work-permit/">法语流动工签</a>
+            <a class="pill" href="/visa/c11-work-permit/">C11 工签</a>
+            <a class="pill" href="/visa/extend/">续签/延期/境内转换</a>
+          </div>
+        </div>
+      </section>
+      <section class="card">
+        <div class="card-inner">
+          <h2 class="h2">与移民、留学衔接</h2>
+          <p class="muted" style="margin:0 0 10px; font-size:14px">
+            工签、学签常与省提名、LMIA、EE 联动，需要一起排时间线。
+          </p>
+          <a class="btn" href="/projects/">移民项目总览</a>
+          <a class="btn" style="margin-top:8px" href="/school/">免费申请学校</a>
+        </div>
+      </section>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+  .vh-grid {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    margin: 14px 0 28px;
+  }
+  .vh-card {
+    display: flex;
+    flex-direction: column;
+    padding: 14px 16px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    text-decoration: none;
+    color: inherit;
+    transition:
+      border-color 0.15s var(--ease),
+      box-shadow 0.15s var(--ease);
+  }
+  .vh-card:hover {
+    border-color: var(--border-2);
+    box-shadow: var(--shadow-sm);
+    text-decoration: none;
+  }
+  .vh-card-title {
+    font-weight: 750;
+    font-size: 15px;
+    color: var(--link);
+    line-height: 1.35;
+  }
+  .vh-card-desc {
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.55;
+    flex: 1;
+  }
+  .vh-card-cta {
+    margin-top: 10px;
+    font-size: 12px;
+    font-weight: 650;
+    color: var(--red);
+  }
+</style>

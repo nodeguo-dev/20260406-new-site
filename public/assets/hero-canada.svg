@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="420" viewBox="0 0 1100 420">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#f6f7fb"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#d92d20" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#0b57d0" stop-opacity="0.10"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#111827" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+  <rect width="1100" height="420" fill="url(#bg)"/>
+  <rect x="0" y="0" width="1100" height="420" fill="url(#accent)"/>
+
+  <!-- simple skyline -->
+  <g filter="url(#shadow)">
+    <path d="M0 320h1100v100H0z" fill="#ffffff" opacity="0.9"/>
+    <path d="M0 316h1100v6H0z" fill="#1f2328" opacity="0.08"/>
+  </g>
+
+  <g fill="#1f2328" opacity="0.12">
+    <rect x="60" y="190" width="70" height="130" rx="10"/>
+    <rect x="150" y="150" width="90" height="170" rx="10"/>
+    <rect x="260" y="180" width="65" height="140" rx="10"/>
+    <rect x="340" y="120" width="120" height="200" rx="10"/>
+    <rect x="480" y="170" width="80" height="150" rx="10"/>
+    <rect x="580" y="140" width="100" height="180" rx="10"/>
+    <rect x="700" y="190" width="70" height="130" rx="10"/>
+    <rect x="790" y="110" width="140" height="210" rx="10"/>
+    <rect x="950" y="160" width="90" height="160" rx="10"/>
+  </g>
+
+  <!-- maple leaf mark -->
+  <g transform="translate(900 70) scale(1.05)" opacity="0.18">
+    <path fill="#d92d20" d="M40 0l6 18 18-6-10 16 16 3-14 10 11 12-17-2-1 18-9-15-9 15-1-18-17 2 11-12-14-10 16-3-10-16 18 6z"/>
+  </g>
+
+  <g fill="#1f2328">
+    <text x="56" y="88" font-size="34" font-family="PingFang SC, Microsoft YaHei, Arial" font-weight="700" opacity="0.92">
+      常春藤国际咨询 · 内容型移民资讯站
+    </text>
+    <text x="56" y="130" font-size="18" font-family="PingFang SC, Microsoft YaHei, Arial" opacity="0.65">
+      政策解读 · 材料清单 · 时间线 · FAQ · 咨询转化
+    </text>
+  </g>
+</svg>
+

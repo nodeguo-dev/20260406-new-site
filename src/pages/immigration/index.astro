@@ -1,0 +1,91 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Sidebar from "@/components/Sidebar.astro";
+import PostCard from "@/components/PostCard.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+import {
+  getAllPublishedPosts,
+  getAllPublishedServices,
+  getAllCategories,
+  getAllTags,
+} from "@/utils/content";
+import { categoryMeta } from "@/data/categoryMeta";
+
+const posts = await getAllPublishedPosts();
+const services = await getAllPublishedServices();
+const categories = getAllCategories(posts);
+const tags = getAllTags(posts);
+
+const latest = posts.slice(0, 16);
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民资讯", href: "/immigration/" },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("移民资讯 | 政策解读、项目指南与材料清单")}
+  description="移民资讯聚合页：按分类与标签系统化整理政策解读、项目指南与材料清单；提供新手必读、多伦多生活指南与项目列表入口。"
+  canonical="https://cachinavisa.com/immigration/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <div class="grid">
+    <section class="card">
+      <div class="card-inner">
+        <div class="kicker">移民资讯</div>
+        <h1 class="h1">政策解读 · 项目指南 · 材料清单 · 时间线</h1>
+        <p class="muted" style="margin:10px 0 0">
+          这里是文章与指南的聚合页。你可以按分类快速定位，也可以先看「新手必读」「多伦多生活指南」和「项目列表」。
+        </p>
+        <div class="hr"></div>
+        <div class="split">
+          <div style="display:flex; gap:10px; flex-wrap:wrap">
+            <a class="btn" href="/immigration/guide/">新手必读（保姆级）</a>
+            <a class="btn" href="/guides/toronto-life/">多伦多生活指南</a>
+            <a class="btn" href="/projects/">加拿大移民项目列表</a>
+            <a class="btn" href="/search/">站内搜索</a>
+          </div>
+          <span class="pill">共 {posts.length} 篇文章</span>
+        </div>
+
+        <div class="hr"></div>
+        <h2 class="h2">热门分类</h2>
+        <div class="list" style="grid-template-columns:1fr; gap:10px">
+          {categories.slice(0, 8).map((slug) => (
+            <a class="list-item" href={`/category/${slug}/`}>
+              <div style="font-weight:650">{categoryMeta[slug]?.title ?? slug}</div>
+              <div class="muted" style="font-size:13px; margin-top:6px">
+                {categoryMeta[slug]?.description ?? "查看该主题下的最新文章与指南。"}
+              </div>
+            </a>
+          ))}
+        </div>
+
+        <div class="hr"></div>
+        <h2 class="h2">最新文章</h2>
+        <div class="list">{latest.map((p) => <PostCard post={p} />)}</div>
+        <div class="hr"></div>
+        <div class="split">
+          <span class="muted">更多文章与分页归档在博客列表。</span>
+          <a class="btn" href="/blog/">进入博客</a>
+        </div>
+      </div>
+    </section>
+    <Sidebar services={services} categories={categories} tags={tags} />
+  </div>
+</BaseLayout>
+

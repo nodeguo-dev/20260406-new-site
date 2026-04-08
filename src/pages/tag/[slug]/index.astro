@@ -1,0 +1,263 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PostCard from "@/components/PostCard.astro";
+import BlogInternalHub from "@/components/BlogInternalHub.astro";
+import Pagination from "@/components/Pagination.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import RelatedToolsCard from "@/components/RelatedToolsCard.astro";
+import { categoryMeta } from "@/data/categoryMeta";
+import { withSiteTitle } from "@/utils/seo";
+import { getAllPublishedPosts, getAllTags } from "@/utils/content";
+import { getPageSlice } from "@/utils/pagination";
+
+const PAGE_SIZE = 12;
+
+export async function getStaticPaths() {
+  const { getAllPublishedPosts, getAllTags } = await import("@/utils/content");
+  const posts = await getAllPublishedPosts();
+  const tags = getAllTags(posts);
+  return tags.map((tag) => ({ params: { slug: tag } }));
+}
+
+const { slug } = Astro.params;
+const tag = slug;
+const allPosts = await getAllPublishedPosts();
+const tagPosts = allPosts.filter((p) => p.data.tags?.includes(tag));
+const { items, totalPages } = getPageSlice(tagPosts, 1, PAGE_SIZE);
+
+// Top tags for sidebar
+const allTags = getAllTags(allPosts);
+const tagCounts = allTags.map((t) => ({
+  tag: t,
+  count: allPosts.filter((p) => p.data.tags?.includes(t)).length,
+})).sort((a, b) => b.count - a.count).slice(0, 30);
+
+// Related categories
+const relatedCategories = [...new Set(tagPosts.map((p) => p.data.category))];
+const allCategories = [...new Set(allPosts.map((p) => p.data.category))].sort((a, b) =>
+  a.localeCompare(b, "zh-CN"),
+);
+---
+
+<BaseLayout
+  title={withSiteTitle(`#${tag} | 标签文章`)}
+  description={`浏览所有带有标签「${tag}」的移民签证相关文章，共 ${tagPosts.length} 篇。`}
+  canonical={`https://cachinavisa.com/tag/${encodeURIComponent(slug)}/`}
+>
+  <div class="tag-layout">
+    <main>
+      <!-- Tag hero -->
+      <div class="tag-hero">
+        <div class="tag-hero-kicker">标签</div>
+        <h1 class="tag-hero-title">
+          <span class="tag-hash">#</span>{tag}
+        </h1>
+        <div class="tag-hero-meta">
+          <span class="thm-count">{tagPosts.length} 篇文章</span>
+          {relatedCategories.length > 0 && (
+            <span class="thm-sep">·</span>
+          )}
+          {relatedCategories.map((c) => (
+            <a class="thm-cat" href={`/category/${c}/`}>
+              {categoryMeta[c]?.title ?? c}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      {items.length > 0 ? (
+        <div class="posts-list">
+          {items.map((p) => <PostCard post={p} variant="list" />)}
+        </div>
+      ) : (
+        <div class="empty-state">
+          <div class="es-icon">🏷️</div>
+          <div class="es-title">暂无文章</div>
+          <p class="es-desc">该标签下暂时没有已发布的文章，请稍后再来。</p>
+          <a href="/blog/" class="btn-soft">查看全部文章</a>
+        </div>
+      )}
+
+      <div class="pagination-wrap">
+        <Pagination base={`/tag/${slug}/`} page={1} totalPages={totalPages} />
+      </div>
+
+      <section class="tag-hub-wrap" aria-labelledby="tag-hub-main">
+        <h2 id="tag-hub-main" class="visually-hidden">站内导航与延伸阅读</h2>
+        <BlogInternalHub />
+      </section>
+    </main>
+
+    <aside class="tag-sidebar">
+      <ContactCard />
+      <RelatedToolsCard
+        title="相关打分工具"
+        subtitle="标签页里如果看到 CRS / EOI / 打分，先把工具打开。"
+        items={[
+          { href: "/tools/crs-calculator/", label: "联邦 CRS 计算器", desc: "EE / CEC / FSW 的基础自测工具。" },
+          { href: "/tools/oinp-calculator/", label: "安省 OINP · EOI", desc: "安省雇主类 / 留学类常见入口。" },
+          { href: "/tools/bc-pnp-calculator/", label: "BC SIRS 计算器", desc: "BC 技术移民常用分值预估。" },
+          { href: "/tools/aaip-calculator/", label: "AAIP Worker EOI", desc: "阿省相关路径的分值自测。" },
+        ]}
+        footerHref="/tools/"
+        footerLabel="进入全部打分工具"
+      />
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">热门标签</div>
+        <div class="tag-cloud">
+          {tagCounts.map(({ tag: t, count }) => (
+            <a
+              class={`tag-cloud-item${t === tag ? ' active' : ''}`}
+              href={`/tag/${encodeURIComponent(t)}/`}
+            >
+              <span>#{t}</span>
+              <span class="tc-count">{count}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">相关分类</div>
+        <div class="sidebar-cats">
+          {relatedCategories.map((c) => (
+            <a class="scat-item" href={`/category/${c}/`}>
+              {categoryMeta[c]?.title ?? c}
+            </a>
+          ))}
+          {relatedCategories.length === 0 && (
+            <div style="padding:12px 20px; font-size:13px; color:rgba(13,17,23,0.4)">暂无相关分类</div>
+          )}
+        </div>
+      </div>
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">全部文章频道</div>
+        <div class="sidebar-cats">
+          {allCategories.map((c) => (
+            <a class="scat-item" href={`/category/${c}/`}>
+              {categoryMeta[c]?.title ?? c}
+            </a>
+          ))}
+        </div>
+      </div>
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">快速入口</div>
+        <div class="quick-links">
+          <a class="ql" href="/blog/">移民新闻</a>
+          <a class="ql" href="/immigration/guide/">新手必读</a>
+          <a class="ql" href="/tools/">打分工具</a>
+          <a class="ql" href="/search/">站内搜索</a>
+          <a class="ql" href="/contact/">咨询</a>
+        </div>
+      </div>
+      <div class="sidebar-card sidebar-card--hub">
+        <BlogInternalHub compact heading="热门内链" />
+      </div>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+.tag-layout {
+  display: grid; grid-template-columns: 1fr;
+  gap: 24px; align-items: start;
+}
+@media (min-width: 960px) { .tag-layout { grid-template-columns: 1fr 280px; } }
+
+/* Hero */
+.tag-hero {
+  background: linear-gradient(135deg, #0a1628 0%, #0f2040 60%, #1a1040 100%);
+  border-radius: 18px; padding: 36px 32px; margin-bottom: 20px;
+  position: relative; overflow: hidden;
+}
+.tag-hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 50% 70% at 85% 25%, rgba(124,58,237,0.2), transparent 65%);
+  pointer-events: none;
+}
+.tag-hero-kicker {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; color: rgba(167,139,250,0.8); margin-bottom: 10px;
+  position: relative; z-index: 1;
+}
+.tag-hero-title {
+  font-size: clamp(24px, 4vw, 36px); font-weight: 900; color: #fff;
+  margin: 0 0 14px; letter-spacing: -0.025em; position: relative; z-index: 1;
+  display: flex; align-items: center; gap: 4px;
+}
+.tag-hash { color: rgba(167,139,250,0.8); }
+.tag-hero-meta {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  position: relative; z-index: 1;
+}
+.thm-count {
+  display: inline-block; padding: 4px 12px; border-radius: 999px;
+  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.7); font-size: 12px; font-weight: 600;
+}
+.thm-sep { color: rgba(255,255,255,0.3); }
+.thm-cat {
+  font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.6);
+  text-decoration: none; padding: 3px 10px; border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.15);
+  transition: color 0.15s, border-color 0.15s;
+}
+.thm-cat:hover { color: #fff; border-color: rgba(255,255,255,0.3); text-decoration: none; }
+
+/* Posts */
+.posts-list { display: flex; flex-direction: column; gap: 10px; }
+.pagination-wrap { margin-top: 24px; }
+
+/* Empty */
+.empty-state {
+  text-align: center; padding: 60px 20px;
+  background: #fff; border: 1px solid rgba(13,17,23,0.08);
+  border-radius: 16px;
+}
+.es-icon  { font-size: 48px; margin-bottom: 16px; }
+.es-title { font-size: 18px; font-weight: 700; color: #0d1117; margin-bottom: 8px; }
+.es-desc  { font-size: 14px; color: rgba(13,17,23,0.55); line-height: 1.7; margin: 0 0 20px; }
+
+/* Sidebar */
+.tag-sidebar { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 88px; }
+.sidebar-card {
+  background: #fff; border: 1px solid rgba(13,17,23,0.09);
+  border-radius: 16px; overflow: hidden;
+}
+.sidebar-card-title {
+  font-size: 14px; font-weight: 700; color: #0d1117;
+  padding: 16px 20px 12px; border-bottom: 1px solid rgba(13,17,23,0.07);
+}
+.tag-cloud { padding: 12px 16px; display: flex; flex-wrap: wrap; gap: 6px; }
+.tag-cloud-item {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px; border-radius: 8px; font-size: 12px;
+  color: rgba(13,17,23,0.65); border: 1px solid rgba(13,17,23,0.1);
+  text-decoration: none; transition: all 0.12s;
+}
+.tag-cloud-item:hover { border-color: rgba(217,45,32,0.3); color: #d92d20; text-decoration: none; }
+.tag-cloud-item.active { background: rgba(217,45,32,0.08); border-color: rgba(217,45,32,0.3); color: #d92d20; font-weight: 700; }
+.tc-count { font-size: 11px; color: rgba(13,17,23,0.35); }
+
+.sidebar-cats { padding: 8px 0; }
+.scat-item {
+  display: block; padding: 9px 20px;
+  font-size: 13.5px; color: rgba(13,17,23,0.7);
+  text-decoration: none; transition: background 0.12s, color 0.12s;
+}
+.scat-item:hover { background: rgba(217,45,32,0.04); color: #d92d20; text-decoration: none; }
+
+.tag-hub-wrap { margin-top: 8px; }
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+.quick-links { display: flex; flex-direction: column; gap: 2px; padding: 4px 0; }
+.ql {
+  padding: 8px 16px; font-size: 13.5px; color: rgba(13,17,23,0.7);
+  text-decoration: none;
+}
+.ql:hover { background: rgba(217,45,32,0.04); color: #d92d20; text-decoration: none; }
+.sidebar-card--hub { padding: 0; overflow: hidden; }
+.sidebar-card--hub :global(.bih) { border: none; border-radius: 0; margin: 0; }
+</style>

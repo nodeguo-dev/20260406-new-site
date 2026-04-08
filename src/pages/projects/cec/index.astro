@@ -1,0 +1,278 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import RelatedToolsCard from "@/components/RelatedToolsCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民项目", href: "/projects/" },
+  { name: "联邦项目总览", href: "/projects/federal-programs/" },
+  { name: "加拿大经验类（CEC）", href: "/projects/cec/" },
+];
+
+const requirements = [
+  { label: "工作经验", value: "申请前3年内，在加拿大的 NOC 0、A 或 B 类职业全职工作经验不少于12个月（或兼职等效时长）" },
+  { label: "工作类型", value: "必须是有薪工作（不含自雇），在加拿大境内完成，合法持有工签期间积累" },
+  { label: "语言要求", value: "NOC 0 和 A 类：英语或法语 CLB 7+；NOC B 类：CLB 5+" },
+  { label: "定居意愿", value: "有意愿在加拿大任意一个省份（魁北克除外）定居" },
+  { label: "体检与背调", value: "无犯罪记录，通过移民体检；家庭成员也需完成相关材料（随行或不随行均需申报）" },
+];
+
+const steps = [
+  { title: "确认工作经验是否达标", desc: "核查过去3年内的NOC职业类别、工作时长、雇主资质是否符合CEC要求，避免因NOC判断错误导致申请被拒。" },
+  { title: "完成语言考试", desc: "参加雅思（IELTS）或法语 TEF/TCF 等认可考试，确保成绩在有效期内（2年）。语言是CRS分数的最大单项，值得充分备考。" },
+  { title: "创建 Express Entry Profile", desc: "在 IRCC 官网创建档案，如实填写工作经验、语言、学历等信息，系统自动计算CRS分数。" },
+  { title: "等待 ITA 邀请", desc: "进入候选池后，IRCC 定期举行抽签（Draw）。CEC专项抽签通常分数较低，有时达到450分以下即可获邀。" },
+  { title: "60天内提交完整PR申请", desc: "收到ITA后，需在60天内通过 IRCC 网站提交所有证明材料，包括体检报告、无犯罪证明、学历及工作经历证明。" },
+  { title: "等待审批与登陆", desc: "IRCC 目标处理时间6个月内发出COPR（登陆纸），持登陆纸按期入境即完成登陆，正式成为加拿大永久居民。" },
+];
+
+const faqItems = [
+  {
+    q: "CEC 申请时我必须还在加拿大吗？",
+    a: "提交PR申请时不要求你必须在加拿大境内，但工作经验必须是在加拿大境内合法工签期间积累的。许多人在工作满12个月后申请，审批期间可以继续在加拿大工作或短期出境。"
+  },
+  {
+    q: "NOC 类别如何判断？",
+    a: "NOC（国家职业分类）根据工作职责和所需技能水平划分。CEC要求NOC 0类（管理职位）、A类（专业技术类）或B类（技术及技工类）。判断NOC需要对照自己的实际工作职责，不是看职位名称。建议咨询顾问或通过IRCC官网的NOC查询工具进行比对。"
+  },
+  {
+    q: "兼职工作可以计算入CEC工作经验吗？",
+    a: "可以，但必须折算成全职等效时长。CEC要求相当于至少12个月的全职工作（每周30小时），兼职工作按比例换算：例如每周15小时工作，需要24个月才达标。"
+  },
+  {
+    q: "CEC 需要工作 offer 吗？",
+    a: "不强制要求，但有工作offer可以额外加分（50–200分，视NOC级别）。没有offer也能申请，只是CRS分数相对低一些，等待时间可能稍长。"
+  },
+  {
+    q: "语言考试哪种更有利？",
+    a: "英语方面，雅思（IELTS 学术或培训类）和 CELPIP 均被接受，雅思使用更广泛；法语方面接受 TEF Canada 和 TCF Canada。双语成绩（英语+法语）均达标可获额外加分，对于有法语基础的申请人是个策略选项。"
+  },
+  {
+    q: "CEC 申请被拒的最常见原因是什么？",
+    a: "最常见的拒绝原因包括：工作经验NOC类别判断错误、语言成绩不达标、材料不完整或前后不一致、体检或无犯罪记录未及时准备、未如实申报家庭成员信息。建议全程保留工作证明文件，并由专业顾问核查材料。"
+  },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem", position: i + 1, name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((i) => ({
+    "@type": "Question", name: i.q,
+    acceptedAnswer: { "@type": "Answer", text: i.a },
+  })),
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("加拿大经验类（CEC）移民申请完整指南")}
+  description="加拿大经验类（CEC）是最热门的永久居民申请路径之一，适合已在加拿大积累工作经验的持工签人士。本文详解申请条件、语言要求、材料准备与常见问题。"
+  canonical="https://cachinavisa.com/projects/cec/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={faqLd} />
+  <Breadcrumbs items={breadcrumbs} />
+
+  <div class="grid" style="margin-top:16px">
+    <article class="content-card">
+      <div class="page-header">
+        <div class="page-kicker">Express Entry · CEC</div>
+        <h1 class="page-h1">加拿大经验类（CEC）移民申请完整指南</h1>
+        <p class="page-intro">
+          加拿大经验类（Canadian Experience Class，CEC）专为在加拿大有合法工作经验的技术工人设计，
+          是目前通过 Express Entry 系统最常见、处理速度最快的永久居民申请路径之一。
+          IRCC 平均处理时间目标为6个月，整体流程清晰、材料要求明确。
+        </p>
+      </div>
+
+      <div class="content-sections">
+
+        <div class="section-block">
+          <h2>申请资格核心条件</h2>
+          <div class="req-table">
+            {requirements.map((r) => (
+              <div class="rt-row">
+                <div class="rt-label">{r.label}</div>
+                <div class="rt-value">{r.value}</div>
+              </div>
+            ))}
+          </div>
+          <div class="tip-box">
+            ⚠️ 重要提示：CEC 不接受魁北克省的工作经验（魁省有自己的移民体系）。在魁北克积累的工作经验不纳入CEC的计算，请注意核查。
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2>CRS 加分因素（CEC 申请人）</h2>
+          <div class="score-grid">
+            <div class="score-card">
+              <div class="score-label">语言（核心）</div>
+              <div class="score-val">最高 160 分</div>
+              <div class="score-desc">CLB 10+ 英语四项满分，每项40分</div>
+            </div>
+            <div class="score-card">
+              <div class="score-label">工作经验</div>
+              <div class="score-val">最高 80 分</div>
+              <div class="score-desc">1年经验 40 分，5年+ 80 分</div>
+            </div>
+            <div class="score-card">
+              <div class="score-label">学历</div>
+              <div class="score-val">最高 150 分</div>
+              <div class="score-desc">博士学历最高，需 ECA 认证</div>
+            </div>
+            <div class="score-card">
+              <div class="score-label">工作 Offer（加分）</div>
+              <div class="score-val">50 或 200 分</div>
+              <div class="score-desc">NOC 00 管理类 200 分，其余 50 分</div>
+            </div>
+            <div class="score-card">
+              <div class="score-label">省提名（PNP 加分）</div>
+              <div class="score-val">+600 分</div>
+              <div class="score-desc">几乎确保下一轮 ITA</div>
+            </div>
+            <div class="score-card">
+              <div class="score-label">配偶技能加分</div>
+              <div class="score-val">最高 40 分</div>
+              <div class="score-desc">配偶语言、学历、经验均可加分</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2>申请流程（6步）</h2>
+          <ol class="step-list">
+            {steps.map((s) => (
+              <li>
+                <span class="step-text">
+                  <strong>{s.title}</strong>
+                  <span class="step-sub">{s.desc}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        <div class="section-block">
+          <h2>常见问题（FAQ）</h2>
+          {faqItems.map((item) => (
+            <details class="faq-item">
+              <summary class="faq-q">{item.q}</summary>
+              <p class="faq-a">{item.a}</p>
+            </details>
+          ))}
+        </div>
+
+      </div>
+      <div class="page-share">
+        <ShareBar url="https://cachinavisa.com/projects/cec/" title={"加拿大经验类（CEC）移民申请完整指南"} />
+      </div>
+
+
+      <div class="cta-inline">
+        <div class="cta-text">想确认你的CEC资格和CRS分数？</div>
+        <a class="cta-btn" href="/contact/">免费评估 →</a>
+      </div>
+    </article>
+
+    <aside class="sidebar-stack">
+      <ContactCard />
+      <RelatedToolsCard
+        title="相关打分工具"
+        subtitle="CEC 的核心就是 CRS，先算分再看抽签节奏最稳。"
+        items={[
+          { href: "/tools/crs-calculator/", label: "联邦 CRS 计算器", desc: "CEC 申请人最直接的自测工具。" },
+          { href: "/tools/", label: "打分工具总览", desc: "把 CRS 与各省 EOI 一起看更完整。" },
+          { href: "/projects/provincial-nomination/", label: "省提名总览", desc: "如果 CRS 不够，可同步看 PNP 补分。" },
+        ]}
+        footerHref="/tools/crs-calculator/"
+        footerLabel="直接计算 CRS"
+      />
+      <div class="sidebar-nav-card">
+        <div class="snc-title">联邦移民路径</div>
+        <div class="snc-links">
+          <a class="snc-link" href="/projects/federal-programs/">联邦项目总览</a>
+          <a class="snc-link active" href="/projects/cec/">加拿大经验类（CEC）</a>
+          <a class="snc-link" href="/projects/lmia-overview/">LMIA 雇主担保</a>
+          <a class="snc-link" href="/projects/lmia-exemptions/">LMIA 豁免类别</a>
+          <a class="snc-link" href="/projects/provincial-nomination/">省提名总览</a>
+          <a class="snc-link" href="/projects/oinp/">安省 OINP 详解</a>
+        </div>
+      </div>
+      <div class="sidebar-nav-card">
+        <div class="snc-title">相关工具与资源</div>
+        <div class="snc-links">
+          <a class="snc-link" href="/visa/work-permit/">工签申请指南</a>
+          <a class="snc-link" href="/inland/status-extension/">续签与身份衔接</a>
+          <a class="snc-link" href="/faq/">常见问题解答</a>
+          <a class="snc-link" href="/contact/">预约免费咨询</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+.grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 920px) { .grid { grid-template-columns: 1fr 300px; align-items: start; } }
+.content-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 16px; overflow: hidden; }
+.page-header { padding: 28px 28px 24px; border-bottom: 1px solid rgba(26,29,35,0.08); background: linear-gradient(135deg, #fafbff, #fff); }
+.page-kicker { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #d92d20; margin-bottom: 8px; }
+.page-h1 { font-size: clamp(20px, 3.5vw, 28px); font-weight: 800; color: #1a1d23; margin: 0 0 12px; letter-spacing: -0.02em; }
+.page-intro { font-size: 15px; color: rgba(26,29,35,0.62); line-height: 1.7; margin: 0; }
+.content-sections { padding: 24px 28px; display: grid; gap: 32px; }
+.section-block h2 { font-size: 18px; font-weight: 750; color: #1a1d23; margin: 0 0 14px; padding-bottom: 8px; border-bottom: 2px solid rgba(217,45,32,0.12); }
+
+.req-table { border: 1px solid rgba(26,29,35,0.09); border-radius: 12px; overflow: hidden; }
+.rt-row { display: grid; grid-template-columns: 120px 1fr; border-bottom: 1px solid rgba(26,29,35,0.07); }
+.rt-row:last-child { border-bottom: none; }
+.rt-label { padding: 12px 16px; font-size: 13px; font-weight: 700; color: #1a1d23; background: rgba(26,29,35,0.02); border-right: 1px solid rgba(26,29,35,0.07); line-height: 1.5; }
+.rt-value { padding: 12px 16px; font-size: 13.5px; color: rgba(26,29,35,0.7); line-height: 1.6; }
+
+.tip-box { margin-top: 14px; padding: 14px 16px; background: rgba(217,45,32,0.05); border-left: 3px solid #d92d20; border-radius: 0 10px 10px 0; font-size: 13.5px; color: rgba(26,29,35,0.7); line-height: 1.65; }
+
+.score-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+@media (min-width: 640px) { .score-grid { grid-template-columns: repeat(3, 1fr); } }
+.score-card { padding: 14px 16px; background: rgba(26,29,35,0.02); border-radius: 12px; border: 1px solid rgba(26,29,35,0.08); }
+.score-label { font-size: 12px; color: rgba(26,29,35,0.5); margin-bottom: 4px; }
+.score-val { font-size: 18px; font-weight: 800; color: #d92d20; margin-bottom: 4px; }
+.score-desc { font-size: 12px; color: rgba(26,29,35,0.5); line-height: 1.5; }
+
+.step-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; counter-reset: steps; }
+.step-list li { display: flex; gap: 14px; align-items: flex-start; counter-increment: steps; }
+.step-list li::before { content: counter(steps); display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; min-width: 28px; border-radius: 50%; background: #d92d20; color: #fff; font-weight: 700; font-size: 13px; margin-top: 2px; }
+.step-text { display: flex; flex-direction: column; gap: 4px; }
+.step-text strong { font-size: 14px; color: #1a1d23; }
+.step-sub { font-size: 13px; color: rgba(26,29,35,0.6); line-height: 1.65; }
+
+.faq-item { border: 1px solid rgba(26,29,35,0.08); border-radius: 12px; overflow: hidden; margin-bottom: 8px; }
+.faq-q { padding: 14px 18px; font-size: 14px; font-weight: 600; color: #1a1d23; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+.faq-q::after { content: '+'; font-size: 18px; color: #d92d20; font-weight: 400; flex-shrink: 0; }
+details[open] .faq-q::after { content: '−'; }
+.faq-a { padding: 12px 18px 14px; font-size: 13.5px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0; border-top: 1px solid rgba(26,29,35,0.06); }
+
+.cta-inline { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 28px; background: linear-gradient(135deg, rgba(217,45,32,0.05), rgba(217,45,32,0.02)); border-top: 1px solid rgba(217,45,32,0.1); }
+.cta-text { font-size: 15px; font-weight: 600; color: #1a1d23; }
+.cta-btn { padding: 10px 22px; background: #d92d20; color: #fff; border-radius: 10px; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; }
+.cta-btn:hover { background: #b52418; text-decoration: none; }
+
+.sidebar-stack { display: grid; gap: 16px; position: sticky; top: 80px; }
+.sidebar-nav-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 14px; padding: 18px 20px; }
+.snc-title { font-size: 14px; font-weight: 700; color: #1a1d23; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(26,29,35,0.08); }
+.snc-links { display: flex; flex-direction: column; gap: 2px; }
+.snc-link { display: block; padding: 8px 10px; font-size: 13.5px; color: #374151; text-decoration: none; border-radius: 8px; }
+.snc-link:hover { background: rgba(217,45,32,0.06); color: #d92d20; text-decoration: none; }
+.snc-link.active { background: rgba(217,45,32,0.07); color: #d92d20; font-weight: 600; }
+</style>

@@ -1,0 +1,88 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民打分", href: "/tools/" },
+];
+---
+<BaseLayout
+  title={withSiteTitle("移民打分计算器 | CRS · BC · OINP · AAIP")}
+  description="联邦 Express Entry CRS、BC PNP SIRS、安省 OINP EOI、阿省 AAIP Worker EOI 等打分估算工具。结果仅供参考，递交前请以 IRCC 与各省官网最新规则为准。"
+  canonical="https://cachinavisa.com/tools/"
+>
+  <div class="container" style="padding-top:18px;padding-bottom:48px">
+    <Breadcrumbs items={breadcrumbs} />
+    <article class="tool-hub">
+      <div class="page-header">
+        <div class="page-kicker">移民打分</div>
+        <h1 class="page-h1">移民相关打分计算器</h1>
+        <p class="page-intro">
+          以下工具根据加拿大联邦政府与各省公开发布的评分表编写，用于<strong>自助估算</strong>。政策与分数线会调整，邀请不以本站计算结果为准；正式入池与递交前请核对
+          <a href="https://www.canada.ca/en/immigration-refugees-citizenship.html" target="_blank" rel="noopener noreferrer">IRCC</a>
+          及各省移民部门最新说明。
+        </p>
+      </div>
+
+      <div class="tool-grid">
+        <a class="tool-card" href="/tools/crs-calculator/">
+          <div class="tc-icon">📊</div>
+          <div class="tc-title">联邦 CRS 计算器</div>
+          <div class="tc-desc">Express Entry 综合排名系统（CEC / FSW / FST 入池适用）。自 2025-03-25 起<strong>不再含</strong> Arranged Employment 加分。</div>
+        </a>
+        <a class="tool-card" href="/tools/bc-pnp-calculator/">
+          <div class="tc-icon">🌊</div>
+          <div class="tc-title">BC PNP · SIRS</div>
+          <div class="tc-desc">BC 技术移民注册打分（200 分制）：人力资本 + 经济因素（时薪、地区等）。</div>
+        </a>
+        <a class="tool-card" href="/tools/oinp-calculator/">
+          <div class="tc-icon">🏛️</div>
+          <div class="tc-title">安省 OINP · EOI</div>
+          <div class="tc-desc">雇主类（Foreign Worker / International Student / In-Demand）EOI；EE 关联类别请用 CRS 计算器。</div>
+        </a>
+        <a class="tool-card" href="/tools/aaip-calculator/">
+          <div class="tc-icon">⛰️</div>
+          <div class="tc-title">阿省 AAIP · Worker EOI</div>
+          <div class="tc-desc">AAIP Worker 意向表达打分（100 分制），适用于含 Alberta Express Entry Stream 在内的 Worker 类池子排序参考。</div>
+        </a>
+      </div>
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  .tool-hub { max-width: 900px; margin: 0 auto; }
+  .page-header { margin-bottom: 28px; }
+  .page-kicker {
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--red); margin-bottom: 8px;
+  }
+  .page-h1 {
+    font-size: clamp(26px, 4vw, 36px); font-weight: 900;
+    letter-spacing: -0.03em; margin: 0 0 12px; color: var(--text);
+  }
+  .page-intro { font-size: 16px; color: var(--muted); line-height: 1.75; margin: 0; }
+  .tool-grid {
+    display: grid; gap: 14px;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 640px) {
+    .tool-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  .tool-card {
+    display: block; padding: 22px 22px 20px;
+    background: #fff; border: 1px solid var(--border);
+    border-radius: 16px; text-decoration: none; color: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .tool-card:hover {
+    border-color: rgba(217,45,32,0.25);
+    box-shadow: var(--shadow);
+    text-decoration: none;
+  }
+  .tc-icon { font-size: 28px; margin-bottom: 10px; }
+  .tc-title { font-size: 17px; font-weight: 800; margin-bottom: 8px; color: var(--text); }
+  .tc-desc { font-size: 14px; color: var(--muted); line-height: 1.65; }
+</style>

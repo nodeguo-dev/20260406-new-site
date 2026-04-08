@@ -1,0 +1,460 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民项目", href: "/projects/" },
+  { name: "省提名计划（PNP）", href: "/projects/provincial-nomination/" },
+  { name: "新不伦瑞克省提名（NBPNP）", href: "/projects/province/new-brunswick/" },
+];
+
+const streams = [
+  {
+    title: "NB 快速通道劳动力市场（Express Entry Labour Market Stream）",
+    badge: "EE 对接",
+    badgeColor: "#1a56c4",
+    req: [
+      "已入联邦 EE 候选池并具备有效档案",
+      "意向在 NB 定居并与省内劳动力需求匹配",
+      "满足 NBPNP 与联邦对应类别要求",
+    ],
+    target: "已在 EE 池中、希望走省提名加分的申请人",
+    processing: "视邀请与名额而定",
+    notes: "NB 会不定期从 EE 池向符合条件的候选人发出意向；需关注省政府与联邦最新清单。",
+  },
+  {
+    title: "雇主担保（Employer Support）",
+    badge: "雇主类",
+    badgeColor: "#059669",
+    req: [
+      "新不伦瑞克省合格雇主的全职工作 offer",
+      "职位与申请人背景匹配，薪资符合省要求",
+      "语言与学历满足所申类别最低线",
+    ],
+    target: "已拿到 NB 雇主 offer 或计划在蒙克顿、弗雷德里克顿等城市发展者",
+    processing: "约 6–14 个月（因类别而异）",
+    notes: "蒙克顿为双语城市，部分岗位对法语能力有额外加分或机会。",
+  },
+  {
+    title: "大西洋移民计划（AIP）",
+    badge: "大西洋四省",
+    badgeColor: "#7c3aed",
+    req: [
+      "获得大西洋四省指定雇主（Designated Employer）的 job offer",
+      "学历、语言（通常 CLB 4–5+）与定居资金符合联邦 AIP 要求",
+      "计划定居于 NB 或其他大西洋省份",
+    ],
+    target: "境外或境内已有 AIP 认可雇主 offer 的申请人",
+    processing: "约 6–12 个月",
+    notes: "AIP 由联邦主导，覆盖 NS、NB、PEI、NL 四省；雇主须先完成指定雇主注册。",
+  },
+];
+
+const faqs = [
+  {
+    q: "NBPNP 和 AIP 怎么选？",
+    a: "NBPNP 由新不伦瑞克省政府管理，适合已有省内雇主或符合省里单独类别（含 EE 衔接类）的申请人。AIP（Atlantic Immigration Program）是联邦项目，必须有四省「指定雇主」的 offer，流程与材料以 IRCC 为准。两者可同时咨询顾问，看哪条与您的 offer、语言与时间表最匹配。",
+  },
+  {
+    q: "新不伦瑞克留学后移民方便吗？",
+    a: "NB 有多所学院与大学，学费与生活成本低于安省、BC。毕业后可持 PGWP 积累本地工作经验，再通过 NBPNP 技术类或 AIP 等通道申请。建议选校时确认 DLI 与课程是否利于 PGWP 与后续 NOC 匹配。",
+  },
+  {
+    q: "法语对 NB 移民有帮助吗？",
+    a: "蒙克顿等地区为双语社区，部分雇主与项目会偏好英法双语能力；若走联邦 EE，法语成绩还可带来 CRS 加分。具体以当类别清单为准。",
+  },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((i) => ({
+    "@type": "Question",
+    name: i.q,
+    acceptedAnswer: { "@type": "Answer", text: i.a },
+  })),
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("新不伦瑞克省提名（NBPNP）指南 | 海洋四省 · AIP · 雇主担保")}
+  description="新不伦瑞克省 NBPNP 与 AIP 大西洋通道简介：EE 衔接、雇主担保与指定雇主项目，衔接蒙克顿、弗雷德里克顿等城市与 NB 院校留学路径。"
+  canonical="https://cachinavisa.com/projects/province/new-brunswick/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={faqLd} />
+  <Breadcrumbs items={breadcrumbs} />
+
+  <div class="page-layout" style="margin-top:16px">
+    <main>
+      <div class="page-hero nb-hero">
+        <div class="hero-kicker">新不伦瑞克省 · 省提名</div>
+        <h1 class="hero-title">NB 省提名<br /><span class="hero-title-en">New Brunswick Provincial Nominee Program (NBPNP)</span></h1>
+        <p class="hero-desc">
+          新不伦瑞克是<strong>海洋四省</strong>之一，生活成本低、双语环境突出（蒙克顿）。
+          移民路径主要包括<strong> NBPNP 各类别</strong>以及与四省共享的<strong> AIP 大西洋移民计划</strong>。以下为重点通道概览，正式递交前请以 NB 省政府与 IRCC 最新要求为准。
+        </p>
+        <div class="hero-tags">
+          <span class="htag">海洋四省 · NB</span>
+          <span class="htag">AIP 指定雇主</span>
+          <span class="htag">EE 衔接可能</span>
+        </div>
+      </div>
+
+      {streams.map((s) => (
+        <div class="content-card">
+          <div class="stream-header">
+            <h2 class="stream-title">{s.title}</h2>
+            <span
+              class="stream-badge"
+              style={`background: ${s.badgeColor}18; color: ${s.badgeColor}; border-color: ${s.badgeColor}40`}
+              >{s.badge}</span
+            >
+          </div>
+          <div class="stream-target">🎯 适合人群：{s.target}</div>
+          <div class="stream-meta"><span class="sm-label">预计处理时间：</span>{s.processing}</div>
+          <div class="req-list">
+            {s.req.map((r) => (
+              <div class="req-item">
+                <span class="ri-check">✓</span>
+                {r}
+              </div>
+            ))}
+          </div>
+          {s.notes && <div class="stream-note">💡 {s.notes}</div>}
+        </div>
+      ))}
+
+      <div class="content-card">
+        <h2 class="cc-title">常见问题（FAQ）</h2>
+        {faqs.map((item) => (
+          <details class="faq-item">
+            <summary class="faq-q">{item.q}</summary>
+            <p class="faq-a">{item.a}</p>
+          </details>
+        ))}
+      </div>
+
+      <div class="cta-block nb-cta">
+        <div class="cta-text">
+          <div class="cta-title">评估 NBPNP / AIP 是否适合你</div>
+          <p class="cta-desc">带上雇主 offer 或学历背景，顾问可帮你比对 NBPNP 与 AIP 时间线。</p>
+        </div>
+        <a href="/contact/" class="cta-btn">免费评估 →</a>
+      </div>
+    </main>
+
+    <aside class="page-sidebar">
+      <ContactCard title="咨询 NB 移民" />
+      <div class="sidebar-card">
+        <div class="sc-title">海洋四省通道</div>
+        <div class="sc-links">
+          <a class="sc-link" href="/projects/province/newfoundland/">纽芬兰 NL（NLNP）</a>
+          <a class="sc-link" href="/projects/province/nova-scotia/">新斯科舍 NS（NSNP）</a>
+          <a class="sc-link active" href="/projects/province/new-brunswick/">新不伦瑞克 NB（当前）</a>
+          <a class="sc-link" href="/projects/province/prince-edward-island/">爱德华王子岛 PEI</a>
+        </div>
+      </div>
+      <div class="sidebar-card">
+        <div class="sc-title">择校衔接</div>
+        <div class="sc-links">
+          <a class="sc-link" href="/school/new-brunswick/">NB 省院校目录</a>
+          <a class="sc-link" href="/projects/study-to-pr/">留学转移民总览</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="page-share">
+    <ShareBar
+      url="https://cachinavisa.com/projects/province/new-brunswick/"
+      title={"新不伦瑞克省提名（NBPNP）指南 | 海洋四省 · AIP"}
+    />
+  </div>
+</BaseLayout>
+
+<style>
+  .page-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  @media (min-width: 960px) {
+    .page-layout {
+      grid-template-columns: 1fr 280px;
+    }
+  }
+  .nb-hero {
+    background: linear-gradient(135deg, #1e3a5f 0%, #1e40af 55%, #0a1628 100%);
+  }
+  .page-hero {
+    border-radius: 20px;
+    padding: 40px 36px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-kicker {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(191, 219, 254, 0.85);
+    margin-bottom: 12px;
+  }
+  .hero-title {
+    font-size: clamp(24px, 4vw, 36px);
+    font-weight: 900;
+    color: #fff;
+    margin: 0 0 14px;
+    line-height: 1.15;
+  }
+  .hero-title-en {
+    font-size: 0.48em;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.4);
+    display: block;
+    margin-top: 4px;
+  }
+  .hero-desc {
+    font-size: 14.5px;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.75;
+    margin: 0 0 22px;
+    max-width: 680px;
+  }
+  .hero-desc strong {
+    color: #93c5fd;
+  }
+  .hero-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .htag {
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e0e7ff;
+  }
+
+  .content-card {
+    background: #fff;
+    border: 1px solid rgba(13, 17, 23, 0.09);
+    border-radius: 18px;
+    padding: 24px 28px;
+    margin-bottom: 16px;
+  }
+  .cc-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0d1117;
+    margin: 0 0 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid rgba(30, 64, 175, 0.15);
+  }
+  .stream-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .stream-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #0d1117;
+    margin: 0;
+  }
+  .stream-badge {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 999px;
+    border: 1.5px solid;
+    white-space: nowrap;
+  }
+  .stream-target {
+    font-size: 13px;
+    color: rgba(13, 17, 23, 0.6);
+    margin-bottom: 6px;
+  }
+  .stream-meta {
+    font-size: 12.5px;
+    color: rgba(13, 17, 23, 0.5);
+    margin-bottom: 10px;
+  }
+  .sm-label {
+    font-weight: 700;
+  }
+  .req-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .req-item {
+    display: flex;
+    gap: 8px;
+    font-size: 13px;
+    color: rgba(13, 17, 23, 0.7);
+    line-height: 1.55;
+  }
+  .ri-check {
+    color: #1d4ed8;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .stream-note {
+    font-size: 12.5px;
+    color: rgba(13, 17, 23, 0.55);
+    background: rgba(30, 64, 175, 0.04);
+    padding: 10px 14px;
+    border-radius: 10px;
+    border-left: 3px solid rgba(30, 64, 175, 0.25);
+    line-height: 1.55;
+  }
+
+  .faq-item {
+    border: 1px solid rgba(13, 17, 23, 0.08);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .faq-q {
+    padding: 14px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #0d1117;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+  .faq-q::after {
+    content: "+";
+    font-size: 18px;
+    color: #1d4ed8;
+    font-weight: 400;
+  }
+  details[open] .faq-q::after {
+    content: "−";
+  }
+  .faq-a {
+    padding: 12px 18px 14px;
+    font-size: 13.5px;
+    color: rgba(13, 17, 23, 0.65);
+    line-height: 1.75;
+    margin: 0;
+    border-top: 1px solid rgba(13, 17, 23, 0.06);
+  }
+
+  .nb-cta {
+    background: linear-gradient(135deg, #1e3a5f, #1e40af);
+  }
+  .cta-block {
+    border-radius: 18px;
+    padding: 28px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .cta-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 7px;
+  }
+  .cta-desc {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.65;
+    margin: 0;
+    max-width: 500px;
+  }
+  .cta-btn {
+    padding: 12px 26px;
+    background: #fff;
+    color: #1e40af;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 14px;
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .cta-btn:hover {
+    background: #eff6ff;
+    text-decoration: none;
+  }
+
+  .page-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: sticky;
+    top: 88px;
+  }
+  .sidebar-card {
+    background: #fff;
+    border: 1px solid rgba(13, 17, 23, 0.09);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .sc-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0d1117;
+    padding: 14px 18px 10px;
+    border-bottom: 1px solid rgba(13, 17, 23, 0.07);
+  }
+  .sc-links {
+    padding: 6px 0;
+  }
+  .sc-link {
+    display: block;
+    padding: 8px 18px;
+    font-size: 13px;
+    color: rgba(13, 17, 23, 0.7);
+    text-decoration: none;
+    transition: all 0.12s;
+  }
+  .sc-link:hover {
+    background: rgba(30, 64, 175, 0.04);
+    color: #1e40af;
+    text-decoration: none;
+  }
+  .sc-link.active {
+    background: rgba(30, 64, 175, 0.07);
+    color: #1e40af;
+    font-weight: 700;
+  }
+  .page-share {
+    margin-top: 24px;
+  }
+</style>

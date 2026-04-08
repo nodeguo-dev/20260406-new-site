@@ -1,0 +1,180 @@
+---
+import { site } from "@/config/site";
+
+type Props = {
+  title?: string;
+  compact?: boolean;
+};
+
+const { title = "预约免费咨询", compact = false } = Astro.props;
+---
+
+<div class="contact-card">
+  <div class="cc-header">
+    <div class="cc-icon">💬</div>
+    <div>
+      <h3 class="cc-title">{title}</h3>
+      {!compact && (
+        <p class="cc-subtitle">告诉我们您的基本情况，顾问将在 1 个工作日内回复</p>
+      )}
+    </div>
+  </div>
+
+  <div class="cc-contacts">
+    <a class="cc-item" href={`tel:${site.contact.phoneCA.replace(/[^+0-9]/g, '')}`}>
+      <span class="cc-item-icon">📞</span>
+      <div>
+        <div class="cc-item-label">加拿大热线</div>
+        <div class="cc-item-val">{site.contact.phoneCA}</div>
+      </div>
+    </a>
+    <a class="cc-item" href={`tel:${site.contact.phoneCNPlain || site.contact.phoneCN}`}>
+      <span class="cc-item-icon">📱</span>
+      <div>
+        <div class="cc-item-label">国内热线</div>
+        <div class="cc-item-val">{site.contact.phoneCN}</div>
+      </div>
+    </a>
+    <div class="cc-item">
+      <span class="cc-item-icon">💬</span>
+      <div>
+        <div class="cc-item-label">微信</div>
+        <div class="cc-item-val">{site.contact.wechat}</div>
+      </div>
+    </div>
+    <a class="cc-item" href={`mailto:${site.contact.email}`}>
+      <span class="cc-item-icon">✉️</span>
+      <div>
+        <div class="cc-item-label">邮箱</div>
+        <div class="cc-item-val">{site.contact.email}</div>
+      </div>
+    </a>
+    <div class="cc-item">
+      <span class="cc-item-icon">🕐</span>
+      <div>
+        <div class="cc-item-label">服务时间</div>
+        <div class="cc-item-val">{site.contact.hours}</div>
+      </div>
+    </div>
+  </div>
+
+  <a class="cc-btn" href="/contact/">填写表单免费评估 →</a>
+
+  <div class="cc-tools">
+    <div class="cc-tools-title">移民打分自助神器</div>
+    <a class="cc-tools-link" href="/tools/crs-calculator/">
+      <span class="cc-tools-name">CRS 打分计算器</span>
+      <span class="cc-tools-arrow">→</span>
+    </a>
+    <p class="cc-tools-desc">EE / CEC / FSW 入池前，先快速算一遍分数。</p>
+    <a class="cc-tools-link cc-tools-link--secondary" href="/services/ee-pathway-job-match/">
+      <span class="cc-tools-name">EE 定向 / 找工匹配</span>
+      <span class="cc-tools-arrow">→</span>
+    </a>
+    <p class="cc-tools-desc">免费评估你的定向类别、技工路径与工作匹配度。</p>
+  </div>
+</div>
+
+<style>
+.contact-card {
+  background: linear-gradient(135deg, #0a1628 0%, #0f2040 100%);
+  border-radius: 16px;
+  overflow: hidden;
+  padding: 20px;
+  position: relative;
+}
+.contact-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 90% 0%, rgba(217,45,32,0.2), transparent 60%);
+  pointer-events: none;
+}
+
+.cc-header {
+  display: flex; align-items: flex-start; gap: 12px;
+  margin-bottom: 16px; position: relative; z-index: 1;
+}
+.cc-icon { font-size: 24px; flex-shrink: 0; }
+.cc-title {
+  font-size: 15px; font-weight: 800; color: #fff;
+  margin: 0 0 4px; line-height: 1.3;
+}
+.cc-subtitle { font-size: 12px; color: rgba(255,255,255,0.55); line-height: 1.5; margin: 0; }
+
+.cc-contacts {
+  display: flex; flex-direction: column; gap: 1px;
+  background: rgba(255,255,255,0.06); border-radius: 12px;
+  overflow: hidden; margin-bottom: 14px; position: relative; z-index: 1;
+}
+.cc-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; text-decoration: none;
+  background: rgba(255,255,255,0.03);
+  transition: background 0.12s;
+}
+a.cc-item:hover { background: rgba(255,255,255,0.08); text-decoration: none; }
+.cc-item-icon { font-size: 16px; flex-shrink: 0; }
+.cc-item-label { font-size: 11px; color: rgba(255,255,255,0.45); margin-bottom: 1px; }
+.cc-item-val { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.9); }
+
+.cc-btn {
+  display: block; width: 100%; text-align: center;
+  padding: 11px 16px; background: #d92d20; color: #fff;
+  border-radius: 10px; font-size: 13.5px; font-weight: 700;
+  text-decoration: none; transition: background 0.15s;
+  position: relative; z-index: 1;
+}
+.cc-btn:hover { background: #b52418; text-decoration: none; }
+
+.cc-tools {
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  position: relative;
+  z-index: 1;
+}
+.cc-tools-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.78);
+  margin-bottom: 8px;
+  letter-spacing: 0.02em;
+}
+.cc-tools-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.08);
+  text-decoration: none;
+  transition: background 0.15s, transform 0.15s;
+}
+.cc-tools-link:hover {
+  background: rgba(255,255,255,0.12);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+.cc-tools-link--secondary {
+  margin-top: 8px;
+}
+.cc-tools-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+}
+.cc-tools-arrow {
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.75);
+}
+.cc-tools-desc {
+  font-size: 11px;
+  line-height: 1.5;
+  color: rgba(255,255,255,0.5);
+  margin: 8px 2px 0;
+}
+</style>

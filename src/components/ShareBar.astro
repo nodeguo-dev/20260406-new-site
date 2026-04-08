@@ -1,0 +1,394 @@
+---
+/**
+ * ShareBar — social sharing strip
+ * Props:
+ *   url:   canonical URL of the page (required)
+ *   title: page title for share text (required)
+ *   compact: if true, render a smaller inline row (default false)
+ */
+interface Props {
+  url: string;
+  title: string;
+  compact?: boolean;
+}
+
+const { url, title, compact = false } = Astro.props;
+const encodedUrl   = encodeURIComponent(url);
+const encodedTitle = encodeURIComponent(title);
+
+const shares = [
+  {
+    id: "wechat",
+    label: "微信",
+    icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.5 5C5.46 5 3 7.46 3 10.5c0 1.74.83 3.29 2.12 4.3l-.53 1.6 1.74-.87c.62.17 1.27.27 1.94.27.19 0 .37-.01.56-.03A5.5 5.5 0 0 1 8.5 14a5.5 5.5 0 0 1 0-9zm-.78 2.25.9.54.9-.54-.23 1.02.78.68-1.04.09L8.5 9.75l-.53.29-1.04-.09.78-.68-.23-1.02zM17 8.5c-2.76 0-5 2.24-5 5s2.24 5 5 5c.64 0 1.26-.12 1.83-.34l1.44.72-.44-1.33A4.98 4.98 0 0 0 22 13.5c0-2.76-2.24-5-5-5zm-1.5 3.25.75.44.75-.44-.19.85.65.57-.87.07-.44.86-.44-.86-.87-.07.65-.57-.19-.85zm3 0 .75.44.75-.44-.19.85.65.57-.87.07-.44.86-.44-.86-.87-.07.65-.57-.19-.85z"/></svg>`,
+    // WeChat requires a QR modal — we open our own handler
+    href: "#wechat-share",
+    isWechat: true,
+    color: "#07c160",
+    bg: "#e8f9ef",
+    showIcon: false,
+    showLabel: true,
+  },
+  {
+    id: "whatsapp",
+    label: "WhatsApp",
+    icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.522 3.658 1.432 5.167L2 22l4.975-1.404A9.962 9.962 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18a7.96 7.96 0 0 1-4.073-1.115l-.291-.173-3.014.851.854-2.943-.19-.303A7.96 7.96 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/></svg>`,
+    href: `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`,
+    color: "#25d366",
+    bg: "#e7fbed",
+    showIcon: true,
+    showLabel: false,
+  },
+  {
+    id: "instagram",
+    label: "Instagram",
+    icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>`,
+    href: `https://www.instagram.com/`,
+    color: "#e1306c",
+    bg: "#fce4ec",
+    isInstagram: true,
+    showIcon: true,
+    showLabel: false,
+  },
+  {
+    id: "facebook",
+    label: "Facebook",
+    icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>`,
+    href: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
+    color: "#1877f2",
+    bg: "#e7f0fd",
+    showIcon: true,
+    showLabel: false,
+  },
+  {
+    id: "x",
+    label: "X",
+    icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`,
+    href: `https://x.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`,
+    color: "#000000",
+    bg: "#f0f0f0",
+    showIcon: true,
+    showLabel: false,
+  },
+  {
+    id: "email",
+    label: "邮件",
+    icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>`,
+    href: `mailto:?subject=${encodedTitle}&body=${encodedUrl}`,
+    color: "#d92d20",
+    bg: "#fef2f2",
+    showIcon: false,
+    showLabel: true,
+  },
+  {
+    id: "message",
+    label: "短信",
+    icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 10H6v-2h12v2zm0-3H6V7h12v2z"/></svg>`,
+    href: `sms:?body=${encodedTitle}%20${encodedUrl}`,
+    color: "#4f46e5",
+    bg: "#eef2ff",
+    showIcon: false,
+    showLabel: true,
+  },
+];
+---
+
+<div class={`share-bar${compact ? " share-bar--compact" : ""}`}>
+    <span class="share-label">
+      <svg class="share-label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      分享
+    </span>
+  <div class="share-buttons">
+    {shares.map((s) => (
+      <a
+        class="share-btn"
+        class:list={{
+          "share-btn--icon-only": s.showIcon && !s.showLabel,
+          "share-btn--text-only": s.showLabel && !s.showIcon,
+        }}
+        href={s.href}
+        target={s.isWechat || s.isInstagram ? undefined : "_blank"}
+        rel={s.isWechat || s.isInstagram ? undefined : "noopener noreferrer"}
+        aria-label={`分享到 ${s.label}`}
+        data-platform={s.id}
+        style={`--btn-color:${s.color};--btn-bg:${s.bg}`}
+      >
+        {s.showIcon && <span class="share-btn-icon" set:html={s.icon} />}
+        {s.showLabel && <span class="share-btn-label">{s.label}</span>}
+      </a>
+    ))}
+  </div>
+
+  <!-- WeChat QR modal -->
+  <div class="wc-modal" id="wechat-share-modal" role="dialog" aria-modal="true" aria-label="微信分享">
+    <div class="wc-backdrop"></div>
+    <div class="wc-box">
+      <button class="wc-close" aria-label="关闭">✕</button>
+      <div class="wc-title">微信扫一扫分享</div>
+      <div class="wc-qr" id="wechat-qr-container"></div>
+      <p class="wc-hint">用微信扫描二维码，即可将本页分享给好友或朋友圈</p>
+      <hr class="wc-divider"/>
+      <div class="wc-wechat-id">
+        <span>也可直接添加顾问微信：</span>
+        <strong>getprsoon</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── WeChat share modal ──────────────────────────────────────────
+  document.querySelectorAll<HTMLAnchorElement>('[data-platform="wechat"]').forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const modal = document.getElementById("wechat-share-modal");
+      if (!modal) return;
+
+      // Generate QR lazily using a free API
+      const qrContainer = document.getElementById("wechat-qr-container");
+      if (qrContainer && !qrContainer.querySelector("img")) {
+        const pageUrl = encodeURIComponent(window.location.href);
+        const img = document.createElement("img");
+        img.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${pageUrl}`;
+        img.alt = "二维码";
+        img.width = 180;
+        img.height = 180;
+        qrContainer.appendChild(img);
+      }
+
+      modal.classList.add("is-open");
+      document.body.style.overflow = "hidden";
+    });
+  });
+
+  // Close modal
+  document.querySelectorAll(".wc-close, .wc-backdrop").forEach((el) => {
+    el.addEventListener("click", () => {
+      document.getElementById("wechat-share-modal")?.classList.remove("is-open");
+      document.body.style.overflow = "";
+    });
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      document.getElementById("wechat-share-modal")?.classList.remove("is-open");
+      document.body.style.overflow = "";
+    }
+  });
+
+  // ── Instagram: copy link then open ─────────────────────────────
+  document.querySelectorAll<HTMLAnchorElement>('[data-platform="instagram"]').forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      navigator.clipboard?.writeText(window.location.href).catch(() => {});
+      // Small toast
+      const toast = document.createElement("div");
+      toast.textContent = "链接已复制，去 Instagram 粘贴分享 📋";
+      toast.style.cssText =
+        "position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#e1306c;color:#fff;padding:10px 20px;border-radius:30px;font-size:13px;z-index:9999;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.2)";
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+      window.open("https://www.instagram.com/", "_blank");
+    });
+  });
+
+</script>
+
+<style>
+/* ── Container ─────────────────────────────────────────────────── */
+.share-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 14px 18px;
+  background: rgba(26,29,35,0.03);
+  border: 1px solid rgba(26,29,35,0.08);
+  border-radius: 14px;
+  margin: 20px 0;
+}
+.share-bar--compact {
+  padding: 10px 14px;
+  gap: 8px;
+}
+
+/* ── Label ─────────────────────────────────────────────────────── */
+.share-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(26,29,35,0.55);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+.share-label-icon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+/* ── Buttons row ───────────────────────────────────────────────── */
+.share-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* ── Individual button ─────────────────────────────────────────── */
+.share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 30px;
+  background: var(--btn-bg, #f3f4f6);
+  color: var(--btn-color, #374151);
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, background 0.15s, border-color 0.15s;
+  line-height: 1;
+}
+.share-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  border-color: var(--btn-color, #374151);
+  text-decoration: none;
+  color: var(--btn-color, #374151);
+}
+.share-btn:active { transform: translateY(0); }
+
+.share-btn--icon-only {
+  justify-content: center;
+  padding-inline: 10px;
+}
+
+.share-btn--text-only {
+  padding-inline: 12px;
+}
+
+.share-btn-icon {
+  display: flex;
+  align-items: center;
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+.share-btn-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Compact mode: hide label text */
+.share-bar--compact .share-btn {
+  padding: 7px 9px;
+}
+.share-bar--compact .share-btn-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.share-bar--compact .share-btn--text-only {
+  padding-inline: 10px;
+}
+
+/* ── WeChat modal ──────────────────────────────────────────────── */
+.wc-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  align-items: center;
+  justify-content: center;
+}
+.wc-modal.is-open {
+  display: flex;
+}
+.wc-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(3px);
+}
+.wc-box {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  border-radius: 20px;
+  padding: 30px 28px 24px;
+  max-width: 320px;
+  width: calc(100% - 40px);
+  text-align: center;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.22);
+  animation: wc-in 0.25s ease;
+}
+@keyframes wc-in {
+  from { transform: scale(0.92) translateY(20px); opacity: 0; }
+  to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+.wc-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: rgba(26,29,35,0.4);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  line-height: 1;
+}
+.wc-close:hover { background: rgba(26,29,35,0.07); color: #1a1d23; }
+.wc-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1d23;
+  margin-bottom: 18px;
+}
+.wc-qr {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 14px;
+  min-height: 180px;
+  align-items: center;
+}
+.wc-qr img {
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+.wc-hint {
+  font-size: 12.5px;
+  color: rgba(26,29,35,0.55);
+  margin: 0 0 14px;
+  line-height: 1.6;
+}
+.wc-divider {
+  border: none;
+  border-top: 1px solid rgba(26,29,35,0.08);
+  margin: 0 0 14px;
+}
+.wc-wechat-id {
+  font-size: 13.5px;
+  color: rgba(26,29,35,0.7);
+}
+.wc-wechat-id strong {
+  color: #07c160;
+  font-size: 15px;
+  display: block;
+  margin-top: 4px;
+  letter-spacing: 0.05em;
+}
+
+/* ── Mobile responsiveness ─────────────────────────────────────── */
+@media (max-width: 480px) {
+  .share-btn { padding: 8px 10px; }
+  .share-btn-icon { width: 17px; height: 17px; }
+  .share-bar { gap: 8px; padding: 12px 14px; }
+}
+</style>

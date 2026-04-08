@@ -1,0 +1,240 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民项目", href: "/projects/" },
+  { name: "省提名项目", href: "/projects/provincial-nomination/" },
+  { name: "魁北克省移民", href: "/projects/province/quebec/" },
+];
+
+const faqItems = [
+  {
+    q: "魁北克移民和其他省份有什么根本区别？",
+    a: "魁北克是唯一拥有独立移民体系的省份（根据加拿大宪法中的魁北克-加拿大协定）。魁北克自己管理技术移民申请（QSWP/PEQ等），通过魁北克审核后获得CSQ（魁北克选择证书），再向联邦IRCC申请安全和健康审核，然后获得永居权。魁北克移民不走联邦Express Entry系统，CRS分数与之无关。"
+  },
+  {
+    q: "我不会法语，能移民魁北克吗？",
+    a: "法语是魁北克技术移民的核心评估因素，虽然不是硬性否决条件，但没有法语会让你的综合评分非常低，几乎无法通过QSWP的分数线。不会法语的申请人通常只有两种情况例外：一是有魁北克雇主担保（某些类别），二是走投资移民类别。如果你计划移民魁北克，学法语基本是必不可少的准备。"
+  },
+  {
+    q: "PEQ（魁北克经验类）适合什么人？",
+    a: "PEQ（Programme de l'expérience québécoise）适合已经在魁北克合法工作或学习的申请人：持工签并在魁北克工作满12个月（符合要求的职业）；或在魁北克法语大学毕业（或已在读最后学期），且工作语言为法语。PEQ处理速度非常快，通常几个月内就能拿到CSQ，是最高效的魁北克移民路径之一。"
+  },
+  {
+    q: "QSWP目前还在开放接受申请吗？",
+    a: "魁北克技术工人计划（QSWP）历史上多次暂停和重开，且每次开放窗口有名额限制，有时几小时内就额满关闭。近年来，魁北克的移民政策有重大改革，引入了新的Arrima候选池系统（类似EE），建议密切关注MIFI（魁北克移民部）官网的最新动态。"
+  },
+  {
+    q: "在魁北克生活一定要会法语吗？",
+    a: "魁北克的官方语言是法语，大多数公共服务、工作环境和日常生活都以法语为主（蒙特利尔部分地区英语也通用）。法语能力对融入当地社会和职场非常重要。很多新移民在正式定居前会参加魁北克政府提供的免费法语课程（FRANCISATION）。"
+  },
+  {
+    q: "魁北克投资移民适合哪类人？",
+    a: "魁北克商业投资移民（现名Immigrant Investor Program，如果重开）适合：净资产达到要求（历史上$2M CAD）、有3年以上企业管理经验，愿意向魁北克政府批准的基金进行被动投资（历史金额约$1.2M CAD，五年还本无息）。这类移民语言要求不高，但对资产要求较高，且该项目历史上频繁暂停，建议咨询当前状态。"
+  },
+];
+
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((i) => ({
+    "@type": "Question",
+    name: i.q,
+    acceptedAnswer: { "@type": "Answer", text: i.a },
+  })),
+};
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+---
+<BaseLayout
+  title={withSiteTitle("魁北克省移民申请指南 | QSWP·PEQ·法语要求·投资移民")}
+  description="魁北克省移民完整指南：独立移民体系说明、QSWP技术移民、PEQ经验类、法语要求、CSQ申请流程及6个常见问题解答。"
+  canonical="https://cachinavisa.com/projects/province/quebec/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={faqLd} />
+  <Breadcrumbs items={breadcrumbs} />
+  <div class="grid" style="margin-top:16px">
+    <article class="content-card">
+      <div class="page-header">
+        <div class="page-kicker">魁北克移民 · QSWP / PEQ</div>
+        <h1 class="page-h1">魁北克省移民申请指南</h1>
+        <p class="page-intro">魁北克省是加拿大唯一运营独立移民体系的省份，以法语为官方语言，文化和政策都与其他省份有显著差异。移民魁北克不走联邦Express Entry系统，而是由魁北克移民部（MIFI）负责筛选和发放魁北克选择证书（CSQ），再向联邦IRCC申请PR。</p>
+      </div>
+
+      <div class="content-sections">
+
+        <div class="section-block">
+          <h2>魁北克移民体系与其他省份的区别</h2>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-card-label">主管部门</div>
+              <div class="info-card-value">魁北克移民部（MIFI）</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">联邦EE系统</div>
+              <div class="info-card-value">不适用，魁北克独立运营</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">关键证件</div>
+              <div class="info-card-value">CSQ（魁北克选择证书），联邦PR需凭CSQ申请</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">语言要求</div>
+              <div class="info-card-value">法语为核心要求（英语亦考量，但分值低）</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2>主要移民类别</h2>
+          <div class="streams-list">
+            <div class="stream-item">
+              <div class="stream-name">魁北克技术工人（QSWP / Arrima系统）</div>
+              <div class="stream-desc">通过积分制评分（学历、工作经验、语言、年龄等），在Arrima候选池中等待邀请。法语能力是最重要的加分项，不会法语几乎无法竞争。</div>
+            </div>
+            <div class="stream-item">
+              <div class="stream-name">魁北克经验类（PEQ）</div>
+              <div class="stream-desc">已在魁北克合法工作满12个月，或在魁北克法语院校就读并毕业（工作语言须为法语）。处理速度快，是在魁人士最高效的PR路径。</div>
+            </div>
+            <div class="stream-item">
+              <div class="stream-name">魁北克雇主需求类</div>
+              <div class="stream-desc">有魁北克雇主的工作offer，雇主在MIFI注册并为申请人申请，适合有本地雇主支持的外来工作者。</div>
+            </div>
+            <div class="stream-item">
+              <div class="stream-name">魁北克投资移民 / 企业家类</div>
+              <div class="stream-desc">面向有资产和管理经验的企业主，分投资人和企业家两类，对法语要求相对较低，但资产门槛高，且项目历史上时常暂停。</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2>QSWP评分（Grille de pointage）主要维度</h2>
+          <ul class="req-list">
+            <li><strong>法语能力</strong>——口语、书写、听力、阅读，各级别有对应分数，是最高权重的因素</li>
+            <li><strong>受邀职业（AOF）</strong>——魁北克紧缺职业列表中的职业额外加分</li>
+            <li><strong>学历</strong>——学历越高分数越高，在魁北克获得学历有额外加分</li>
+            <li><strong>年龄</strong>——18–35岁分数最高，随年龄递减</li>
+            <li><strong>工作经验</strong>——在魁北克内/外的工作年限</li>
+            <li><strong>英语能力</strong>——有一定加分，但远低于法语</li>
+            <li><strong>配偶情况</strong>——配偶的法语能力和学历也计入总分</li>
+          </ul>
+        </div>
+
+        <div class="section-block">
+          <h2>申请流程（QSWP为例）</h2>
+          <ol class="step-list">
+            <li><span class="step-text"><strong>在Arrima平台创建候选档案</strong>——MIFI从Arrima候选池中定期发出邀请，高分优先</span></li>
+            <li><span class="step-text"><strong>收到邀请后提交MIFI申请</strong>——上传所有材料（学历、语言成绩、工作证明等），MIFI进行评估</span></li>
+            <li><span class="step-text"><strong>获得CSQ（魁北克选择证书）</strong>——MIFI批准后颁发CSQ，CSQ有效期一般为2年</span></li>
+            <li><span class="step-text"><strong>向联邦IRCC申请永居权</strong>——凭CSQ向IRCC提交联邦PR申请（安全审查+体检），IRCC处理通常需要12–18个月</span></li>
+            <li><span class="step-text"><strong>登陆魁北克，完成定居</strong>——获批后持COPR入境魁北克完成登陆手续</span></li>
+          </ol>
+          <div class="tip-box">魁北克的免费法语课程（Francisation Québec）对新移民免费开放，建议在定居后尽早参加，这对融入本地生活和职场非常有帮助。</div>
+        </div>
+
+        <div class="section-block">
+          <h2>常见问题（FAQ）</h2>
+          {faqItems.map((item) => (
+            <details class="faq-item">
+              <summary class="faq-q">{item.q}</summary>
+              <p class="faq-a">{item.a}</p>
+            </details>
+          ))}
+        </div>
+
+      </div>
+      <div class="page-share">
+        <ShareBar url="https://cachinavisa.com/projects/province/quebec/" title={"魁北克省移民申请指南 | QSWP·PEQ·法语要求·投资移民"} />
+      </div>
+
+
+      <div class="cta-inline">
+        <div class="cta-text">想免费评估魁北克移民是否适合你？法语学习如何规划？</div>
+        <a class="cta-btn" href="/contact/">免费咨询 →</a>
+      </div>
+    </article>
+
+    <aside class="sidebar-stack">
+      <ContactCard />
+      <div class="sidebar-nav-card">
+        <div class="snc-title">各省提名</div>
+        <div class="snc-links">
+          <a class="snc-link" href="/projects/province/ontario/">安大略省（OINP）</a>
+          <a class="snc-link" href="/projects/province/british-columbia/">不列颠哥伦比亚省</a>
+          <a class="snc-link active" href="/projects/province/quebec/">魁北克省</a>
+        </div>
+      </div>
+      <div class="sidebar-nav-card">
+        <div class="snc-title">相关移民路径</div>
+        <div class="snc-links">
+          <a class="snc-link" href="/projects/provincial-nomination/">省提名项目总览</a>
+          <a class="snc-link" href="/projects/federal/">联邦技术移民（EE）</a>
+          <a class="snc-link" href="/projects/">全部移民项目</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+.grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 920px) { .grid { grid-template-columns: 1fr 300px; align-items: start; } }
+.content-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 16px; overflow: hidden; }
+.page-header { padding: 28px 28px 24px; border-bottom: 1px solid rgba(26,29,35,0.08); background: linear-gradient(135deg, #fafbff, #fff); }
+.page-kicker { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #d92d20; margin-bottom: 8px; }
+.page-h1 { font-size: clamp(22px, 4vw, 30px); font-weight: 800; color: #1a1d23; margin: 0 0 12px; letter-spacing: -0.02em; }
+.page-intro { font-size: 15px; color: rgba(26,29,35,0.62); line-height: 1.7; margin: 0; }
+.content-sections { padding: 24px 28px; display: grid; gap: 32px; }
+.section-block h2 { font-size: 18px; font-weight: 750; color: #1a1d23; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 2px solid rgba(217,45,32,0.12); }
+.section-block p { font-size: 14px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0 0 12px; }
+.streams-list { display: grid; gap: 10px; }
+.stream-item { padding: 14px 16px; background: rgba(26,29,35,0.025); border-radius: 12px; border: 1px solid rgba(26,29,35,0.07); }
+.stream-name { font-size: 14px; font-weight: 700; color: #1a1d23; margin-bottom: 5px; }
+.stream-desc { font-size: 13.5px; color: rgba(26,29,35,0.6); line-height: 1.55; }
+.req-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.req-list li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; background: rgba(26,29,35,0.025); border-radius: 10px; font-size: 14px; color: rgba(26,29,35,0.75); line-height: 1.55; }
+.req-list li::before { content: "✓"; color: #d92d20; font-weight: 700; flex-shrink: 0; }
+.step-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; counter-reset: steps; }
+.step-list li { display: flex; gap: 14px; align-items: flex-start; counter-increment: steps; }
+.step-list li::before { content: counter(steps); display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #d92d20; color: #fff; font-weight: 700; font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+.step-text { font-size: 14px; color: rgba(26,29,35,0.75); line-height: 1.6; padding-top: 3px; }
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.info-card { padding: 14px 16px; background: rgba(26,29,35,0.03); border-radius: 12px; border: 1px solid rgba(26,29,35,0.07); }
+.info-card-label { font-size: 12px; color: rgba(26,29,35,0.45); margin-bottom: 4px; }
+.info-card-value { font-size: 14px; font-weight: 600; color: #1a1d23; }
+.tip-box { padding: 14px 16px; background: rgba(217,45,32,0.05); border-left: 3px solid #d92d20; border-radius: 0 10px 10px 0; font-size: 13px; color: rgba(26,29,35,0.7); line-height: 1.65; margin-top: 12px; }
+.faq-item { border: 1px solid rgba(26,29,35,0.09); border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+.faq-q { padding: 13px 16px; font-weight: 650; font-size: 14px; cursor: pointer; list-style: none; display: flex; justify-content: space-between; color: #1a1d23; }
+.faq-q::after { content: "+"; font-size: 18px; color: rgba(26,29,35,0.4); }
+details[open] .faq-q::after { content: "−"; }
+.faq-q::-webkit-details-marker { display: none; }
+.faq-a { padding: 0 16px 13px; font-size: 13.5px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0; }
+.cta-inline { margin: 0 28px 28px; padding: 20px 24px; background: linear-gradient(135deg, #0a1628, #0f1f38); border-radius: 14px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.cta-text { font-size: 15px; font-weight: 700; color: #fff; }
+.cta-btn { display: inline-flex; padding: 10px 20px; border-radius: 10px; background: #d92d20; color: #fff; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; }
+.cta-btn:hover { background: #b52418; text-decoration: none; }
+.sidebar-stack { display: grid; gap: 16px; position: sticky; top: 80px; }
+.sidebar-nav-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 14px; padding: 18px 20px; }
+.snc-title { font-size: 14px; font-weight: 700; color: #1a1d23; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(26,29,35,0.08); }
+.snc-links { display: flex; flex-direction: column; gap: 2px; }
+.snc-link { display: block; padding: 8px 10px; font-size: 13.5px; color: #374151; text-decoration: none; border-radius: 8px; }
+.snc-link:hover { background: rgba(217,45,32,0.06); color: #d92d20; text-decoration: none; }
+.snc-link.active { background: rgba(217,45,32,0.07); color: #d92d20; font-weight: 600; }
+</style>

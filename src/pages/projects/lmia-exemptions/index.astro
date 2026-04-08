@@ -1,0 +1,282 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民项目", href: "/projects/" },
+  { name: "联邦项目总览", href: "/projects/federal-programs/" },
+  { name: "LMIA 豁免类别", href: "/projects/lmia-exemptions/" },
+];
+
+const exemptions = [
+  {
+    code: "C10",
+    name: "加拿大国家利益",
+    desc: "适用于对加拿大经济、文化或社会利益有显著贡献的人士，由部长或省级机构提名。条件较难满足，需有力证明材料。",
+    tags: ["国家利益", "部长授权"],
+  },
+  {
+    code: "C11",
+    name: "自雇企业家",
+    desc: "在加拿大自行创立企业，并为自己创造就业岗位，需证明具备经营能力且对加拿大经济有贡献。",
+    tags: ["自雇", "创业"],
+  },
+  {
+    code: "C12",
+    name: "公司内部调动（ICT）",
+    desc: "跨国公司将境外雇员调至加拿大分支机构任职（管理/高管/专业知识岗位），需证明与境外公司的雇佣关系。",
+    tags: ["跨国公司", "境内调动"],
+  },
+  {
+    code: "R204 / CUSMA",
+    name: "CUSMA/USMCA 自由贸易协定",
+    desc: "适用于美国或墨西哥公民，在特定专业类职位（如工程师、会计、IT等）有工作offer时可免LMIA申请工签。",
+    tags: ["美/墨公民", "贸易协定"],
+  },
+  {
+    code: "R205(a)",
+    name: "CETA / 欧加贸易协定",
+    desc: "适用于欧盟成员国公民，类似CUSMA，覆盖特定专业类和企业内部调动类别。",
+    tags: ["欧盟公民", "CETA"],
+  },
+  {
+    code: "R205(c)(ii)",
+    name: "显著利益 / Significant Benefit",
+    desc: "适用于有显著经济、社会或文化贡献的人士，如知名艺术家、运动员、学者等。证明标准较高。",
+    tags: ["文化贡献", "经济贡献"],
+  },
+  {
+    code: "R205(d)",
+    name: "互惠安排",
+    desc: "基于国际协议，加拿大允许特定国家/地区的公民在某类职位工作，对方国家提供同等待遇给加拿大公民。",
+    tags: ["双边协议", "互惠"],
+  },
+  {
+    code: "R186(a)–(l)",
+    name: "无需工签类别（某些情况）",
+    desc: "包括短期访问的学术人员、宗教工作者、部分紧急服务人员等，可在不需要工签（或豁免LMIA）的情况下在加工作。",
+    tags: ["学术", "短期"],
+  },
+];
+
+const faqItems = [
+  {
+    q: "LMIA 豁免是什么意思？",
+    a: "豁免LMIA意味着雇主无需经过正常的劳工市场影响评估流程（无需招聘广告、无需向ESDC申请），工人可以直接（或通过其他方式）获得工签。但大多数豁免类别仍然是封闭式工签（限定雇主），只是无需LMIA文件。",
+  },
+  {
+    q: "豁免 LMIA 的工签能用于 EE 加分吗？",
+    a: "大多数LMIA豁免的工签不能用于EE的50/200分加分。EE加分要求工作offer需经过LMIA支持，或属于特定类别（如C12公司内部调动高管级别也不能加分）。部分豁免类别（如符合LMIA要求的国家利益类C10）可能例外，需具体评估。",
+  },
+  {
+    q: "公司内部调动（ICT）需要满足什么条件？",
+    a: "申请人须在境外关联公司连续工作满1年（12个月），调至加拿大公司担任管理职位、高管职位或专业知识岗位。所谓「专业知识」需要证明是公司特有的技能或知识，通用行业技能通常不符合。申请时需提供大量公司和个人关系证明材料。",
+  },
+  {
+    q: "我是美国公民，CUSMA 工签是否一定不需要 LMIA？",
+    a: "CUSMA（前身NAFTA）适用于美国和墨西哥公民，在CUSMA附录一涵盖的特定职业类别（如工程师、会计、科学家、IT专业人员等）有加拿大工作offer时，可免LMIA申请工签。但职业必须在CUSMA附录名单内，且需满足该职业的学历要求（通常需要本科以上学位）。",
+  },
+  {
+    q: "自雇类（C11）豁免适合什么人？",
+    a: "适合有明确商业计划、能证明具备经营能力且为自己创造加拿大工作岗位的申请人。通常需要商业计划书、相关行业经验证明、财务能力证明。审批官有较大自由裁量权，建议咨询顾问评估可行性。",
+  },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem", position: i + 1, name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((i) => ({
+    "@type": "Question", name: i.q,
+    acceptedAnswer: { "@type": "Answer", text: i.a },
+  })),
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("LMIA 豁免类别汇总 | ICT · CUSMA · 国家利益 · 互惠安排")}
+  description="全面汇总加拿大 LMIA 豁免工签类别：公司内部调动（C12/ICT）、CUSMA/USMCA美墨公民、CETA欧盟公民、国家利益（C10）、自雇（C11）等，附条件与常见问题。"
+  canonical="https://cachinavisa.com/projects/lmia-exemptions/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={faqLd} />
+  <Breadcrumbs items={breadcrumbs} />
+
+  <div class="grid" style="margin-top:16px">
+    <article class="content-card">
+      <div class="page-header">
+        <div class="page-kicker">工签 · LMIA 豁免</div>
+        <h1 class="page-h1">LMIA 豁免类别汇总</h1>
+        <p class="page-intro">
+          并非所有工签申请都需要经过LMIA流程。加拿大移民法规（IRPA/IRPR）规定了多种豁免情形，
+          允许特定雇主或特定国籍的申请人跳过劳工市场评估，直接或更快地获得工签。
+          以下是主要豁免类别的核心条件与适用情形。
+        </p>
+      </div>
+
+      <div class="content-sections">
+
+        <div class="section-block">
+          <h2>主要 LMIA 豁免类别</h2>
+          <div class="exemp-grid">
+            {exemptions.map((e) => (
+              <div class="exemp-card">
+                <div class="exemp-top">
+                  <span class="exemp-code">{e.code}</span>
+                  <div class="exemp-tags">
+                    {e.tags.map((t) => <span class="exemp-tag">{t}</span>)}
+                  </div>
+                </div>
+                <div class="exemp-name">{e.name}</div>
+                <p class="exemp-desc">{e.desc}</p>
+              </div>
+            ))}
+          </div>
+          <p class="exemp-more">
+            与 IMP 相关的<strong>法语流动工签（Mobilité francophone）</strong>与<strong>重大利益（C11 / significant benefit）</strong>的专题说明、流程与 FAQ，见签证栏目：
+            <a href="/visa/french-mobility-work-permit/">法语流动工签</a> ·
+            <a href="/visa/c11-work-permit/">C11 重大利益工签</a>。
+          </p>
+        </div>
+
+        <div class="section-block">
+          <h2>豁免类别 vs 常规 LMIA 工签对比</h2>
+          <div class="compare-table">
+            <div class="cmp-header cmp-row">
+              <div>对比维度</div>
+              <div>常规 LMIA 工签</div>
+              <div>LMIA 豁免工签</div>
+            </div>
+            <div class="cmp-row">
+              <div>雇主招聘广告要求</div>
+              <div class="neg">✗ 需要（至少4周广告）</div>
+              <div class="pos">✓ 通常不需要</div>
+            </div>
+            <div class="cmp-row">
+              <div>ESDC 审批时间</div>
+              <div class="neg">8–14 周（视类别）</div>
+              <div class="pos">通常更短或即时</div>
+            </div>
+            <div class="cmp-row">
+              <div>EE 工作 offer 加分</div>
+              <div class="pos">✓ 可加 50 / 200 分</div>
+              <div class="neg">✗ 多数豁免类别不能加分</div>
+            </div>
+            <div class="cmp-row">
+              <div>申请成本（政府费用）</div>
+              <div class="neg">雇主须缴 $1,000/职位</div>
+              <div class="pos">无 LMIA 申请费</div>
+            </div>
+            <div class="cmp-row">
+              <div>工签类型</div>
+              <div>封闭式（限定雇主）</div>
+              <div>多为封闭式，部分豁免开放式</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2>常见问题（FAQ）</h2>
+          {faqItems.map((item) => (
+            <details class="faq-item">
+              <summary class="faq-q">{item.q}</summary>
+              <p class="faq-a">{item.a}</p>
+            </details>
+          ))}
+        </div>
+
+      </div>
+      <div class="page-share">
+        <ShareBar url="https://cachinavisa.com/projects/lmia-exemptions/" title={"LMIA 豁免类别汇总 | ICT · CUSMA · 国家利益 · 互惠安排"} />
+      </div>
+
+
+      <div class="cta-inline">
+        <div class="cta-text">想了解哪类豁免适合你的情况？</div>
+        <a class="cta-btn" href="/contact/">免费咨询 →</a>
+      </div>
+    </article>
+
+    <aside class="sidebar-stack">
+      <ContactCard />
+      <div class="sidebar-nav-card">
+        <div class="snc-title">工签与雇主担保</div>
+        <div class="snc-links">
+          <a class="snc-link" href="/projects/lmia-overview/">LMIA 雇主担保总览</a>
+          <a class="snc-link active" href="/projects/lmia-exemptions/">LMIA 豁免类别</a>
+          <a class="snc-link" href="/visa/work-permit/">工签申请指南</a>
+          <a class="snc-link" href="/visa/french-mobility-work-permit/">法语流动工签</a>
+          <a class="snc-link" href="/visa/c11-work-permit/">C11 重大利益工签</a>
+          <a class="snc-link" href="/projects/cec/">CEC 转永居</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+.grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 920px) { .grid { grid-template-columns: 1fr 300px; align-items: start; } }
+.content-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 16px; overflow: hidden; }
+.page-header { padding: 28px 28px 24px; border-bottom: 1px solid rgba(26,29,35,0.08); background: linear-gradient(135deg, #fafbff, #fff); }
+.page-kicker { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #d92d20; margin-bottom: 8px; }
+.page-h1 { font-size: clamp(20px, 3.5vw, 28px); font-weight: 800; color: #1a1d23; margin: 0 0 12px; letter-spacing: -0.02em; }
+.page-intro { font-size: 15px; color: rgba(26,29,35,0.62); line-height: 1.7; margin: 0; }
+.content-sections { padding: 24px 28px; display: grid; gap: 32px; }
+.section-block h2 { font-size: 18px; font-weight: 750; color: #1a1d23; margin: 0 0 14px; padding-bottom: 8px; border-bottom: 2px solid rgba(217,45,32,0.12); }
+
+.exemp-grid { display: grid; gap: 12px; }
+@media (min-width: 640px) { .exemp-grid { grid-template-columns: 1fr 1fr; } }
+.exemp-card { padding: 18px 20px; border-radius: 14px; border: 1.5px solid rgba(26,29,35,0.09); background: #fff; transition: border-color 0.15s; }
+.exemp-card:hover { border-color: rgba(217,45,32,0.2); }
+.exemp-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.exemp-code { font-size: 11px; font-weight: 700; color: #d92d20; background: rgba(217,45,32,0.08); padding: 3px 9px; border-radius: 6px; }
+.exemp-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+.exemp-tag { font-size: 11px; color: rgba(26,29,35,0.55); background: rgba(26,29,35,0.05); padding: 2px 8px; border-radius: 5px; }
+.exemp-name { font-size: 14px; font-weight: 700; color: #1a1d23; margin-bottom: 7px; }
+.exemp-desc { font-size: 13px; color: rgba(26,29,35,0.6); line-height: 1.6; margin: 0; }
+.exemp-more { margin: 18px 0 0; padding: 14px 16px; font-size: 14px; color: rgba(26,29,35,0.68); line-height: 1.65; background: rgba(26,86,196,0.06); border-radius: 12px; border-left: 3px solid #1a56c4; }
+.exemp-more a { color: #1a56c4; font-weight: 600; }
+
+.compare-table { border: 1px solid rgba(26,29,35,0.09); border-radius: 12px; overflow: hidden; }
+.cmp-row { display: grid; grid-template-columns: 1.4fr 1fr 1fr; border-bottom: 1px solid rgba(26,29,35,0.07); }
+.cmp-row:last-child { border-bottom: none; }
+.cmp-row > div { padding: 11px 14px; font-size: 13px; color: rgba(26,29,35,0.7); line-height: 1.5; border-right: 1px solid rgba(26,29,35,0.06); }
+.cmp-row > div:last-child { border-right: none; }
+.cmp-header { background: rgba(26,29,35,0.04); }
+.cmp-header > div { font-weight: 700; color: #1a1d23; font-size: 12px; text-transform: uppercase; }
+.pos { color: #059669 !important; font-weight: 600; }
+.neg { color: rgba(217,45,32,0.85) !important; }
+
+.faq-item { border: 1px solid rgba(26,29,35,0.08); border-radius: 12px; overflow: hidden; margin-bottom: 8px; }
+.faq-q { padding: 14px 18px; font-size: 14px; font-weight: 600; color: #1a1d23; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.faq-q::after { content: '+'; font-size: 18px; color: #d92d20; font-weight: 400; flex-shrink: 0; }
+details[open] .faq-q::after { content: '−'; }
+.faq-a { padding: 12px 18px 14px; font-size: 13.5px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0; border-top: 1px solid rgba(26,29,35,0.06); }
+
+.cta-inline { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 28px; background: linear-gradient(135deg, rgba(217,45,32,0.05), rgba(217,45,32,0.02)); border-top: 1px solid rgba(217,45,32,0.1); flex-wrap: wrap; }
+.cta-text { font-size: 15px; font-weight: 600; color: #1a1d23; }
+.cta-btn { padding: 10px 22px; background: #d92d20; color: #fff; border-radius: 10px; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; }
+.cta-btn:hover { background: #b52418; text-decoration: none; }
+
+.sidebar-stack { display: grid; gap: 16px; position: sticky; top: 80px; }
+.sidebar-nav-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 14px; padding: 18px 20px; }
+.snc-title { font-size: 14px; font-weight: 700; color: #1a1d23; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(26,29,35,0.08); }
+.snc-links { display: flex; flex-direction: column; gap: 2px; }
+.snc-link { display: block; padding: 8px 10px; font-size: 13.5px; color: #374151; text-decoration: none; border-radius: 8px; }
+.snc-link:hover { background: rgba(217,45,32,0.06); color: #d92d20; text-decoration: none; }
+.snc-link.active { background: rgba(217,45,32,0.07); color: #d92d20; font-weight: 600; }
+</style>

@@ -1,0 +1,126 @@
+---
+import "@/styles/toronto-life-guides.css";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import TorontoLifeSubNav from "@/components/guides/TorontoLifeSubNav.astro";
+import TorontoLifePartnerBand from "@/components/guides/TorontoLifePartnerBand.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+import { torontoLifePageBands } from "@/data/torontoLifeSponsors";
+
+const pageKey = "education";
+const bands = torontoLifePageBands[pageKey]!;
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "多伦多生活指南", href: "/guides/toronto-life/" },
+  { name: "教育育儿", href: "/guides/toronto-life/education/" },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("多伦多教育与育儿指南 | 公校 · 日托 · 衔接课")}
+  description="GTA 公校注册、教育局边界、日托与课后班线索；内含培训与升学类合作展示位。"
+  canonical="https://cachinavisa.com/guides/toronto-life/education/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <div class="container tl-page">
+    <Breadcrumbs items={breadcrumbs} />
+    <header class="tl-hero">
+      <p class="tl-kicker">多伦多生活指南 · 分册</p>
+      <h1 class="tl-h1">教育与育儿</h1>
+      <p class="tl-lead">
+        多伦多及周边由多个公立教育局管理；入学通常按住址划片。日托（Daycare）与课前课后班（Before/After School）名额紧张，建议尽早登记候补。
+      </p>
+      <TorontoLifeSubNav activeKey="education" />
+    </header>
+
+    <TorontoLifePartnerBand band={bands.top} bandId="education-top" />
+
+    <div class="tl-prose">
+      <h2>公校注册大致流程</h2>
+      <ul>
+        <li>确认住址所属教育局与学校边界（在线地图）。</li>
+        <li>准备身份、住址证明、免疫记录等（以教育局清单为准）。</li>
+        <li>国际生可能走不同注册通道，学费与文件要求另查。</li>
+      </ul>
+      <p class="tl-inline-tip">
+        需要<strong>英语/法语衔接课、私校申请或竞赛培训</strong>资源的家长，可通过
+        <a href="/contact/?topic=toronto-life-referral&vertical=education">合作教育机构推荐</a>
+        获取线索（合作推广）。
+      </p>
+    </div>
+
+    <TorontoLifePartnerBand band={bands.mid} bandId="education-mid" />
+
+    <div class="tl-prose">
+      <h2>在读大学生与研究生（社团、活动餐）</h2>
+      <p>
+        本册正文侧重 K–12 公校与幼儿照护；若您在<strong>多伦多大学（U of T）</strong>或<strong>多伦多都会大学（TMU）</strong>等市中心高校就读，社团迎新、小组活动常需<strong>团体订餐或 catering</strong>。可参考站内整理（含各店官网链接与第三方英文博文引用）：
+        <a href="/blog/downtown-toronto-catering-uoft-tmu-students/">《多大、TMU 周边团体点餐与 catering》</a>。
+      </p>
+    </div>
+
+    <div class="tl-prose">
+      <h2>日托与补贴</h2>
+      <p>
+        安省日托分多种牌照类型；部分家庭可申请费用减免（CWELCC 等政策以当年为准）。候补时间因区域差异大，可同时登记多个中心。
+      </p>
+    </div>
+
+    <TorontoLifePartnerBand band={bands.bottom} bandId="education-bottom" />
+
+    <p class="tl-back">
+      <a href="/guides/toronto-life/">← 返回总览</a>
+      ·
+      <a href="/category/toronto-life/">分类文章</a>
+    </p>
+
+    <aside class="tl-disclaimer" role="note">教育政策与校网以各教育局官网为准；合作培训机构的服务与收费由其自行披露。</aside>
+  </div>
+</BaseLayout>
+
+<style>
+  .tl-inline-tip {
+    font-size: 14px;
+    line-height: 1.65;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: rgba(26, 86, 196, 0.06);
+    border-left: 3px solid rgba(26, 86, 196, 0.35);
+    color: rgba(26, 29, 35, 0.78);
+    margin: 16px 0;
+  }
+  .tl-inline-tip a {
+    color: #1a56c4;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .tl-inline-tip a:hover {
+    text-decoration: underline;
+  }
+  .tl-back {
+    font-size: 14px;
+    margin-top: 28px;
+  }
+  .tl-back a {
+    color: var(--red);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .tl-back a:hover {
+    text-decoration: underline;
+  }
+</style>

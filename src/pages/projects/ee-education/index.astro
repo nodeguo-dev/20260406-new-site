@@ -1,0 +1,331 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民项目", href: "/projects/" },
+  { name: "EE 定向邀请（CBS）", href: "/projects/ee-category/" },
+  { name: "EE 教育类定向", href: "/projects/ee-education/" },
+];
+
+const jobs = [
+  { noc: "41220", name: "小学及幼稚园教师", en: "Elementary and kindergarten teachers", teer: 1, salary: "$58,000–$88,000", licenseRequired: true, licenseBody: "省级教师学会（如 OCT、BCTF）", canExp: true, foreignExp: false, collegeAvail: false, note: "需要本科教育学位（B.Ed）及省级教学执照。师范学历境外认证复杂，适合本地读师范或已持 PGWP 者。" },
+  { noc: "41221", name: "中学教师", en: "Secondary school teachers", teer: 1, salary: "$62,000–$95,000", licenseRequired: true, licenseBody: "省级教师学会", canExp: true, foreignExp: false, collegeAvail: false, note: "与小学教师类似，需省级执照，学科专长（STEM/语言/艺术）会影响就业难易度。" },
+  { noc: "41210", name: "大学教授及讲师", en: "University professors and lecturers", teer: 1, salary: "$85,000–$150,000+", licenseRequired: false, licenseBody: "—", canExp: true, foreignExp: true, collegeAvail: false, note: "需博士或硕士学位，在大学/学院担任讲师及以上职位。境外工作经验可计入，是研究型高学历移民的重要通道。" },
+  { noc: "41200", name: "College/职业学院讲师", en: "Post-secondary teaching and research assistants", teer: 1, salary: "$55,000–$90,000", licenseRequired: false, licenseBody: "—", canExp: true, foreignExp: true, collegeAvail: false, note: "在 College 或多技术院校授课，通常需相关领域硕士或丰富行业经验。境外经验可计入 CBS。" },
+  { noc: "42202", name: "幼儿教育工作者（ECE）", en: "Early childhood educators & assistants", teer: 2, salary: "$38,000–$58,000", licenseRequired: true, licenseBody: "省级 ECE 注册机构（如 BC ECEBC）", canExp: false, foreignExp: false, collegeAvail: true, note: "College 2年 ECE 文凭，毕业后申请注册成 RECE。政府大量扩建托育中心，职位供不应求，是教育类 CBS 中入门门槛最低的职位。" },
+  { noc: "42203", name: "幼儿教育辅助人员", en: "Early childhood educator assistants", teer: 3, salary: "$32,000–$48,000", licenseRequired: false, licenseBody: "—", canExp: false, foreignExp: true, collegeAvail: true, note: "无需完整 ECE 认证，College 短期课程（1年以下）或在职培训即可入行，适合快速积累教育类经验。" },
+  { noc: "41320", name: "教育辅导员（学校/职业）", en: "Educational counsellors", teer: 1, salary: "$55,000–$80,000", licenseRequired: true, licenseBody: "各省咨询师协会", canExp: true, foreignExp: false, collegeAvail: false, note: "通常需要辅导学或教育心理学硕士学位（M.Ed/MA），境内工作经验要求较严格。" },
+  { noc: "43100", name: "学校辅助人员", en: "School support workers (educational assistants)", teer: 3, salary: "$35,000–$52,000", licenseRequired: false, licenseBody: "—", canExp: false, foreignExp: true, collegeAvail: true, note: "EA（Educational Assistant）College 1–2年课程，协助特殊需求学生，是进入学校系统最容易的职位。" },
+];
+
+const pathways = [
+  {
+    icon: "👶",
+    title: "路径 A：读 ECE 文凭，走幼儿教育路线（推荐）",
+    who: "零教育背景，希望快速入行",
+    steps: [
+      "申请 College 2年 ECE（Early Childhood Education）课程，如 Humber、George Brown、Langara 等",
+      "在校期间完成实习（Placement），积累实际幼教经验",
+      "毕业申请 PGWP 工签，同时提交省级 ECE 注册申请（成为 RECE）",
+      "进入全职 ECE 职位（托儿所、幼儿园、After School 项目），积累 12 个月工作经验",
+      "建立 EE Profile，等待教育类 CBS 定向邀请",
+    ],
+    timeline: "从入学到 ITA：约 3–4 年",
+    highlight: "ECE 同时符合教育类和医护/社会服务类两个 CBS 通道，被邀请概率更高",
+  },
+  {
+    icon: "🎓",
+    title: "路径 B：境外有教育学历，申请加拿大教学执照",
+    who: "在国内有教师资格证或教育相关学历经验",
+    steps: [
+      "向目标省份教师注册机构提交学历评估（如 OCT 安省教师学会）",
+      "完成差距培训或「教师资格桥梁课程」（Teacher Qualification Bridging Program）",
+      "通过省级教学语言评估（通常需要 CLB 7+ 英语）",
+      "取得省级有条件或完整教学执照，开始在公立学校任教",
+      "积累 12 个月加拿大境内教学经验，进入 EE 候选池等待 CBS 邀请",
+    ],
+    timeline: "从认证到 ITA：约 2–3 年（视省份和学历认证进度）",
+    highlight: "境外教师经验不直接计入教育类 CBS，需要在加拿大持执照工作才算",
+  },
+  {
+    icon: "📚",
+    title: "路径 C：持高学历（硕/博），进入大学或 College 讲师通道",
+    who: "硕士或博士学历，有教学或研究经验",
+    steps: [
+      "持工签或 PGWP 在加拿大大学/学院找到兼职或全职讲师职位",
+      "部分 College 招聘行业讲师，不严格要求博士，专业经验丰富即可",
+      "在学术岗位积累 12 个月工作经验（NOC 41200 或 41210）",
+      "建立 EE Profile，如工作经验为教育类 CBS 覆盖职业，等待定向邀请",
+    ],
+    timeline: "视职位找到速度，通常 1–2 年",
+    highlight: "大学/College 讲师职位境外经验同样可计入 CBS，学历优势大",
+  },
+];
+
+const faqs = [
+  {
+    q: "教育类 CBS 多久举行一次，历史分数是多少？",
+    a: "教育类（Education）定向邀请相对技工类和医护类频率稍低，通常每年 1–3 次。历史邀请截止分数在 430–490 分区间，比普通邀请低约 30–60 分。ECE（幼儿教育工作者）由于同时属于医护/社会服务类别，在两类定向邀请中都可能被邀请，优势更大。",
+  },
+  {
+    q: "ECE 是不是最容易走的教育类移民路线？",
+    a: "对于没有教育专业背景的人来说，ECE 确实是入门门槛最低的教育类路线：College 2年课程，无需本科学历，毕业后注册成 RECE 即可执业。更重要的是，ECE（NOC 42202）同时在教育类 CBS 和医护/社会服务类 CBS 名单中，意味着进入候选池后有两倍机会被定向邀请。",
+  },
+  {
+    q: "我在中国是小学或中学老师，来加拿大可以继续当老师吗？",
+    a: "可以，但需要完成省级教师资格认证过程，不能直接拿着中国教师资格证上岗。主要步骤：① 向安省（OCT）或目标省份教师注册机构申请学历评估；② 根据评估结果补修指定课程或完成桥梁项目；③ 通过语言测试（通常需要高于 CLB 7 的英语能力）；④ 取得省级教学许可开始任教。整个过程通常 1–2 年。",
+  },
+  {
+    q: "教育辅助员（EA）有移民价值吗？",
+    a: "有。教育辅助员（NOC 43100，TEER 3）属于教育类 CBS 覆盖职业，College 短期课程（1–2年）即可入行，工作在学校系统，需求稳定。它是「过渡性」职业——先以 EA 积累 12 个月经验拿 ITA，PR 之后再继续深造拿 ECE 或教学执照，完全可行。",
+  },
+  {
+    q: "读完 ECE 一定要注册成 RECE 才能工作吗？",
+    a: "各省要求不同。在安省，在受监管的幼儿园（如公立学校附属幼儿园）工作需要 RECE 资格，但私人日托中心聘用未注册的 ECE 毕业生是合法的。在 BC 省，任何幼儿教育场所工作都需要省级注册。建议尽早启动注册流程，有 RECE 头衔的职位薪资更高、就业选择更多。",
+  },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem", position: i + 1, name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((i) => ({
+    "@type": "Question", name: i.q,
+    acceptedAnswer: { "@type": "Answer", text: i.a },
+  })),
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("EE 教育类定向移民指南 | ECE幼教/教师/讲师 · College可入门 · 双CBS通道")}
+  description="2026年 Express Entry 教育类定向邀请（Education CBS）完整指南：8个覆盖职业、ECE幼儿教育入门路径、教师资格认证流程、境外教师如何转换执照，以及ECE同时符合医护类CBS的双重优势。"
+  canonical="https://cachinavisa.com/projects/ee-education/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={faqLd} />
+  <Breadcrumbs items={breadcrumbs} />
+
+  <div class="page-layout" style="margin-top:16px">
+    <main>
+      <div class="page-hero">
+        <div class="hero-kicker">EE 定向邀请 · 教育类</div>
+        <h1 class="hero-title">教育类定向移民<br /><span class="hero-title-en">Education Occupations CBS</span></h1>
+        <p class="hero-desc">
+          教育类（Education Occupations）CBS 覆盖从幼儿教育到大学讲师的多个职业，
+          其中<strong>幼儿教育工作者（ECE）</strong>是最受关注的入门路线——College 2 年文凭即可，
+          且 ECE 同时属于<strong>两个 CBS 类别</strong>（教育类 + 医护/社会服务类），
+          被邀请的机会比其他职业多一倍。
+        </p>
+        <div class="hero-tags">
+          <span class="htag purple">历史邀请分：430–490分</span>
+          <span class="htag purple">ECE 双 CBS 通道</span>
+          <span class="htag purple">College 可入门</span>
+          <span class="htag purple">境外讲师经验可用</span>
+        </div>
+      </div>
+
+      <!-- Double CBS advantage -->
+      <div class="content-card highlight-banner">
+        <div class="hb-icon">⚡</div>
+        <div class="hb-text">
+          <div class="hb-title">ECE 幼儿教育工作者的特殊优势：双 CBS 通道</div>
+          <p class="hb-desc">幼儿教育工作者（NOC 42202）同时出现在「教育类 CBS」和「医护/社会服务类 CBS」名单中。这意味着进入 EE 候选池后，只要任一类别举行定向邀请，你都有机会收到 ITA，被邀请的概率是只属于单一类别职业的两倍。这是目前所有 CBS 类别中少有的「双通道」职业。</p>
+        </div>
+      </div>
+
+      <!-- Jobs table -->
+      <div class="content-card">
+        <h2 class="cc-title">2026 年教育类 CBS 覆盖职业</h2>
+        <div class="jobs-table">
+          <div class="jt-row jt-header">
+            <div>NOC</div><div>职业名称</div><div>TEER</div><div>年薪参考</div><div>执照/注册</div><div>备注</div>
+          </div>
+          {jobs.map((j) => (
+            <div class="jt-row">
+              <div class="jt-noc">{j.noc}</div>
+              <div>
+                <div class="jt-name">{j.name}</div>
+                <div class="jt-en">{j.en}</div>
+              </div>
+              <div><span class={`teer-badge teer-${j.teer}`}>TEER {j.teer}</span></div>
+              <div class="jt-salary">{j.salary}</div>
+              <div>
+                {j.licenseRequired
+                  ? <span class="badge-lic">需注册<br/><span class="lic-body">{j.licenseBody}</span></span>
+                  : <span class="badge-no-lic">无需执照</span>}
+              </div>
+              <div class="jt-note">{j.note}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Pathways -->
+      <div class="content-card">
+        <h2 class="cc-title">三条主流路径</h2>
+        <div class="pathways">
+          {pathways.map((p, i) => (
+            <div class="pw-item">
+              <div class="pw-header">
+                <span class="pw-icon">{p.icon}</span>
+                <div>
+                  <div class="pw-title">{p.title}</div>
+                  <div class="pw-who">适合：{p.who}</div>
+                </div>
+              </div>
+              <div class="pw-steps">
+                {p.steps.map((s, si) => (
+                  <div class="pw-step">
+                    <span class="ps-n">{si+1}</span><span>{s}</span>
+                  </div>
+                ))}
+              </div>
+              <div class="pw-footer">
+                <span class="pw-time">⏱ {p.timeline}</span>
+                <div class="pw-hl">⭐ {p.highlight}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div class="content-card">
+        <h2 class="cc-title">常见问题（FAQ）</h2>
+        {faqs.map((item) => (
+          <details class="faq-item">
+            <summary class="faq-q">{item.q}</summary>
+            <p class="faq-a">{item.a}</p>
+          </details>
+        ))}
+      </div>
+
+      <div class="cta-block">
+        <div class="cta-text">
+          <div class="cta-title">想了解教育类移民是否适合你？</div>
+          <p class="cta-desc">无论你是想读 ECE、转教师执照还是走大学讲师路线，填写表单告诉我们你的背景，顾问为你制定具体方案。</p>
+        </div>
+        <a href="/contact/" class="cta-btn">免费评估 →</a>
+      </div>
+    </main>
+
+    <aside class="page-sidebar">
+      <ContactCard title="评估教育类资格" />
+      <div class="sidebar-card">
+        <div class="sc-title">CBS 四大热门通道</div>
+        <div class="sc-links">
+          <a class="sc-link" href="/projects/ee-trades/">🔧 技工类定向</a>
+          <a class="sc-link" href="/projects/ee-healthcare/">🏥 医护类定向</a>
+          <a class="sc-link active" href="/projects/ee-education/">📚 教育类定向（当前页）</a>
+          <a class="sc-link" href="/projects/ee-french/">🇫🇷 法语定向</a>
+        </div>
+      </div>
+      <div class="sidebar-card highlight-card">
+        <div class="sc-title">⚡ 关键数据</div>
+        <div class="key-data">
+          <div class="kd-item"><div class="kd-val">430–490</div><div class="kd-label">历史邀请分数区间</div></div>
+          <div class="kd-item"><div class="kd-val">2年</div><div class="kd-label">ECE 最短 College 课程</div></div>
+          <div class="kd-item"><div class="kd-val">2×</div><div class="kd-label">ECE 双CBS通道优势</div></div>
+          <div class="kd-item"><div class="kd-val">8+</div><div class="kd-label">覆盖教育职业数量</div></div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+      <div class="page-share">
+        <ShareBar url="https://cachinavisa.com/projects/ee-education/" title={"EE 教育类定向移民指南 | ECE幼教/教师/讲师 · College可入门 · 双CBS通道"} />
+      </div>
+</BaseLayout>
+
+<style>
+.page-layout { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: start; }
+@media (min-width: 960px) { .page-layout { grid-template-columns: 1fr 280px; } }
+
+.page-hero { background: linear-gradient(135deg, #1e0a5e 0%, #3a1a8a 55%, #0a1628 100%); border-radius: 20px; padding: 40px 36px; margin-bottom: 16px; position: relative; overflow: hidden; }
+.page-hero::before { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 55% 70% at 90% 15%, rgba(124,58,237,0.3), transparent 55%); }
+.hero-kicker { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(196,181,253,0.8); margin-bottom: 12px; position: relative; z-index: 1; }
+.hero-title { font-size: clamp(24px, 4vw, 38px); font-weight: 900; color: #fff; margin: 0 0 14px; line-height: 1.15; position: relative; z-index: 1; }
+.hero-title-en { font-size: 0.55em; font-weight: 500; color: rgba(255,255,255,0.4); display: block; margin-top: 4px; }
+.hero-desc { font-size: 14.5px; color: rgba(255,255,255,0.65); line-height: 1.75; margin: 0 0 22px; max-width: 680px; position: relative; z-index: 1; }
+.hero-desc strong { color: #c4b5fd; }
+.hero-tags { display: flex; gap: 8px; flex-wrap: wrap; position: relative; z-index: 1; }
+.htag { padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; border: 1px solid transparent; }
+.htag.purple { background: rgba(124,58,237,0.2); border-color: rgba(124,58,237,0.35); color: #c4b5fd; }
+
+.content-card { background: #fff; border: 1px solid rgba(13,17,23,0.09); border-radius: 18px; padding: 28px 30px; margin-bottom: 16px; }
+.cc-title { font-size: 19px; font-weight: 800; color: #0d1117; margin: 0 0 14px; padding-bottom: 10px; border-bottom: 2px solid rgba(124,58,237,0.15); }
+
+.highlight-banner { display: flex; gap: 16px; align-items: flex-start; background: linear-gradient(135deg, rgba(124,58,237,0.06), rgba(124,58,237,0.02)); border-color: rgba(124,58,237,0.2) !important; padding: 22px 26px; }
+.hb-icon { font-size: 32px; flex-shrink: 0; }
+.hb-title { font-size: 15px; font-weight: 800; color: #0d1117; margin-bottom: 8px; }
+.hb-desc { font-size: 13.5px; color: rgba(13,17,23,0.65); line-height: 1.7; margin: 0; }
+
+.jobs-table { border: 1px solid rgba(13,17,23,0.09); border-radius: 14px; overflow: auto; }
+.jt-row { display: grid; grid-template-columns: 65px 2fr 70px 1fr 1.2fr 2fr; border-bottom: 1px solid rgba(13,17,23,0.07); min-width: 700px; }
+.jt-row:last-child { border-bottom: none; }
+.jt-row > div { padding: 10px 12px; font-size: 12.5px; color: rgba(13,17,23,0.7); border-right: 1px solid rgba(13,17,23,0.06); line-height: 1.45; }
+.jt-row > div:last-child { border-right: none; }
+.jt-header { background: rgba(13,17,23,0.04); }
+.jt-header > div { font-weight: 700; font-size: 11.5px; color: #0d1117; text-transform: uppercase; }
+.jt-noc { font-family: monospace; font-size: 11.5px; color: rgba(13,17,23,0.45); }
+.jt-name { font-weight: 700; color: #0d1117; font-size: 13px; }
+.jt-en { font-size: 11px; color: rgba(13,17,23,0.45); margin-top: 2px; }
+.jt-salary { font-weight: 600; color: #7c3aed; }
+.jt-note { font-size: 12px; color: rgba(13,17,23,0.55); }
+.teer-badge { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: rgba(124,58,237,0.1); color: #7c3aed; }
+.badge-lic { font-size: 11px; font-weight: 700; color: #b45309; }
+.lic-body { font-weight: 400; font-size: 10.5px; color: rgba(13,17,23,0.45); display: block; }
+.badge-no-lic { font-size: 11px; font-weight: 700; color: #059669; background: rgba(5,150,105,0.08); padding: 2px 8px; border-radius: 6px; }
+
+.pathways { display: flex; flex-direction: column; gap: 14px; }
+.pw-item { border: 1.5px solid rgba(124,58,237,0.15); border-radius: 16px; overflow: hidden; }
+.pw-header { display: flex; gap: 14px; align-items: flex-start; padding: 16px 20px 12px; background: rgba(124,58,237,0.04); border-bottom: 1px solid rgba(124,58,237,0.1); }
+.pw-icon { font-size: 26px; flex-shrink: 0; }
+.pw-title { font-size: 14.5px; font-weight: 800; color: #0d1117; margin-bottom: 4px; }
+.pw-who { font-size: 12.5px; color: rgba(13,17,23,0.5); }
+.pw-steps { padding: 14px 20px; display: flex; flex-direction: column; gap: 8px; }
+.pw-step { display: flex; gap: 10px; font-size: 13px; color: rgba(13,17,23,0.7); line-height: 1.6; }
+.ps-n { width: 22px; height: 22px; min-width: 22px; border-radius: 50%; background: rgba(124,58,237,0.12); color: #7c3aed; font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.pw-footer { padding: 10px 20px 14px; background: rgba(13,17,23,0.02); border-top: 1px solid rgba(13,17,23,0.07); }
+.pw-time { font-size: 12.5px; font-weight: 700; color: #7c3aed; display: block; margin-bottom: 5px; }
+.pw-hl { font-size: 12.5px; color: rgba(13,17,23,0.55); line-height: 1.5; }
+
+.faq-item { border: 1px solid rgba(13,17,23,0.08); border-radius: 12px; overflow: hidden; margin-bottom: 8px; }
+.faq-q { padding: 14px 18px; font-size: 14px; font-weight: 600; color: #0d1117; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.faq-q::after { content: '+'; font-size: 18px; color: #7c3aed; font-weight: 400; flex-shrink: 0; }
+details[open] .faq-q::after { content: '−'; }
+.faq-a { padding: 12px 18px 14px; font-size: 13.5px; color: rgba(13,17,23,0.65); line-height: 1.75; margin: 0; border-top: 1px solid rgba(13,17,23,0.06); }
+
+.cta-block { background: linear-gradient(135deg, #1e0a5e, #3a1a8a); border-radius: 18px; padding: 28px 32px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.cta-title { font-size: 17px; font-weight: 800; color: #fff; margin-bottom: 7px; }
+.cta-desc { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.65; margin: 0; max-width: 500px; }
+.cta-btn { padding: 12px 26px; background: #7c3aed; color: #fff; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
+.cta-btn:hover { background: #6d28d9; text-decoration: none; }
+
+.page-sidebar { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 88px; }
+.sidebar-card { background: #fff; border: 1px solid rgba(13,17,23,0.09); border-radius: 16px; overflow: hidden; }
+.sc-title { font-size: 13px; font-weight: 700; color: #0d1117; padding: 14px 18px 10px; border-bottom: 1px solid rgba(13,17,23,0.07); }
+.sc-links { padding: 6px 0; }
+.sc-link { display: block; padding: 8px 18px; font-size: 13px; color: rgba(13,17,23,0.7); text-decoration: none; transition: all 0.12s; }
+.sc-link:hover { background: rgba(124,58,237,0.04); color: #7c3aed; text-decoration: none; }
+.sc-link.active { background: rgba(124,58,237,0.07); color: #7c3aed; font-weight: 700; }
+.highlight-card .sc-title { background: rgba(124,58,237,0.06); }
+.key-data { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(13,17,23,0.07); }
+.kd-item { background: #fff; padding: 14px 12px; text-align: center; }
+.kd-val { font-size: 18px; font-weight: 900; color: #7c3aed; margin-bottom: 4px; }
+.kd-label { font-size: 11px; color: rgba(13,17,23,0.45); line-height: 1.4; }
+</style>

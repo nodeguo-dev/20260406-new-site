@@ -1,0 +1,51 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import { withSiteTitle } from "@/utils/seo";
+---
+
+<BaseLayout
+  title={withSiteTitle("NOC Job Bank 广告写法指南 | 雇主版")}
+  description="给雇主和招聘负责人看的 Job Bank 广告写法指南：如何按 NOC 写岗位标题、职责、资格和关键词。"
+  canonical="https://cachinavisa.com/noc/job-bank-ad-guide/"
+>
+  <div class="grid">
+    <main class="card">
+      <div class="card-inner prose">
+        <div class="kicker">雇主指南</div>
+        <h1 class="h1">NOC Job Bank 广告怎么写</h1>
+        <p class="lead">
+          如果你要在 Job Bank、Indeed 或自己的官网发岗位，最好先把 NOC 想清楚。标题、职责、资格、地点和薪资写得越贴近真实工作，越容易吸引到能用的申请人，也越方便将来和移民路径对接。
+        </p>
+
+        <h2>广告里必须写清楚的 5 件事</h2>
+        <ol>
+          <li>岗位标题不要只写泛称，尽量贴近 NOC 常用 title。</li>
+          <li>职责不要只写“general duties”，要写到能区分工种的层级。</li>
+          <li>资格要求写清楚证书、执照、语言、学徒、驾驶或工具要求。</li>
+          <li>工时、地点、班次、薪资范围和是否 overtime 要透明。</li>
+          <li>如果岗位可用于 EE / PNP / 技工，建议注明能否提供培训或 reference letter。</li>
+        </ol>
+
+        <h2>最容易出问题的地方</h2>
+        <ul>
+          <li>标题和职责不一致，导致申请人和职业分类对不上。</li>
+          <li>广告写得太笼统，申请人无法判断是不是自己能做的工作。</li>
+          <li>只强调“能移民”，但不写实际工作内容，反而降低信任度。</li>
+        </ul>
+
+        <h2>建议的广告结构</h2>
+        <p>标题 → 职责 → 资格 → 薪资/工时 → 地点 → 如何申请 → 是否提供培训 / 雇主信。</p>
+
+        <p>
+          如果你愿意把岗位贴到 NOC 职业库里对照，我们可以帮你看广告写法是否更容易被目标人群理解。
+        </p>
+      </div>
+    </main>
+
+    <aside class="list">
+      <ContactCard />
+    </aside>
+  </div>
+</BaseLayout>
+

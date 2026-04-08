@@ -1,0 +1,289 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民打分", href: "/tools/" },
+  { name: "CRS 计算器", href: "/tools/crs-calculator/" },
+];
+---
+<BaseLayout
+  title={withSiteTitle("联邦 Express Entry CRS 打分计算器")}
+  description="根据 IRCC 公布的 Comprehensive Ranking System（CRS）标准估算 EE 分数，适用于 CEC、FSW、FST 入池参考。不含 LMIA/雇主加分（2025年3月起已取消）。"}
+  canonical="https://cachinavisa.com/tools/crs-calculator/"
+>
+  <div class="container calc-wrap">
+    <Breadcrumbs items={breadcrumbs} />
+
+    <header class="calc-head">
+      <h1 class="calc-h1">Express Entry · CRS 打分计算器</h1>
+      <p class="calc-lead">
+        依据
+        <a href="https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/check-score/crs-criteria.html" target="_blank" rel="noopener noreferrer">IRCC CRS 标准</a>
+        编写。<strong>2025 年 3 月 25 日起</strong>CRS 不再包含有效雇主 offer 加分；如仍符合 FSW / LMIA 等<strong>资格条件</strong>，请在档案中如实填写雇主信息。
+      </p>
+    </header>
+
+    <form class="calc-form" id="crs-form">
+      <fieldset class="fs">
+        <legend>婚姻与基本情况</legend>
+        <label>婚姻状态
+          <select name="marital" id="f-marital" autocomplete="off">
+            <option value="single">单身 / 离异 / 丧偶（或配偶不随行）</option>
+            <option value="married_accompany">已婚/同居，配偶随行移民</option>
+            <option value="married_not_accompany">已婚/同居，配偶为加拿大公民或 PR，或不随行</option>
+          </select>
+        </label>
+        <label>年龄
+          <input type="number" name="age" min="17" max="99" value="29" required />
+        </label>
+      </fieldset>
+
+      <fieldset class="fs">
+        <legend>学历（主申）</legend>
+        <select name="education" id="f-edu" autocomplete="off">
+          <option value="lt_secondary">高中以下</option>
+          <option value="secondary">高中毕业</option>
+          <option value="one_year_ps">一年制大专/证书</option>
+          <option value="two_year_ps">两年制大专/证书</option>
+          <option value="bachelor_3yr" selected>本科（三年或以上）</option>
+          <option value="two_creds_one_3yr">双学历（其一为三年或以上）</option>
+          <option value="masters">硕士</option>
+          <option value="doctoral">博士</option>
+        </select>
+      </fieldset>
+
+      <fieldset class="fs">
+        <legend>第一官方语言（CLB，四项）</legend>
+        <div class="grid4">
+          <label>听 <select name="l1" class="clb-sel">
+            <option>4</option><option>5</option><option>6</option><option>7</option><option>8</option>
+            <option selected>9</option><option>10</option>
+          </select></label>
+          <label>读 <select name="r1" class="clb-sel">
+            <option>4</option><option>5</option><option>6</option><option>7</option><option>8</option>
+            <option selected>9</option><option>10</option>
+          </select></label>
+          <label>写 <select name="w1" class="clb-sel">
+            <option>4</option><option>5</option><option>6</option><option>7</option><option>8</option>
+            <option selected>9</option><option>10</option>
+          </select></label>
+          <label>说 <select name="s1" class="clb-sel">
+            <option>4</option><option>5</option><option>6</option><option>7</option><option>8</option>
+            <option selected>9</option><option>10</option>
+          </select></label>
+        </div>
+        <label class="chk"><input type="checkbox" name="hasL2" id="has-l2" /> 已参加第二官方语言考试（英/法中较弱的一门作为第二语言）</label>
+        <div class="grid4" id="l2-box" hidden>
+          <label>听 <select name="l2" class="clb-sel"><option>0</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option></select></label>
+          <label>读 <select name="r2" class="clb-sel"><option>0</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option></select></label>
+          <label>写 <select name="w2" class="clb-sel"><option>0</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option></select></label>
+          <label>说 <select name="s2" class="clb-sel"><option>0</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option></select></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="fs">
+        <legend>工作经验</legend>
+        <label>加拿大境内技术类工作经验（年）
+          <select name="cdn">
+            <option value="0">无或不足 1 年</option>
+            <option value="1" selected>1 年</option>
+            <option value="2">2 年</option>
+            <option value="3">3 年</option>
+            <option value="4">4 年</option>
+            <option value="5">5 年及以上</option>
+          </select>
+        </label>
+        <label>境外技术类工作经验
+          <select name="foreign">
+            <option value="0" selected>无</option>
+            <option value="1">1–2 年</option>
+            <option value="2">3 年及以上</option>
+          </select>
+        </label>
+        <label class="chk"><input type="checkbox" name="cert" /> 持有加拿大技工类 Certificate of Qualification（如适用）</label>
+      </fieldset>
+
+      <fieldset class="fs" id="spouse-fs" hidden>
+        <legend>配偶（仅随行配偶）</legend>
+        <select name="spouseEdu" id="spouse-edu">
+          <option value="secondary">高中</option>
+          <option value="one_year_ps">一年制</option>
+          <option value="bachelor_3yr" selected>本科及以上</option>
+          <option value="masters">硕士</option>
+        </select>
+        <div class="grid4">
+          <label>配偶听 <select name="sl1" class="clb-sel"><option>4</option><option>5</option><option selected>7</option><option>9</option></select></label>
+          <label>配偶读 <select name="sr1" class="clb-sel"><option>4</option><option>5</option><option selected>7</option><option>9</option></select></label>
+          <label>配偶写 <select name="sw1" class="clb-sel"><option>4</option><option>5</option><option selected>7</option><option>9</option></select></label>
+          <label>配偶说 <select name="ss1" class="clb-sel"><option>4</option><option>5</option><option selected>7</option><option>9</option></select></label>
+        </div>
+        <label>配偶加拿大工作经验
+          <select name="scdn">
+            <option value="0">无</option>
+            <option value="1" selected>1 年</option>
+            <option value="2">2 年+</option>
+          </select>
+        </label>
+      </fieldset>
+
+      <fieldset class="fs">
+        <legend>附加分</legend>
+        <label class="chk"><input type="checkbox" name="sibling" /> 有 18 岁以上兄弟姐妹为加国公民或 PR 且定居加拿大</label>
+        <label>法语 + 英语组合（IRCC「附加分」法语栏）
+          <select name="french" autocomplete="off">
+            <option value="none" selected>不适用 / 未达法语加分条件</option>
+            <option value="nclc7_french_english_le4">法语 NCLC 7+ 四项，且英语 CLB 4 或以下（或未考英语）</option>
+            <option value="nclc7_french_english_ge5">法语 NCLC 7+ 四项，且英语 CLB 5+ 四项</option>
+          </select>
+        </label>
+        <label>加拿大高等教育
+          <select name="cdnEdu" autocomplete="off">
+            <option value="none" selected>无或不符合</option>
+            <option value="one_or_two_year">1–2 年制大专/证书</option>
+            <option value="three_year_plus">3 年及以上学制</option>
+          </select>
+        </label>
+        <label class="chk"><input type="checkbox" name="pnp" /> 已获省/地区提名（+600，通常与 EE 关联）</label>
+      </fieldset>
+
+      <button type="button" class="btn-calc" id="btn-crs">计算 CRS</button>
+    </form>
+
+    <section class="result-panel" id="crs-result" hidden>
+      <div class="score-big"><span id="crs-total">0</span> <span class="sub">/ 1200</span></div>
+      <ul class="break-list" id="crs-break"></ul>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .calc-wrap { max-width: 720px; padding-top: 18px; padding-bottom: 56px; }
+  .calc-head { margin-bottom: 24px; }
+  .calc-h1 { font-size: clamp(24px, 3.5vw, 32px); font-weight: 900; margin: 0 0 12px; letter-spacing: -0.03em; }
+  .calc-lead { margin: 0; font-size: 15px; color: var(--muted); line-height: 1.75; }
+  .calc-form { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 22px 24px 28px; }
+  .fs { border: none; margin: 0 0 20px; padding: 0; }
+  .fs legend { font-weight: 800; font-size: 14px; margin-bottom: 12px; color: var(--text); }
+  .fs label { display: block; font-size: 13px; color: var(--text-2); margin-bottom: 14px; }
+  .fs select, .fs input[type="number"] {
+    display: block; width: 100%; margin-top: 6px; padding: 10px 12px;
+    border-radius: 10px; border: 1px solid var(--border-2); font-size: 15px;
+  }
+  .grid4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  @media (min-width: 560px) { .grid4 { grid-template-columns: repeat(4, 1fr); } }
+  .chk { display: flex; align-items: flex-start; gap: 8px; }
+  .chk input { margin-top: 4px; }
+  .btn-calc {
+    width: 100%; padding: 14px; font-size: 16px; font-weight: 800;
+    border: none; border-radius: 12px; cursor: pointer;
+    background: linear-gradient(135deg, #d92d20, #e85d47); color: #fff;
+  }
+  .btn-calc:hover { filter: brightness(1.05); }
+  .result-panel {
+    margin-top: 24px; padding: 24px; background: linear-gradient(135deg, #0a1628, #1a1040);
+    border-radius: 16px; color: #fff;
+  }
+  .score-big { font-size: 42px; font-weight: 900; letter-spacing: -0.03em; }
+  .score-big .sub { font-size: 18px; font-weight: 600; opacity: 0.7; }
+  .break-list { list-style: none; margin: 16px 0 0; padding: 0; font-size: 14px; opacity: 0.92; line-height: 1.7; }
+  .break-list li { display: flex; justify-content: space-between; gap: 12px; border-top: 1px solid rgba(255,255,255,0.12); padding: 8px 0; }
+</style>
+
+<script>
+  import { calculateCRS, type CRSInput, type EducationCode, type MaritalStatus } from "@/lib/calculators/crs";
+
+  const form = document.getElementById("crs-form") as HTMLFormElement;
+  const btn = document.getElementById("btn-crs");
+  const result = document.getElementById("crs-result");
+  const totalEl = document.getElementById("crs-total");
+  const breakEl = document.getElementById("crs-break");
+  const spouseFs = document.getElementById("spouse-fs");
+  const marital = document.getElementById("f-marital") as HTMLSelectElement;
+  const hasL2 = document.getElementById("has-l2") as HTMLInputElement;
+  const l2Box = document.getElementById("l2-box");
+
+  function syncSpouse() {
+    const m = marital.value;
+    if (spouseFs) spouseFs.hidden = m !== "married_accompany";
+  }
+  function syncL2() {
+    if (l2Box) l2Box.hidden = !hasL2.checked;
+  }
+  marital.addEventListener("change", syncSpouse);
+  hasL2.addEventListener("change", syncL2);
+  syncSpouse();
+  syncL2();
+
+  function num(sel: string): number {
+    const el = form.querySelector(sel) as HTMLSelectElement | HTMLInputElement | null;
+    return el ? Number(el.value) : 0;
+  }
+
+  btn?.addEventListener("click", () => {
+    const maritalStatus = form.marital.value as MaritalStatus;
+    const education = form.education.value as EducationCode;
+    const age = num('[name="age"]');
+    const l1: [number, number, number, number] = [
+      num('[name="l1"]'),
+      num('[name="r1"]'),
+      num('[name="w1"]'),
+      num('[name="s1"]'),
+    ];
+    let secondLang: [number, number, number, number] | null = null;
+    if (hasL2.checked) {
+      secondLang = [num('[name="l2"]'), num('[name="r2"]'), num('[name="w2"]'), num('[name="s2"]')];
+    }
+    const input: CRSInput = {
+      maritalStatus,
+      age,
+      education,
+      firstLang: l1,
+      secondLang,
+      canadianWorkBand: Number(form.cdn.value) as CRSInput["canadianWorkBand"],
+      foreignWorkBand: Number(form.foreign.value) as CRSInput["foreignWorkBand"],
+      certificateOfQualification: (form.querySelector('[name="cert"]') as HTMLInputElement).checked,
+      siblingInCanada: (form.querySelector('[name="sibling"]') as HTMLInputElement).checked,
+      frenchBonus: form.french.value as CRSInput["frenchBonus"],
+      canadianPostSecondary: form.cdnEdu.value as CRSInput["canadianPostSecondary"],
+      provincialNomination: (form.querySelector('[name="pnp"]') as HTMLInputElement).checked,
+    };
+    if (maritalStatus === "married_accompany") {
+      input.spouseEducation = form.spouseEdu.value as EducationCode;
+      input.spouseFirstLang = [
+        num('[name="sl1"]'),
+        num('[name="sr1"]'),
+        num('[name="sw1"]'),
+        num('[name="ss1"]'),
+      ];
+      input.spouseCanadianWorkBand = Number(form.scdn.value) as CRSInput["spouseCanadianWorkBand"];
+    }
+
+    const r = calculateCRS(input);
+    if (totalEl) totalEl.textContent = String(r.total);
+    if (breakEl) {
+      breakEl.innerHTML = "";
+      const rows: [string, number][] = [
+        ["核心人力资本（已封顶）", r.coreHuman],
+        ["配偶因素", r.spouse],
+        ["衔接因素", r.skillTransfer],
+        ["附加分", r.additional],
+      ];
+      for (const [k, v] of rows) {
+        const li = document.createElement("li");
+        li.innerHTML = `<span>${k}</span><span>${v}</span>`;
+        breakEl.appendChild(li);
+      }
+      for (const [k, v] of Object.entries(r.details)) {
+        const li = document.createElement("li");
+        li.innerHTML = `<span>${k}</span><span>${v}</span>`;
+        li.style.opacity = "0.85";
+        li.style.fontSize = "13px";
+        breakEl.appendChild(li);
+      }
+    }
+    result?.removeAttribute("hidden");
+  });
+</script>

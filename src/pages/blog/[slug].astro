@@ -1,0 +1,426 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import Disclaimer from "@/components/Disclaimer.astro";
+import FaqBlock from "@/components/FaqBlock.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import PostCard from "@/components/PostCard.astro";
+import BlogInternalHub from "@/components/BlogInternalHub.astro";
+import RelatedToolsCard from "@/components/RelatedToolsCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import { site } from "@/config/site";
+import { categoryMeta } from "@/data/categoryMeta";
+import { formatDateCN } from "@/utils/dates";
+import { withSiteTitle } from "@/utils/seo";
+import { getAllPublishedPosts, findPrevNext, getRelatedPosts } from "@/utils/content";
+
+export async function getStaticPaths() {
+  const posts = await getAllPublishedPosts();
+  return posts.map((p) => ({ params: { slug: p.slug } }));
+}
+
+const posts = await getAllPublishedPosts();
+const post = posts.find((p) => p.slug === Astro.params.slug);
+if (!post) throw new Error(`Post not found: ${Astro.params.slug}`);
+
+const { Content } = await post.render();
+const publish = new Date(post.data.publishDate);
+const updated = post.data.updatedDate ? new Date(post.data.updatedDate) : undefined;
+const categoryLabel = categoryMeta[post.data.category]?.title ?? post.data.category;
+
+const canonical = post.data.canonical ?? new URL(`/blog/${post.slug}/`, site.url).toString();
+const { prev, next } = findPrevNext(posts, post.slug);
+const related = getRelatedPosts(posts, post, 9);
+const sameCategoryRecent = posts
+  .filter((p) => p.data.category === post.data.category && p.slug !== post.slug)
+  .slice(0, 12);
+const tagNeighbors = [...new Set(post.data.tags ?? [])].slice(0, 8);
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民新闻", href: "/blog/" },
+  { name: categoryLabel, href: `/category/${post.data.category}/` },
+  { name: post.data.title, href: `/blog/${post.slug}/` },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+
+const articleLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: publish.toISOString(),
+  dateModified: (updated ?? publish).toISOString(),
+  author: { "@type": "Person", name: post.data.author },
+  publisher: { "@type": "Organization", name: site.name, url: site.url },
+  mainEntityOfPage: canonical,
+};
+
+const faqLd =
+  post.data.faq?.length
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: post.data.faq.map((i) => ({
+          "@type": "Question",
+          name: i.question,
+          acceptedAnswer: { "@type": "Answer", text: i.answer },
+        })),
+      }
+    : null;
+---
+
+<BaseLayout
+  title={withSiteTitle(post.data.title)}
+  description={post.data.description}
+  canonical={canonical}
+  ogType="article"
+  publishedTime={publish.toISOString()}
+  modifiedTime={(updated ?? publish).toISOString()}
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={articleLd} />
+  {faqLd ? <JsonLd data={faqLd} /> : null}
+
+  <div class="article-layout">
+    <!-- Main article -->
+    <article class="article-main">
+      <!-- Breadcrumb -->
+      <div class="article-breadcrumb">
+        <Breadcrumbs items={breadcrumbs} />
+      </div>
+
+      <!-- Article header -->
+      <header class="article-header">
+        <div class="article-meta-top">
+          <a class="article-cat" href={`/category/${post.data.category}/`}>{categoryLabel}</a>
+          <time class="article-date" datetime={post.data.publishDate}>
+            {formatDateCN(publish)}
+          </time>
+          {updated && (
+            <span class="article-updated">· 更新：{formatDateCN(updated)}</span>
+          )}
+        </div>
+        <h1 class="article-title">{post.data.title}</h1>
+        <p class="article-excerpt">{post.data.excerpt}</p>
+        <div class="article-meta-bottom">
+          <span class="article-author">✍️ {post.data.author}</span>
+          {post.data.tags?.map((t) => (
+            <a class="article-tag" href={`/tag/${encodeURIComponent(t)}/`}>#{t}</a>
+          ))}
+        </div>
+      </header>
+
+      <!-- Article content -->
+      <div class="article-body prose">
+        <Content />
+      </div>
+
+      <!-- Share bar -->
+      <div class="article-share">
+        <ShareBar url={canonical} title={post.data.title} />
+      </div>
+
+      <!-- FAQ -->
+      {post.data.faq?.length ? (
+        <div class="article-faq">
+          <FaqBlock title="常见问题" items={post.data.faq} />
+        </div>
+      ) : null}
+
+      <!-- Prev / Next navigation -->
+      <nav class="article-nav" aria-label="文章导航">
+        <div class="article-nav-prev">
+          {prev ? (
+            <>
+              <span class="nav-dir">← 上一篇</span>
+              <a href={`/blog/${prev.slug}/`} class="nav-title">{prev.data.title}</a>
+            </>
+          ) : <span class="nav-empty">已是第一篇</span>}
+        </div>
+        <div class="article-nav-next">
+          {next ? (
+            <>
+              <span class="nav-dir">下一篇 →</span>
+              <a href={`/blog/${next.slug}/`} class="nav-title">{next.data.title}</a>
+            </>
+          ) : <span class="nav-empty">已是最后一篇</span>}
+        </div>
+      </nav>
+
+      <!-- Related posts -->
+      {related.length > 0 && (
+        <section class="related-section">
+          <h2 class="related-title">相关文章与推荐阅读</h2>
+          <p class="related-sub">按标签、分类与编辑推荐综合排序，便于延伸阅读站内同类主题。</p>
+          <div class="related-grid">
+            {related.map((p) => <PostCard post={p} variant="card" />)}
+          </div>
+        </section>
+      )}
+
+      <div class="article-hub-wrap">
+        <BlogInternalHub category={post.data.category} />
+      </div>
+    </article>
+
+    <!-- Sidebar -->
+    <aside class="article-sidebar">
+      <ContactCard />
+      <RelatedToolsCard
+        title="相关打分工具"
+        subtitle="如果这篇文章提到 CRS、EOI 或省提名，请先算分。"
+        items={[
+          { href: "/tools/crs-calculator/", label: "联邦 CRS 计算器", desc: "EE / CEC / FSW 的基础自测工具。" },
+          { href: "/tools/oinp-calculator/", label: "安省 OINP · EOI", desc: "安省雇主类 / 留学类常见入口。" },
+          { href: "/tools/bc-pnp-calculator/", label: "BC SIRS 计算器", desc: "BC 技术移民常用分值预估。" },
+          { href: "/tools/aaip-calculator/", label: "AAIP Worker EOI", desc: "阿省相关路径的分值自测。" },
+        ]}
+        footerHref="/tools/"
+        footerLabel="进入全部打分工具"
+      />
+      <Disclaimer />
+
+      <!-- Category links -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">文章分类</div>
+        <div class="sidebar-cats">
+          {Object.entries(categoryMeta).map(([slug, meta]) => (
+            <a class={`sidebar-cat${post.data.category === slug ? " active" : ""}`} href={`/category/${slug}/`}>
+              {meta.title}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      {tagNeighbors.length > 0 && (
+        <div class="sidebar-card">
+          <div class="sidebar-card-title">本文标签 · 更多文章</div>
+          <div class="sidebar-tag-row">
+            {tagNeighbors.map((t) => (
+              <a class="sidebar-taglink" href={`/tag/${encodeURIComponent(t)}/`}>#{t}</a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {sameCategoryRecent.length > 0 && (
+        <div class="sidebar-card">
+          <div class="sidebar-card-title">「{categoryLabel}」最新</div>
+          <ul class="sidebar-recent">
+            {sameCategoryRecent.map((p) => (
+              <li>
+                <a href={`/blog/${p.slug}/`}>{p.data.title}</a>
+              </li>
+            ))}
+          </ul>
+          <a class="sidebar-more" href={`/category/${post.data.category}/`}>查看该分类全部文章 →</a>
+        </div>
+      )}
+
+      <div class="sidebar-card sidebar-card--flush">
+        <BlogInternalHub compact category={post.data.category} heading="热门内链" />
+      </div>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+/* ── LAYOUT ───────────────────────────────────────────────────────── */
+.article-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: start;
+}
+@media (min-width: 960px) {
+  .article-layout { grid-template-columns: 1fr 290px; }
+}
+
+/* ── ARTICLE MAIN ─────────────────────────────────────────────────── */
+.article-main {
+  background: #fff;
+  border: 1px solid rgba(13,17,23,0.09);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+}
+.article-breadcrumb {
+  padding: 14px 32px;
+  border-bottom: 1px solid rgba(13,17,23,0.07);
+  background: #f8f9fc;
+}
+
+/* ── ARTICLE HEADER ──────────────────────────────────────────────── */
+.article-header {
+  padding: 36px 32px 28px;
+  border-bottom: 1px solid rgba(13,17,23,0.08);
+  background: linear-gradient(180deg, rgba(13,17,23,0.02) 0%, transparent 100%);
+}
+.article-meta-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+.article-cat {
+  display: inline-flex; align-items: center;
+  padding: 5px 14px; border-radius: 999px;
+  background: rgba(217,45,32,0.09); color: #c02318;
+  font-size: 12px; font-weight: 700; text-decoration: none;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  transition: background 0.15s;
+}
+.article-cat:hover { background: rgba(217,45,32,0.16); text-decoration: none; }
+.article-date {
+  font-size: 13px; color: rgba(13,17,23,0.45);
+  display: flex; align-items: center; gap: 4px;
+}
+.article-updated { font-size: 13px; color: rgba(13,17,23,0.38); }
+.article-title {
+  font-size: clamp(22px, 3.5vw, 32px);
+  font-weight: 900; color: #0d1117;
+  line-height: 1.25; letter-spacing: -0.025em;
+  margin: 0 0 14px;
+}
+.article-excerpt {
+  font-size: 16px; color: rgba(13,17,23,0.62);
+  line-height: 1.75; margin: 0 0 20px;
+  padding-left: 14px; border-left: 3px solid rgba(217,45,32,0.3);
+}
+.article-meta-bottom {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  padding-top: 16px; border-top: 1px solid rgba(13,17,23,0.07);
+}
+.article-author { font-size: 13px; color: rgba(13,17,23,0.55); }
+.article-tag {
+  font-size: 12px; color: rgba(13,17,23,0.5);
+  text-decoration: none; padding: 3px 9px;
+  border-radius: 999px; border: 1px solid rgba(13,17,23,0.12);
+  transition: border-color 0.15s, color 0.15s;
+}
+.article-tag:hover { border-color: #d92d20; color: #d92d20; text-decoration: none; }
+
+/* ── ARTICLE BODY ────────────────────────────────────────────────── */
+.article-body { padding: 32px 32px; }
+.article-share { padding: 0 32px 4px; }
+.article-faq  { padding: 0 32px 24px; }
+
+/* ── NAV ─────────────────────────────────────────────────────────── */
+.article-nav {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1px; background: rgba(13,17,23,0.08);
+  border-top: 1px solid rgba(13,17,23,0.08);
+}
+.article-nav-prev, .article-nav-next {
+  background: #fff; padding: 18px 22px;
+  display: flex; flex-direction: column; gap: 6px;
+  transition: background 0.15s;
+}
+.article-nav-prev:hover, .article-nav-next:hover { background: rgba(217,45,32,0.03); }
+.article-nav-next { text-align: right; align-items: flex-end; }
+.nav-dir {
+  font-size: 11px; color: rgba(13,17,23,0.4);
+  font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+}
+.nav-title {
+  font-size: 14px; font-weight: 600; color: #0d1117;
+  text-decoration: none; line-height: 1.45;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
+  transition: color 0.15s;
+}
+.nav-title:hover { color: #d92d20; text-decoration: none; }
+.nav-empty { font-size: 13px; color: rgba(13,17,23,0.3); }
+
+/* ── RELATED ─────────────────────────────────────────────────────── */
+.related-section {
+  padding: 28px 32px;
+  border-top: 1px solid rgba(13,17,23,0.08);
+  background: rgba(13,17,23,0.015);
+}
+.related-title {
+  font-size: 17px; font-weight: 800; color: #0d1117;
+  margin: 0 0 8px; letter-spacing: -0.015em;
+}
+.related-sub {
+  font-size: 13px; color: rgba(13,17,23,0.5); line-height: 1.6;
+  margin: 0 0 18px;
+}
+.article-hub-wrap {
+  padding: 8px 24px 28px;
+  border-top: 1px solid rgba(13,17,23,0.06);
+}
+@media (min-width: 960px) {
+  .article-hub-wrap { padding-left: 32px; padding-right: 32px; }
+}
+.related-grid {
+  display: grid; grid-template-columns: 1fr; gap: 12px;
+}
+@media (min-width: 600px) { .related-grid { grid-template-columns: repeat(3, 1fr); } }
+
+/* ── SIDEBAR ─────────────────────────────────────────────────────── */
+.article-sidebar {
+  display: grid; gap: 16px;
+  position: sticky; top: 88px;
+}
+.sidebar-card {
+  background: #fff; border: 1px solid rgba(13,17,23,0.09);
+  border-radius: 16px; padding: 18px 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.sidebar-card-title {
+  font-size: 14px; font-weight: 700; color: #0d1117;
+  margin-bottom: 12px; padding-bottom: 10px;
+  border-bottom: 1px solid rgba(13,17,23,0.08);
+}
+.sidebar-cats { display: flex; flex-direction: column; gap: 2px; }
+.sidebar-cat {
+  display: block; padding: 8px 10px;
+  font-size: 13.5px; color: #374151;
+  text-decoration: none; border-radius: 8px;
+  transition: background 0.12s, color 0.12s;
+}
+.sidebar-cat:hover { background: rgba(217,45,32,0.06); color: #d92d20; text-decoration: none; }
+.sidebar-cat.active { background: rgba(217,45,32,0.07); color: #d92d20; font-weight: 600; }
+
+.sidebar-tag-row {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.sidebar-taglink {
+  font-size: 12px; padding: 4px 10px; border-radius: 999px;
+  border: 1px solid rgba(13,17,23,0.12); color: #6b7280;
+  text-decoration: none; transition: border-color 0.15s, color 0.15s;
+}
+.sidebar-taglink:hover { border-color: #d92d20; color: #d92d20; text-decoration: none; }
+
+.sidebar-recent {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.sidebar-recent a {
+  font-size: 13px; color: #374151; line-height: 1.45;
+  text-decoration: none; display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
+}
+.sidebar-recent a:hover { color: #d92d20; text-decoration: underline; }
+.sidebar-more {
+  display: block; margin-top: 14px; font-size: 12px; font-weight: 700;
+  color: #d92d20; text-decoration: none;
+}
+.sidebar-more:hover { text-decoration: underline; }
+.sidebar-card--flush { padding: 0; overflow: hidden; }
+.sidebar-card--flush :global(.bih) { border: none; border-radius: 0; }
+</style>

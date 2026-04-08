@@ -1,0 +1,114 @@
+---
+type ToolItem = {
+  href: string;
+  label: string;
+  desc: string;
+};
+
+type Props = {
+  title?: string;
+  subtitle?: string;
+  items: ToolItem[];
+  footerHref?: string;
+  footerLabel?: string;
+};
+
+const {
+  title = "相关打分工具",
+  subtitle = "先算分，再看路径，会更快判断自己是否够门槛。",
+  items,
+  footerHref = "/tools/",
+  footerLabel = "进入打分工具总览",
+} = Astro.props;
+---
+
+<section class="rtc" aria-label={title}>
+  <div class="rtc-head">
+    <h2 class="rtc-title">{title}</h2>
+    <p class="rtc-sub">{subtitle}</p>
+  </div>
+
+  <div class="rtc-list">
+    {items.map((item) => (
+      <a class="rtc-item" href={item.href}>
+        <div class="rtc-item-label">{item.label}</div>
+        <div class="rtc-item-desc">{item.desc}</div>
+      </a>
+    ))}
+  </div>
+
+  {footerHref && (
+    <a class="rtc-more" href={footerHref}>
+      {footerLabel}
+    </a>
+  )}
+</section>
+
+<style>
+  .rtc {
+    background: linear-gradient(180deg, #fff 0%, #fbfcff 100%);
+    border: 1px solid rgba(26, 29, 35, 0.09);
+    border-radius: 14px;
+    padding: 18px 18px 16px;
+  }
+  .rtc-head {
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(26, 29, 35, 0.08);
+  }
+  .rtc-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: #1a1d23;
+    margin: 0 0 6px;
+    letter-spacing: -0.02em;
+  }
+  .rtc-sub {
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: rgba(26, 29, 35, 0.56);
+    margin: 0;
+  }
+  .rtc-list {
+    display: grid;
+    gap: 8px;
+  }
+  .rtc-item {
+    display: block;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(26, 29, 35, 0.03);
+    border: 1px solid rgba(26, 29, 35, 0.06);
+    text-decoration: none;
+    transition: border-color 0.15s, background 0.15s, transform 0.15s;
+  }
+  .rtc-item:hover {
+    background: rgba(217, 45, 32, 0.05);
+    border-color: rgba(217, 45, 32, 0.18);
+    transform: translateY(-1px);
+    text-decoration: none;
+  }
+  .rtc-item-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1a1d23;
+    margin-bottom: 3px;
+    line-height: 1.35;
+  }
+  .rtc-item-desc {
+    font-size: 12px;
+    color: rgba(26, 29, 35, 0.6);
+    line-height: 1.55;
+  }
+  .rtc-more {
+    display: inline-flex;
+    margin-top: 12px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #d92d20;
+    text-decoration: none;
+  }
+  .rtc-more:hover {
+    text-decoration: underline;
+  }
+</style>

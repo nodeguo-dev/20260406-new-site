@@ -1,0 +1,819 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import RelatedToolsCard from "@/components/RelatedToolsCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民项目", href: "/projects/" },
+  { name: "EE 定向邀请（CBS）", href: "/projects/ee-category/" },
+  { name: "技工类定向移民", href: "/projects/ee-trades/" },
+];
+
+/* ─── 职业列表（2026年有效名单）─── */
+const tradeJobs = [
+  { noc: "70010", name: "建筑项目经理", en: "Construction managers", license: false, note: "一般需有多年技工管理经验" },
+  { noc: "70011", name: "住宅建筑与翻新经理", en: "Home building and renovation managers", license: false, note: "装修公司管理职位" },
+  { noc: "72100", name: "机械加工技工与检验员", en: "Machinists and tooling inspectors", license: false, note: "工厂机械加工职位" },
+  { noc: "72102", name: "钣金工", en: "Sheet metal workers", license: false, note: "常见于HVAC、建筑行业" },
+  { noc: "72106", name: "焊工及相关机械操作员", en: "Welders", license: false, note: "部分雇主要求CWB认证，但非法定" },
+  { noc: "72200", name: "电工（非工业/电力系统）", en: "Electricians (residential/commercial)", license: true, note: "各省要求持省级电工执照" },
+  { noc: "72201", name: "工业电工", en: "Industrial electricians", license: true, note: "工厂/工业场所，需执照" },
+  { noc: "72300", name: "管道工", en: "Plumbers", license: true, note: "各省执照要求不同，安省等需持牌" },
+  { noc: "72302", name: "燃气安装技工", en: "Gas fitters", license: true, note: "操作天然气设备须持G2/G1执照" },
+  { noc: "72310", name: "木工", en: "Carpenters", license: false, note: "建筑行业最常见职位之一" },
+  { noc: "72311", name: "橱柜制造工", en: "Cabinetmakers", license: false, note: "家具/室内装修行业" },
+  { noc: "72320", name: "砌砖工", en: "Bricklayers", license: false, note: "建筑施工类" },
+  { noc: "72400", name: "建筑机械师及工业机械师", en: "Construction millwrights", license: false, note: "机器设备安装维修" },
+  { noc: "72401", name: "重型机械技工", en: "Heavy-duty equipment mechanics", license: false, note: "工程机械维修，矿业/建筑业需求大" },
+  { noc: "72402", name: "暖通空调机械师（HVAC）", en: "HVAC mechanics", license: false, note: "部分省份要求制冷剂操作证" },
+  { noc: "72422", name: "电气机械技工", en: "Electrical mechanics", license: false, note: "工业电气维护岗位" },
+  { noc: "72501", name: "水井钻探工", en: "Water well drillers", license: true, note: "部分省份要求持牌" },
+  { noc: "72999", name: "其他技术工种", en: "Other technical trades", license: false, note: "含多种专业技工" },
+  { noc: "73100", name: "混凝土修整工", en: "Concrete finishers", license: false, note: "建筑施工类" },
+  { noc: "73110", name: "屋顶工和瓦工", en: "Roofers and shinglers", license: false, note: "找工作相对容易，旺季需求大" },
+  { noc: "73112", name: "油漆工（室外/商业）", en: "Painters and decorators", license: false, note: "装修行业基础职位" },
+  { noc: "73113", name: "地板铺设工", en: "Floor covering installers", license: false, note: "装修行业常见职位" },
+  { noc: "82021", name: "石油钻探承包商及主管", en: "Oil and gas drilling contractors", license: false, note: "阿省、BC省能源行业" },
+  { noc: "22303", name: "建筑估算师", en: "Construction estimators", license: false, note: "文职+技术结合岗位" },
+  { noc: "63200", name: "厨师", en: "Cooks", license: false, note: "2026年新增！餐饮业极易找工作" },
+];
+
+const noLicenseJobs = tradeJobs.filter(j => !j.license);
+
+/* ─── 最新抽签数据 ─── */
+const latestRound = {
+  date: "2026年（近期）",
+  score: 477,
+  type: "技工类定向（Trade Occupations）",
+  note: "比同期普通邀请分低约 40–60 分，说明技工类定向通道对中低分候选人极为有利。"
+};
+
+/* ─── 零经验快速入行岗位（短期培训即可上岗）─── */
+const quickStartJobs = [
+  {
+    noc: "63200",
+    name: "厨师",
+    en: "Cooks",
+    trainTime: "短则 1–3 个月实际操作学习",
+    salary: "$18–$26/小时",
+    demand: "极高",
+    howToStart: "直接去餐厅/快餐店/工厂厨房应聘 Kitchen Helper 或 Prep Cook，边工作边晋升厨师职位，大多数华人餐厅/亚裔餐厅无语言障碍。",
+    license: false,
+    highlight: "2026年新加入技工 CBS 名单，餐饮业人手极度短缺，最容易找到工作",
+  },
+  {
+    noc: "73110",
+    name: "屋顶工 / 瓦工",
+    en: "Roofers and shinglers",
+    trainTime: "1–4 周在岗培训",
+    salary: "$22–$35/小时",
+    demand: "高",
+    demandNote: "旺季4–10月需求翻倍",
+    howToStart: "春夏季是旺季，小型屋顶公司大量招聘体力工人，无需学历，雇主直接培训。搜索 Indeed roofer helper 或联系当地小型建筑公司。",
+    license: false,
+    highlight: "体力劳动，入行门槛极低，旺季时薪可达 $30+，是快速积累经验的务实选择",
+  },
+  {
+    noc: "73112",
+    name: "油漆工（商业/住宅）",
+    en: "Painters and decorators",
+    trainTime: "1–4 周在岗培训",
+    salary: "$20–$32/小时",
+    demand: "高",
+    howToStart: "学徒或助手（Painter's Helper）直接进入，跟着有经验的油漆工学习。小型装修公司、物业管理公司大量招聘，LinkedIn/Kijiji/Facebook 工作群均可找到 lead。",
+    license: false,
+    highlight: "室内外装修需求旺盛，华人承包商多，找工作有语言优势",
+  },
+  {
+    noc: "73113",
+    name: "地板铺设工",
+    en: "Floor covering installers",
+    trainTime: "2–6 周在岗学习",
+    salary: "$22–$38/小时",
+    demand: "高",
+    howToStart: "地板材料商（如 Floor Depot、地板店）或小型装修公司招聘助手，学习铺设硬木地板、瓷砖、LVP 等，技能可快速转化为高薪独立承包商。",
+    license: false,
+    highlight: "技术成熟后可做独立承包商，时薪潜力高",
+  },
+  {
+    noc: "72310",
+    name: "木工（建筑施工类）",
+    en: "Carpenters",
+    trainTime: "2–8 周助手经验后可独立",
+    salary: "$24–$42/小时",
+    demand: "极高（住宅/商业建筑缺口大）",
+    howToStart: "以 Carpenter's Helper / Labour 职位入行，协助框架、干墙（Drywall）等工序。加拿大建筑工地大量缺人，特别是多伦多、卡尔加里、埃德蒙顿等在建项目多的城市。",
+    license: false,
+    highlight: "是所有技工职位中雇主最多、最容易入行的路线之一",
+  },
+  {
+    noc: "72106",
+    name: "焊工",
+    en: "Welders",
+    trainTime: "College 8个月证书课程 / 或 3–6 个月基础培训",
+    salary: "$25–$45/小时（CWB认证后更高）",
+    demand: "高",
+    howToStart: "College 焊接技术证书（如 NAIT、George Brown、Mohawk 均有）是最快的系统入门方式，8个月毕业即可就业。也可直接应聘焊工助手，边干边学。",
+    license: false,
+    highlight: "技能可量化（CWB 焊接资质），越有认证收入越高，阿省/BC省石油行业需求巨大",
+  },
+  {
+    noc: "72402",
+    name: "暖通空调技师（HVAC）",
+    en: "HVAC mechanics",
+    trainTime: "College 1–2 年课程",
+    salary: "$28–$48/小时",
+    demand: "高",
+    howToStart: "College HVAC 技术课程（1–2年）是标准路径，毕业后直接进入安装/维修公司。部分雇主提供学徒计划，边工作边考制冷剂操作证。",
+    license: false,
+    highlight: "冬夏季均为旺季，年薪 6 万+ 普遍，是技工类中薪资/稳定性最佳的职位之一",
+  },
+];
+
+const pathSteps = [
+  {
+    num: "1",
+    title: "确定目标职业（NOC）",
+    desc: "从上方职业列表中选出 1–2 个最符合你背景或最容易就业的 NOC 类别。重点考量：本地就业市场需求、是否需要执照（电工/管道工有执照要求）、你的学习成本。",
+    tips: ["焊工、木工、HVAC、油漆工、屋顶工是门槛较低且容易找工作的职位", "厨师（NOC 63200）2026年新加入，餐饮业工作机会多，英语要求相对低"],
+  },
+  {
+    num: "2",
+    title: "获取技能与资质",
+    desc: "大多数技工类职位不需要省级执照，只需要雇主认可你具备该职业能力。以下方式均可帮你快速进入该行业：",
+    tips: [
+      "College 职业技术项目（通常 1–2 年），如 George Brown、Fanshawe、NAIT、BCIT 等均有技工专项",
+      "学徒计划（Apprenticeship）：边工作边学，雇主担保，是技工行业主流晋升路径",
+      "海外技工经验：如有境外相关工作经验，可直接进入同类岗位并开始积累加拿大经验",
+    ],
+  },
+  {
+    num: "3",
+    title: "在加拿大找到对口工作",
+    desc: "持有学签（在校期间兼职/实习）或毕业后持 PGWP 工签都可以开始积累经验。技工行业在加拿大供不应求，尤其是 BC 省、安省、阿省的建筑和能源行业。",
+    tips: [
+      "招聘渠道：Indeed、Workopolis、各省建筑工会（如 UA Local 联合管道工会）、雇主直聘",
+      "很多小型建筑/装修公司不要求执照，只要能胜任工作即可上岗",
+      "PGWP 工签最长 3 年，时间充足积累 12 个月经验",
+    ],
+  },
+  {
+    num: "4",
+    title: "积累 12 个月工作经验，建立 EE Profile",
+    desc: "在过去 3 年内累计完成 ≥ 12 个月全职技工类工作（可不连续）后，登录 IRCC 官网创建 Express Entry 档案（Profile），如实填写工作经验 NOC 类别。",
+    tips: [
+      "工资单、T4 税单、雇主证明信是最重要的经验证明材料",
+      "兼职可以算但需折算为全职等效：每周 30 小时 = 全职",
+      "Profile 有效期 1 年，期间可随时更新信息",
+    ],
+  },
+  {
+    num: "5",
+    title: "等待 CBS 技工定向邀请",
+    desc: "进入 EE 候选池后，IRCC 会定期举行技工类（Trade Occupations）定向抽签。历史数据显示技工类定向邀请是所有 CBS 类别中分数最低、最频繁的，无需等到分数线极高的普通邀请。",
+    tips: [
+      "历史技工类定向邀请分数：390–450 分（普通邀请通常 490–540 分）",
+      "同时可通过提高语言成绩（CLB 9+）、获取 PNP 省提名等方式进一步提高 CRS 分数",
+      "无需主动选择进入 CBS——只要 EE Profile 中填写了技工 NOC，系统自动识别",
+    ],
+  },
+];
+
+const faqs = [
+  {
+    q: "技工类定向邀请是多久一次？每次邀请多少人？",
+    a: "IRCC 没有固定时间表，但技工类（Trades）在 2024–2026 年间属于最频繁举行的 CBS 类别之一，通常每年 3–6 次，每次邀请 500–2000 人不等。建议进入候选池后设置 IRCC 邮件通知，每次有新一轮邀请都会收到通知。"
+  },
+  {
+    q: "我没有任何技工背景，可以从零学习进入这条路线吗？",
+    a: "完全可以。加拿大很多 College 提供 1–2 年的技工技术证书课程（Certificate/Diploma），毕业后可申请 PGWP 工签，从事对口技工职位。从零开始的学习成本最低的职业包括：油漆工（部分公司可直接入职学习）、地板铺设工、木工助手（后晋升为木工）、HVAC 学徒等。"
+  },
+  {
+    q: "电工和管道工需要省级执照，我该不该选这两个职位？",
+    a: "需要执照的职位（如电工/管道工）在就业和移民上都有更强的竞争力——持牌电工/管道工工资更高、雇主愿意担保、移民路径也更明确。但取得执照需要完成学徒期（通常 4–5 年），适合长期规划的申请人。如果希望快速积累 12 个月经验拿定向 ITA，建议优先选择不需要执照的职业（如焊工、HVAC、木工等），速度更快。"
+  },
+  {
+    q: "厨师（NOC 63200）2026年新加入，真的能移民吗？",
+    a: "可以。厨师是 2026 年 IRCC 新增进入技工类 CBS 名单的职位，只要在过去 3 年内累计从事厨师工作 ≥ 12 个月，就符合技工类定向邀请的职业条件。加拿大餐饮业缺人严重，厨师工作机会多、找工作相对容易，对英语要求也不像白领职位那么高，是很多人选择的务实路线。"
+  },
+  {
+    q: "技工类工作工资如何？能满足移民申请的经济要求吗？",
+    a: "加拿大技工类职位工资普遍较高，以下是参考范围（因省份和经验有差异）：木工 $25–38/小时、焊工 $28–42/小时、电工 $35–50/小时、HVAC 技师 $30–45/小时、厨师 $18–28/小时。PR 申请本身没有最低工资要求，只要是合法全职工作（NOC TEER 0–3 类）均可计入经验。"
+  },
+  {
+    q: "我同时符合技工类 CBS 和医护类 CBS，应该选哪个？",
+    a: "不需要选，两个条件都填写在 EE Profile 里，IRCC 会在任一符合条件的定向轮次中邀请你。如果两类都有工作经验，意味着你进入 ITA 的通道更多，是好事。建议专注于最能稳定就业、薪资最好的那个职业。"
+  },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem", position: i + 1, name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((i) => ({
+    "@type": "Question", name: i.q,
+    acceptedAnswer: { "@type": "Answer", text: i.a },
+  })),
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("EE 技工类定向移民完整指南 | 25个职业 · 无需执照路径 · 厨师新增")}
+  description="2026年 Express Entry 技工类定向邀请（Trade Occupations CBS）详解：25个覆盖职业、哪些无需执照、如何在加拿大找到技工工作、积累1年经验进入EE候选池，历史邀请分数 390–450 分。"
+  canonical="https://cachinavisa.com/projects/ee-trades/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={faqLd} />
+  <Breadcrumbs items={breadcrumbs} />
+
+  <div class="page-layout" style="margin-top:16px">
+    <main>
+
+      <!-- 🔥 Latest round alert -->
+      <div class="round-alert">
+        <div class="ra-left">
+          <span class="ra-badge">🔥 最新动态</span>
+          <div class="ra-title">技工类定向抽签：截止分 <strong>{latestRound.score} 分</strong></div>
+          <div class="ra-desc">
+            IRCC 近期完成一轮技工类（Trade Occupations）CBS 定向邀请，最低邀请分为 <strong>{latestRound.score} 分</strong>，
+            比同期普通邀请低约 40–60 分。这说明目前处于候选池、CRS 分数在 460–490 区间的技工背景申请人
+            已具备极大概率在下一轮被邀请。
+          </div>
+          <div class="ra-insight">
+            💡 <strong>对还没工作经验的人的启发：</strong>找一份技工类岗位，哪怕是门槛最低的（厨师、油漆工、屋顶工、木工助手），
+            累计 12 个月经验进入 EE 候选池，就可以等待下一次 477 分左右的定向邀请——
+            这个分数对于有加拿大学历或一定工作经验的人是完全可以达到的。
+          </div>
+        </div>
+        <div class="ra-score">
+          <div class="ras-num">{latestRound.score}</div>
+          <div class="ras-label">最新邀请截止分</div>
+          <a class="ras-link" href="https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/rounds-invitations.html" target="_blank" rel="noopener">查看 IRCC 官方记录 →</a>
+        </div>
+      </div>
+
+      <!-- Hero -->
+      <div class="page-hero">
+        <div class="hero-kicker">EE 定向邀请 · 技工类</div>
+        <h1 class="hero-title">技工类定向移民<br /><span class="hero-title-en">Trade Occupations CBS</span></h1>
+        <p class="hero-desc">
+          技工类（Trade Occupations）是 CBS 定向邀请中<strong>分数最低、邀请频率最高</strong>的类别之一。
+          2026 年共覆盖 25 个职业，其中大多数<strong>不需要省级执照</strong>，只要找到对口工作并积累 12 个月经验，
+          就可以进入 EE 候选池等待定向 ITA。这是技术门槛低、移民路径清晰的务实选项。
+        </p>
+        <div class="hero-tags">
+          <span class="htag green">历史邀请分：390–450分</span>
+          <span class="htag orange">25个覆盖职业</span>
+          <span class="htag blue">多数无需执照</span>
+          <span class="htag red">厨师 2026 新增</span>
+        </div>
+      </div>
+
+      <!-- Why Trades -->
+      <div class="content-card">
+        <h2 class="cc-title">为什么技工类是"万能油"移民路径？</h2>
+        <div class="why-grid">
+          <div class="why-item">
+            <div class="wi-icon">🔑</div>
+            <div class="wi-title">大多数无需执照</div>
+            <div class="wi-desc">25 个覆盖职业中，焊工、木工、HVAC、屋顶工、厨师等大多数职位只需要雇主认可你的能力，无需政府颁发的省级执照。相比医护类的注册认证流程，入行门槛低很多。</div>
+          </div>
+          <div class="why-item">
+            <div class="wi-icon">📉</div>
+            <div class="wi-title">邀请分数最低</div>
+            <div class="wi-desc">历史数据显示，技工类定向邀请的截止分数在 390–450 分之间，是所有 CBS 类别中最低的。这意味着即使你的 CRS 分数不高，只要工作经验达标就有机会被邀请。</div>
+          </div>
+          <div class="why-item">
+            <div class="wi-icon">🏗️</div>
+            <div class="wi-title">市场需求极大</div>
+            <div class="wi-desc">加拿大建筑、能源、制造、餐饮行业长期缺乏技工人才，且缺口还在扩大。这直接转化为就业机会多、雇主愿意雇用外国工人，找工作相对容易。</div>
+          </div>
+          <div class="why-item">
+            <div class="wi-icon">🎓</div>
+            <div class="wi-title">可从零学起</div>
+            <div class="wi-desc">很多 College 提供 1–2 年的技工技术课程（Certificate/Diploma），毕业后可申请 PGWP 工签，边工作边积累移民所需经验，学历同时为 EE 加分（双学历策略）。</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick start jobs -->
+      <div class="content-card">
+        <h2 class="cc-title">🚀 零经验也能快速入行的 7 个岗位</h2>
+        <p class="cc-desc">
+          以下 7 个职业是技工类 CBS 覆盖范围内，<strong>无需学历、无需执照、可短期培训快速上岗</strong>的代表性岗位。
+          目前就业市场不景气，白领工作难找，转向这些紧缺技工岗位不仅找工作更容易，
+          还能同步积累 EE 移民所需的 12 个月工作经验。
+        </p>
+
+        <div class="qs-grid">
+          {quickStartJobs.map((job, i) => (
+            <div class={`qs-card${i === 0 ? ' qs-featured' : ''}`}>
+              {i === 0 && <div class="qs-new-badge">2026新增</div>}
+              <div class="qs-top">
+                <div>
+                  <div class="qs-name">{job.name}</div>
+                  <div class="qs-en">NOC {job.noc} · {job.en}</div>
+                </div>
+                <div class="qs-demand">
+                  <span class={`demand-dot ${job.demand === '极高' ? 'extreme' : 'high'}`}></span>
+                  <span class="demand-text">需求：{job.demand}</span>
+                </div>
+              </div>
+              <div class="qs-highlight">{job.highlight}</div>
+              <div class="qs-meta">
+                <div class="qm-item"><span class="qm-label">入门时间</span><span class="qm-val">{job.trainTime}</span></div>
+                <div class="qm-item"><span class="qm-label">参考时薪</span><span class="qm-val salary">{job.salary}</span></div>
+              </div>
+              <div class="qs-how">
+                <div class="qs-how-label">如何入行 →</div>
+                <div class="qs-how-text">{job.howToStart}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div class="tip-box" style="margin-top:16px">
+          🎯 <strong>策略建议：</strong>现在找不到白领工作的人，可以先考虑以上任意一个职位——
+          入行难度低、工资不差、工作机会多，最重要的是：每工作一个月，就离 EE 技工定向 ITA 近一步。
+          拿到 PR 身份之后，再转行或进修都不受工签限制，反而更自由。
+        </div>
+      </div>
+
+      <!-- Jobs table -->
+      <div class="content-card">
+        <h2 class="cc-title">2026 年技工类 CBS 职业完整列表</h2>
+        <p class="cc-desc">以下所有职业均符合 2026 年技工类定向邀请条件，绿色标注代表无需省级执照，更容易快速入行。</p>
+
+        <div class="jobs-filter">
+          <span class="jf-label">筛选：</span>
+          <button class="jf-btn active" data-filter="all">全部 ({tradeJobs.length})</button>
+          <button class="jf-btn" data-filter="no-license">无需执照 ({noLicenseJobs.length})</button>
+          <button class="jf-btn" data-filter="license">需要执照 ({tradeJobs.filter(j => j.license).length})</button>
+        </div>
+
+        <div class="jobs-table">
+          <div class="jt-header jt-row">
+            <div>NOC</div>
+            <div>职业名称</div>
+            <div>英文名称</div>
+            <div>执照要求</div>
+            <div>备注</div>
+          </div>
+          {tradeJobs.map((job) => (
+            <div class={`jt-row${job.license ? ' needs-license' : ' no-license'}`} data-license={job.license ? 'yes' : 'no'}>
+              <div class="jt-noc">{job.noc}</div>
+              <div class="jt-name">{job.name}</div>
+              <div class="jt-en">{job.en}</div>
+              <div>
+                {job.license
+                  ? <span class="badge-license">需要执照</span>
+                  : <span class="badge-no-license">无需执照</span>
+                }
+              </div>
+              <div class="jt-note">{job.note}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Path steps -->
+      <div class="content-card">
+        <h2 class="cc-title">从零开始的完整路径（5步）</h2>
+        <div class="steps-list">
+          {pathSteps.map((step) => (
+            <div class="step-item">
+              <div class="step-num">{step.num}</div>
+              <div class="step-content">
+                <div class="step-title">{step.title}</div>
+                <div class="step-desc">{step.desc}</div>
+                <div class="step-tips">
+                  {step.tips.map((tip) => (
+                    <div class="step-tip">
+                      <span class="tip-dot">›</span>
+                      <span>{tip}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- College recommendation -->
+      <div class="content-card">
+        <h2 class="cc-title">推荐的 College 技工项目（从零学起）</h2>
+        <p class="cc-desc">以下 College 提供与技工类 CBS 对口的职业技术课程，完成后可申请 PGWP 工签在加拿大工作积累经验。</p>
+        <div class="college-grid">
+          <div class="college-card">
+            <div class="cc-province">安大略省 Ontario</div>
+            <div class="cc-schools">
+              <div class="ccs-item">
+                <div class="ccs-name">George Brown College（多伦多）</div>
+                <div class="ccs-programs">建筑技术、电工技术、管道与暖通（HVAC）</div>
+              </div>
+              <div class="ccs-item">
+                <div class="ccs-name">Fanshawe College（伦敦）</div>
+                <div class="ccs-programs">焊接技术、机械、木工工艺</div>
+              </div>
+              <div class="ccs-item">
+                <div class="ccs-name">Conestoga College（滑铁卢）</div>
+                <div class="ccs-programs">建筑技术、暖通、工业机械</div>
+              </div>
+            </div>
+          </div>
+          <div class="college-card">
+            <div class="cc-province">不列颠哥伦比亚省 BC</div>
+            <div class="cc-schools">
+              <div class="ccs-item">
+                <div class="ccs-name">BCIT（不列颠哥伦比亚理工学院）</div>
+                <div class="ccs-programs">电工技术、管道、HVAC、建筑管理</div>
+              </div>
+              <div class="ccs-item">
+                <div class="ccs-name">VCC（温哥华社区学院）</div>
+                <div class="ccs-programs">木工、焊接、砌砖、厨艺与烹饪</div>
+              </div>
+            </div>
+          </div>
+          <div class="college-card">
+            <div class="cc-province">阿尔伯塔省 Alberta</div>
+            <div class="cc-schools">
+              <div class="ccs-item">
+                <div class="ccs-name">NAIT（北阿尔伯塔理工学院）</div>
+                <div class="ccs-programs">电工、管道、焊接、重型机械技术</div>
+              </div>
+              <div class="ccs-item">
+                <div class="ccs-name">SAIT（南阿尔伯塔理工学院）</div>
+                <div class="ccs-programs">建筑技术、HVAC、石油技工</div>
+              </div>
+            </div>
+          </div>
+          <div class="college-card">
+            <div class="cc-province">新斯科舍/大西洋四省</div>
+            <div class="cc-schools">
+              <div class="ccs-item">
+                <div class="ccs-name">NSCC（新斯科舍社区学院）</div>
+                <div class="ccs-programs">木工、电工、管道、暖通制冷，并可衔接 AIP 大西洋移民通道</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tip-box">
+          💡 <strong>双学历加分策略：</strong>如果你已有本科或专科学历，在加拿大再读 1–2 年 College 技工课程，毕业后可以在 EE 打分中获得<strong>加拿大本地学历附加分（+15 或 +30 分）</strong>，同时开启技工类 CBS 通道，一举两得。
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div class="content-card">
+        <h2 class="cc-title">常见问题（FAQ）</h2>
+        {faqs.map((item) => (
+          <details class="faq-item">
+            <summary class="faq-q">{item.q}</summary>
+            <p class="faq-a">{item.a}</p>
+          </details>
+        ))}
+      </div>
+
+      <!-- CTA -->
+      <div class="cta-block">
+        <div class="cta-text">
+          <div class="cta-title">想规划你的技工类移民路径？</div>
+          <p class="cta-desc">把你的专业背景和工作经验发给我们，顾问帮你评估哪个技工 NOC 最适合、预计多久能满足 CBS 条件。</p>
+        </div>
+        <a href="/contact/" class="cta-btn">免费路径评估 →</a>
+      </div>
+
+    </main>
+
+    <aside class="page-sidebar">
+      <ContactCard title="评估技工类资格" />
+      <RelatedToolsCard
+        title="相关打分工具"
+        subtitle="技工类定向先看联邦 CRS，再对照是否需要省提名补分。"
+        items={[
+          { href: "/tools/crs-calculator/", label: "联邦 CRS 计算器", desc: "先算 EE 总分，判断是否接近技工类定向线。" },
+          { href: "/tools/aaip-calculator/", label: "AAIP Worker EOI", desc: "阿省技工相关路径常会参考这个 100 分制打分。" },
+          { href: "/tools/oinp-calculator/", label: "OINP EOI 计算器", desc: "如果走安省雇主类或留学类，也可先做预估。" },
+        ]}
+        footerHref="/tools/"
+        footerLabel="查看全部打分工具"
+      />
+      <div class="sidebar-card">
+        <div class="sc-title">CBS 三大热门通道</div>
+        <div class="sc-links">
+          <a class="sc-link active" href="/projects/ee-trades/">🔧 技工类定向（当前页）</a>
+          <a class="sc-link" href="/projects/ee-healthcare/">🏥 医护类定向</a>
+          <a class="sc-link" href="/projects/ee-french/">🇫🇷 法语定向</a>
+        </div>
+      </div>
+      <div class="sidebar-card">
+        <div class="sc-title">相关移民路径</div>
+        <div class="sc-links">
+          <a class="sc-link" href="/projects/ee-category/">EE 定向邀请总览</a>
+          <a class="sc-link" href="/projects/cec/">加拿大经验类（CEC）</a>
+          <a class="sc-link" href="/projects/provincial-nomination/">省提名计划（PNP）</a>
+          <a class="sc-link" href="/visa/work-permit/">工签申请指南</a>
+        </div>
+      </div>
+      <div class="sidebar-card highlight-card">
+        <div class="sc-title">⚡ 关键数据</div>
+        <div class="key-data">
+          <div class="kd-item">
+            <div class="kd-val" style="color:#4ade80">477</div>
+            <div class="kd-label">最新一轮邀请截止分</div>
+          </div>
+          <div class="kd-item">
+            <div class="kd-val">25</div>
+            <div class="kd-label">覆盖职业数量</div>
+          </div>
+          <div class="kd-item">
+            <div class="kd-val">12月</div>
+            <div class="kd-label">最低工作经验</div>
+          </div>
+          <div class="kd-item">
+            <div class="kd-val">3年</div>
+            <div class="kd-label">经验计算时间窗</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+      <div class="page-share">
+        <ShareBar url="https://cachinavisa.com/projects/ee-trades/" title={"EE 技工类定向移民完整指南 | 25个职业 · 无需执照路径 · 厨师新增"} />
+      </div>
+</BaseLayout>
+
+<script>
+  const filterBtns = document.querySelectorAll('.jf-btn');
+  const jobRows = document.querySelectorAll('.jt-row:not(.jt-header)');
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = (btn as HTMLElement).dataset.filter;
+      jobRows.forEach(row => {
+        const el = row as HTMLElement;
+        if (filter === 'all') { el.style.display = ''; }
+        else if (filter === 'no-license') { el.style.display = el.dataset.license === 'no' ? '' : 'none'; }
+        else if (filter === 'license') { el.style.display = el.dataset.license === 'yes' ? '' : 'none'; }
+      });
+    });
+  });
+</script>
+
+<style>
+/* Round alert */
+.round-alert {
+  display: flex; gap: 20px; align-items: flex-start; justify-content: space-between; flex-wrap: wrap;
+  background: linear-gradient(135deg, #0d2010 0%, #1a3a10 60%, #0a1010 100%);
+  border: 1.5px solid rgba(34,197,94,0.25);
+  border-radius: 18px; padding: 24px 28px; margin-bottom: 16px;
+  position: relative; overflow: hidden;
+}
+.round-alert::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 50% 80% at 95% 10%, rgba(34,197,94,0.15), transparent 55%);
+}
+.ra-left { flex: 1; min-width: 260px; position: relative; z-index: 1; }
+.ra-badge {
+  display: inline-block; font-size: 11px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.08em; color: #4ade80; background: rgba(34,197,94,0.15);
+  border: 1px solid rgba(34,197,94,0.3); padding: 3px 10px; border-radius: 6px;
+  margin-bottom: 10px;
+}
+.ra-title { font-size: 17px; font-weight: 800; color: #fff; margin-bottom: 10px; }
+.ra-title strong { color: #4ade80; font-size: 20px; }
+.ra-desc { font-size: 13.5px; color: rgba(255,255,255,0.65); line-height: 1.72; margin-bottom: 12px; }
+.ra-desc strong { color: #86efac; }
+.ra-insight {
+  font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.65;
+  background: rgba(34,197,94,0.08); border-left: 3px solid rgba(34,197,94,0.4);
+  padding: 10px 14px; border-radius: 0 10px 10px 0;
+}
+.ra-insight strong { color: #4ade80; }
+.ra-score {
+  flex-shrink: 0; text-align: center; padding: 18px 24px;
+  background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2);
+  border-radius: 14px; position: relative; z-index: 1;
+}
+.ras-num { font-size: 52px; font-weight: 900; color: #4ade80; line-height: 1; margin-bottom: 6px; }
+.ras-label { font-size: 12px; color: rgba(255,255,255,0.5); margin-bottom: 12px; }
+.ras-link { display: block; font-size: 12px; font-weight: 700; color: #86efac; text-decoration: none; }
+.ras-link:hover { text-decoration: underline; }
+
+/* Quick-start jobs */
+.qs-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 640px) { .qs-grid { grid-template-columns: 1fr 1fr; } }
+.qs-card {
+  padding: 18px 20px; border-radius: 16px; border: 1.5px solid rgba(13,17,23,0.09);
+  background: #fff; position: relative; transition: border-color 0.15s, box-shadow 0.15s;
+}
+.qs-card:hover { border-color: rgba(180,83,9,0.25); box-shadow: 0 4px 20px rgba(13,17,23,0.06); }
+.qs-featured {
+  border-color: rgba(239,68,68,0.25) !important;
+  background: linear-gradient(160deg, #fff 75%, rgba(239,68,68,0.03) 100%);
+}
+.qs-new-badge {
+  position: absolute; top: 14px; right: 14px;
+  font-size: 11px; font-weight: 800; color: #fff;
+  background: #ef4444; padding: 2px 9px; border-radius: 6px;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.qs-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+.qs-name { font-size: 15px; font-weight: 800; color: #0d1117; margin-bottom: 2px; }
+.qs-en { font-size: 11.5px; color: rgba(13,17,23,0.4); }
+.qs-demand { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+.demand-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.demand-dot.extreme { background: #ef4444; box-shadow: 0 0 5px rgba(239,68,68,0.5); }
+.demand-dot.high { background: #f97316; }
+.demand-text { font-size: 11.5px; font-weight: 700; color: rgba(13,17,23,0.5); }
+.qs-highlight {
+  font-size: 12.5px; font-weight: 600; color: #b45309;
+  background: rgba(180,83,9,0.07); padding: 6px 10px; border-radius: 8px;
+  margin-bottom: 10px; line-height: 1.5;
+}
+.qs-featured .qs-highlight { color: #ef4444; background: rgba(239,68,68,0.07); }
+.qs-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.qm-item { background: rgba(13,17,23,0.03); padding: 8px 10px; border-radius: 8px; }
+.qm-label { font-size: 10.5px; font-weight: 700; color: rgba(13,17,23,0.4); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+.qm-val { font-size: 12.5px; color: rgba(13,17,23,0.7); line-height: 1.4; }
+.qm-val.salary { font-weight: 700; color: #059669; }
+.qs-how { border-top: 1px solid rgba(13,17,23,0.06); padding-top: 10px; }
+.qs-how-label { font-size: 11.5px; font-weight: 700; color: rgba(13,17,23,0.4); margin-bottom: 4px; }
+.qs-how-text { font-size: 12.5px; color: rgba(13,17,23,0.6); line-height: 1.65; }
+
+.page-layout { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: start; }
+@media (min-width: 960px) { .page-layout { grid-template-columns: 1fr 280px; } }
+
+/* Hero */
+.page-hero {
+  background: linear-gradient(135deg, #1c1208 0%, #2d1a04 50%, #0a1628 100%);
+  border-radius: 20px; padding: 40px 36px; margin-bottom: 16px;
+  position: relative; overflow: hidden;
+}
+.page-hero::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 55% 70% at 90% 15%, rgba(180,83,9,0.3), transparent 55%);
+}
+.hero-kicker {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+  color: rgba(251,191,36,0.8); margin-bottom: 12px; position: relative; z-index: 1;
+}
+.hero-title {
+  font-size: clamp(24px, 4vw, 38px); font-weight: 900; color: #fff;
+  margin: 0 0 14px; letter-spacing: -0.025em; line-height: 1.15;
+  position: relative; z-index: 1;
+}
+.hero-title-en { font-size: 0.55em; font-weight: 500; color: rgba(255,255,255,0.45); display: block; margin-top: 4px; }
+.hero-desc {
+  font-size: 14.5px; color: rgba(255,255,255,0.65); line-height: 1.75;
+  margin: 0 0 22px; max-width: 680px; position: relative; z-index: 1;
+}
+.hero-desc strong { color: #fbbf24; }
+.hero-tags { display: flex; gap: 8px; flex-wrap: wrap; position: relative; z-index: 1; }
+.htag {
+  padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 700;
+  border: 1px solid transparent;
+}
+.htag.green { background: rgba(5,150,105,0.2); border-color: rgba(5,150,105,0.35); color: #6ee7b7; }
+.htag.orange { background: rgba(180,83,9,0.2); border-color: rgba(180,83,9,0.35); color: #fcd34d; }
+.htag.blue { background: rgba(26,86,196,0.2); border-color: rgba(26,86,196,0.35); color: #93c5fd; }
+.htag.red { background: rgba(217,45,32,0.2); border-color: rgba(217,45,32,0.35); color: #fca5a5; }
+
+/* Content card */
+.content-card {
+  background: #fff; border: 1px solid rgba(13,17,23,0.09);
+  border-radius: 18px; padding: 28px 30px; margin-bottom: 16px;
+}
+.cc-title {
+  font-size: 19px; font-weight: 800; color: #0d1117;
+  margin: 0 0 14px; padding-bottom: 10px; border-bottom: 2px solid rgba(180,83,9,0.15);
+}
+.cc-desc { font-size: 14px; color: rgba(13,17,23,0.6); line-height: 1.75; margin: 0 0 18px; }
+
+/* Why grid */
+.why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 600px) { .why-grid { grid-template-columns: 1fr; } }
+.why-item {
+  padding: 18px; border-radius: 14px;
+  border: 1px solid rgba(13,17,23,0.08); background: rgba(13,17,23,0.015);
+}
+.wi-icon { font-size: 26px; margin-bottom: 10px; }
+.wi-title { font-size: 14px; font-weight: 800; color: #0d1117; margin-bottom: 7px; }
+.wi-desc { font-size: 13px; color: rgba(13,17,23,0.6); line-height: 1.65; }
+
+/* Filter */
+.jobs-filter { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; align-items: center; }
+.jf-label { font-size: 12px; color: rgba(13,17,23,0.45); font-weight: 600; }
+.jf-btn {
+  padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600;
+  border: 1.5px solid rgba(13,17,23,0.12); background: #fff; color: rgba(13,17,23,0.65);
+  cursor: pointer; transition: all 0.12s;
+}
+.jf-btn:hover { border-color: rgba(180,83,9,0.3); color: #b45309; }
+.jf-btn.active { background: rgba(180,83,9,0.08); border-color: rgba(180,83,9,0.3); color: #b45309; }
+
+/* Jobs table */
+.jobs-table { border: 1px solid rgba(13,17,23,0.09); border-radius: 14px; overflow: hidden; }
+.jt-row { display: grid; grid-template-columns: 70px 1.5fr 2fr 100px 2fr; border-bottom: 1px solid rgba(13,17,23,0.07); }
+.jt-row:last-child { border-bottom: none; }
+.jt-row > div { padding: 10px 12px; font-size: 13px; color: rgba(13,17,23,0.7); line-height: 1.45; border-right: 1px solid rgba(13,17,23,0.06); }
+.jt-row > div:last-child { border-right: none; }
+.jt-header { background: rgba(13,17,23,0.04); }
+.jt-header > div { font-weight: 700; font-size: 12px; color: #0d1117; text-transform: uppercase; letter-spacing: 0.05em; }
+.jt-noc { font-family: monospace; font-size: 12px; color: rgba(13,17,23,0.5); }
+.jt-name { font-weight: 600; color: #0d1117; }
+.jt-en { font-size: 12px; color: rgba(13,17,23,0.5); }
+.jt-note { font-size: 12px; color: rgba(13,17,23,0.5); }
+.badge-license { font-size: 11px; font-weight: 700; color: #d92d20; background: rgba(217,45,32,0.08); padding: 2px 8px; border-radius: 6px; }
+.badge-no-license { font-size: 11px; font-weight: 700; color: #059669; background: rgba(5,150,105,0.08); padding: 2px 8px; border-radius: 6px; }
+.no-license { background: rgba(5,150,105,0.02); }
+
+@media (max-width: 768px) {
+  .jt-row { grid-template-columns: 60px 1fr 80px; }
+  .jt-row > div:nth-child(3), .jt-row > div:nth-child(5) { display: none; }
+  .jt-header > div:nth-child(3), .jt-header > div:nth-child(5) { display: none; }
+}
+
+/* Steps */
+.steps-list { display: flex; flex-direction: column; gap: 16px; }
+.step-item { display: flex; gap: 16px; }
+.step-num {
+  width: 32px; height: 32px; min-width: 32px; border-radius: 50%;
+  background: #b45309; color: #fff; font-weight: 800; font-size: 15px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 2px;
+}
+.step-content { flex: 1; }
+.step-title { font-size: 15px; font-weight: 800; color: #0d1117; margin-bottom: 6px; }
+.step-desc { font-size: 13.5px; color: rgba(13,17,23,0.65); line-height: 1.7; margin-bottom: 8px; }
+.step-tips { display: flex; flex-direction: column; gap: 5px; }
+.step-tip { display: flex; gap: 8px; font-size: 13px; color: rgba(13,17,23,0.6); line-height: 1.55; }
+.tip-dot { color: #b45309; font-size: 16px; flex-shrink: 0; line-height: 1.2; }
+
+/* College grid */
+.college-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+@media (max-width: 600px) { .college-grid { grid-template-columns: 1fr; } }
+.college-card { padding: 16px 18px; border-radius: 14px; border: 1px solid rgba(13,17,23,0.09); }
+.cc-province { font-size: 12px; font-weight: 700; color: #b45309; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+.cc-schools { display: flex; flex-direction: column; gap: 8px; }
+.ccs-item { border-bottom: 1px solid rgba(13,17,23,0.06); padding-bottom: 8px; }
+.ccs-item:last-child { border-bottom: none; padding-bottom: 0; }
+.ccs-name { font-size: 13px; font-weight: 700; color: #0d1117; margin-bottom: 3px; }
+.ccs-programs { font-size: 12px; color: rgba(13,17,23,0.55); line-height: 1.5; }
+
+.tip-box { padding: 14px 16px; background: rgba(59,130,246,0.05); border-left: 3px solid rgba(59,130,246,0.35); border-radius: 0 12px 12px 0; font-size: 13.5px; color: rgba(13,17,23,0.65); line-height: 1.65; }
+
+/* FAQ */
+.faq-item { border: 1px solid rgba(13,17,23,0.08); border-radius: 12px; overflow: hidden; margin-bottom: 8px; }
+.faq-q { padding: 14px 18px; font-size: 14px; font-weight: 600; color: #0d1117; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.faq-q::after { content: '+'; font-size: 18px; color: #b45309; font-weight: 400; flex-shrink: 0; }
+details[open] .faq-q::after { content: '−'; }
+.faq-a { padding: 12px 18px 14px; font-size: 13.5px; color: rgba(13,17,23,0.65); line-height: 1.75; margin: 0; border-top: 1px solid rgba(13,17,23,0.06); }
+
+/* CTA */
+.cta-block {
+  background: linear-gradient(135deg, #1c1208, #2d1a04);
+  border-radius: 18px; padding: 28px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 20px; flex-wrap: wrap; position: relative; overflow: hidden;
+}
+.cta-block::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 50% 80% at 95% 10%, rgba(180,83,9,0.25), transparent 55%);
+}
+.cta-text { position: relative; z-index: 1; }
+.cta-title { font-size: 17px; font-weight: 800; color: #fff; margin-bottom: 7px; }
+.cta-desc { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.65; margin: 0; max-width: 500px; }
+.cta-btn { position: relative; z-index: 1; padding: 12px 26px; background: #b45309; color: #fff; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
+.cta-btn:hover { background: #92400e; text-decoration: none; }
+
+/* Sidebar */
+.page-sidebar { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 88px; }
+.sidebar-card { background: #fff; border: 1px solid rgba(13,17,23,0.09); border-radius: 16px; overflow: hidden; }
+.sc-title { font-size: 13px; font-weight: 700; color: #0d1117; padding: 14px 18px 10px; border-bottom: 1px solid rgba(13,17,23,0.07); }
+.sc-links { padding: 6px 0; }
+.sc-link { display: block; padding: 8px 18px; font-size: 13px; color: rgba(13,17,23,0.7); text-decoration: none; transition: background 0.12s, color 0.12s; }
+.sc-link:hover { background: rgba(180,83,9,0.04); color: #b45309; text-decoration: none; }
+.sc-link.active { background: rgba(180,83,9,0.07); color: #b45309; font-weight: 700; }
+
+.highlight-card .sc-title { background: rgba(251,191,36,0.1); }
+.key-data { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(13,17,23,0.07); }
+.kd-item { background: #fff; padding: 14px 12px; text-align: center; }
+.kd-val { font-size: 20px; font-weight: 900; color: #b45309; margin-bottom: 4px; }
+.kd-label { font-size: 11px; color: rgba(13,17,23,0.45); line-height: 1.4; }
+</style>

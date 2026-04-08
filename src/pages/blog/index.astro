@@ -1,0 +1,327 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PostCard from "@/components/PostCard.astro";
+import BlogInternalHub from "@/components/BlogInternalHub.astro";
+import Pagination from "@/components/Pagination.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import RelatedToolsCard from "@/components/RelatedToolsCard.astro";
+import { categoryMeta } from "@/data/categoryMeta";
+import { withSiteTitle } from "@/utils/seo";
+import { getAllPublishedPosts, getAllCategories } from "@/utils/content";
+import { getPageSlice } from "@/utils/pagination";
+
+const PAGE_SIZE = 12;
+const posts = await getAllPublishedPosts();
+const categories = getAllCategories(posts);
+
+const page = 1;
+const { items, totalPages } = getPageSlice(posts, page, PAGE_SIZE);
+
+// Featured = first 3
+const featured = posts.slice(0, 3);
+// Rest for grid
+const gridItems = items.slice(0, PAGE_SIZE);
+---
+
+<BaseLayout
+  title={withSiteTitle("移民新闻 | 政策解读与申请指南")}
+  description="最新加拿大移民政策解读、省提名动态、签证指南与申请攻略，全面覆盖移民项目与签证类别。"
+  canonical="https://cachinavisa.com/blog/"
+>
+  <!-- Page header -->
+  <div class="blog-hero">
+    <div class="blog-hero-noise"></div>
+    <div class="blog-hero-content">
+      <div class="blog-hero-badge">
+        <span class="bhb-dot"></span>
+        移民新闻 & 政策解读
+      </div>
+      <h1 class="blog-hero-title">移民资讯 &amp; 申请指南</h1>
+      <p class="blog-hero-desc">覆盖联邦快速通道、省提名、签证申请与境内事务，持续更新最新政策解读与实操攻略。</p>
+      <div class="blog-hero-meta">
+        <span class="bhm-item">📄 {posts.length}+ 篇文章</span>
+        <span class="bhm-sep">·</span>
+        <span class="bhm-item">🔄 持续更新</span>
+        <span class="bhm-sep">·</span>
+        <span class="bhm-item">🇨🇦 加拿大移民专题</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="blog-layout">
+    <!-- Main content -->
+    <main class="blog-main">
+      <!-- Featured posts -->
+      <section class="featured-section">
+        <h2 class="section-label">最新文章</h2>
+        <div class="featured-grid">
+          {featured.map((p) => <PostCard post={p} variant="card" />)}
+        </div>
+      </section>
+
+      <!-- Divider -->
+      <div class="content-divider"></div>
+
+      <!-- All posts list -->
+      <section>
+        <h2 class="section-label">全部文章</h2>
+        <div class="posts-list">
+          {gridItems.map((p) => <PostCard post={p} variant="list" />)}
+        </div>
+        <div class="pagination-wrap">
+          <Pagination base="/blog/" page={page} totalPages={totalPages} />
+        </div>
+      </section>
+
+      <section class="blog-hub-section" aria-labelledby="blog-hub-h">
+        <h2 id="blog-hub-h" class="visually-hidden">站内导航与移民服务入口</h2>
+        <BlogInternalHub />
+      </section>
+    </main>
+
+    <!-- Sidebar -->
+    <aside class="blog-sidebar">
+      <!-- Contact -->
+      <ContactCard title="免费移民评估" />
+      <RelatedToolsCard
+        title="相关打分工具"
+        subtitle="如果文章提到 CRS / EOI / 省提名，先把分数算一遍。"
+        items={[
+          { href: "/tools/crs-calculator/", label: "联邦 CRS 计算器", desc: "EE / CEC / FSW 的基础自测工具。" },
+          { href: "/tools/oinp-calculator/", label: "安省 OINP · EOI", desc: "安省雇主类 / 留学类常见入口。" },
+          { href: "/tools/bc-pnp-calculator/", label: "BC SIRS 计算器", desc: "BC 技术移民常用分值预估。" },
+          { href: "/tools/aaip-calculator/", label: "AAIP Worker EOI", desc: "阿省相关路径的分值自测。" },
+        ]}
+        footerHref="/tools/"
+        footerLabel="进入全部打分工具"
+      />
+
+      <!-- Category filter -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">文章分类</div>
+        <div class="cat-list">
+          <a class="cat-item active-cat" href="/blog/">
+            <span>全部文章</span>
+            <span class="cat-count">{posts.length}</span>
+          </a>
+          {categories.map((slug) => {
+            const count = posts.filter(p => p.data.category === slug).length;
+            return (
+              <a class="cat-item" href={`/category/${slug}/`}>
+                <span>{categoryMeta[slug]?.title ?? slug}</span>
+                <span class="cat-count">{count}</span>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+
+      <!-- Popular tags -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">热门标签</div>
+        <div class="tag-cloud">
+          {Array.from(new Set(posts.flatMap(p => p.data.tags ?? []))).slice(0, 48).map((tag) => (
+            <a class="sidebar-tag" href={`/tag/${encodeURIComponent(tag)}/`}>#{tag}</a>
+          ))}
+        </div>
+      </div>
+
+      <!-- Quick links -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">快速入口</div>
+        <div class="quick-links">
+          {[
+            { href: "/projects/", label: "移民项目总览" },
+            { href: "/visa/", label: "签证申请指南" },
+            { href: "/visa/french-mobility-work-permit/", label: "法语流动工签（专题）" },
+            { href: "/visa/c11-work-permit/", label: "C11 重大利益工签（专题）" },
+            { href: "/category/work-permit-lmia/", label: "工签 / LMIA 类文章" },
+            { href: "/inland/", label: "境内身份事务" },
+            { href: "/immigration/guide/", label: "新手必读" },
+            { href: "/tools/", label: "CRS / 省提名打分工具" },
+            { href: "/school/", label: "免费申请学校" },
+            { href: "/faq/", label: "常见问题" },
+            { href: "/baike/", label: "移民百科" },
+            { href: "/search/", label: "站内搜索" },
+            { href: "/contact/", label: "免费咨询" },
+          ].map(l => (
+            <a class="quick-link" href={l.href}>{l.label} →</a>
+          ))}
+        </div>
+      </div>
+
+      <div class="sidebar-card sidebar-card--hub">
+        <BlogInternalHub compact heading="服务与项目（简）" />
+      </div>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+/* ── HERO ─────────────────────────────────────────────────────────── */
+.blog-hero {
+  background: linear-gradient(135deg, #0a1628 0%, #0f2040 60%, #1a0828 100%);
+  border-radius: 20px;
+  padding: 52px 44px;
+  margin-bottom: 28px;
+  position: relative;
+  overflow: hidden;
+}
+.blog-hero-noise {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 60% at 100% 0%, rgba(217,45,32,0.15) 0%, transparent 65%),
+              radial-gradient(ellipse 50% 70% at 0% 100%, rgba(26,86,196,0.1) 0%, transparent 65%);
+  pointer-events: none;
+}
+.blog-hero-content { position: relative; z-index: 1; max-width: 640px; }
+.blog-hero-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 6px 14px; border-radius: 999px;
+  background: rgba(217,45,32,0.18); border: 1px solid rgba(217,45,32,0.3);
+  color: #ff8a7a; font-size: 12px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 16px;
+}
+.bhb-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #f87171; animation: pulse-trust 2s ease infinite;
+}
+.blog-hero-title {
+  font-size: clamp(26px, 4vw, 38px);
+  font-weight: 900; color: #fff;
+  margin: 0 0 12px; letter-spacing: -0.025em; line-height: 1.2;
+}
+.blog-hero-desc {
+  font-size: 15px; color: rgba(255,255,255,0.65);
+  margin: 0 0 20px; line-height: 1.75;
+}
+.blog-hero-meta {
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+}
+.bhm-item { font-size: 13px; color: rgba(255,255,255,0.5); }
+.bhm-sep  { color: rgba(255,255,255,0.2); }
+@keyframes pulse-trust {
+  0%,100% { opacity: 1; } 50% { opacity: 0.4; }
+}
+
+/* ── LAYOUT ──────────────────────────────────────────────────────── */
+.blog-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: start;
+}
+@media (min-width: 960px) {
+  .blog-layout { grid-template-columns: 1fr 300px; }
+}
+
+/* ── MAIN ────────────────────────────────────────────────────────── */
+.section-label {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(26,29,35,0.45);
+  margin: 0 0 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(26,29,35,0.08);
+}
+.featured-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+@media (min-width: 640px) {
+  .featured-grid { grid-template-columns: repeat(3, 1fr); }
+}
+.content-divider {
+  height: 1px;
+  background: rgba(26,29,35,0.08);
+  margin: 28px 0;
+}
+.posts-list {
+  display: grid;
+  gap: 12px;
+}
+.pagination-wrap { margin-top: 24px; }
+
+.blog-hub-section { margin-top: 8px; }
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+.sidebar-card--hub { padding: 0; overflow: hidden; }
+.sidebar-card--hub :global(.bih) { border: none; border-radius: 0; margin: 0; }
+
+/* ── SIDEBAR ─────────────────────────────────────────────────────── */
+.blog-sidebar {
+  display: grid;
+  gap: 16px;
+  position: sticky;
+  top: 88px;
+}
+.sidebar-card {
+  background: #fff;
+  border: 1px solid rgba(13,17,23,0.09);
+  border-radius: 16px;
+  padding: 18px 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.sidebar-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0d1117;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(13,17,23,0.08);
+}
+
+/* Cat list */
+.cat-list { display: flex; flex-direction: column; gap: 2px; }
+.cat-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  color: #374151;
+  text-decoration: none;
+  transition: background 0.12s, color 0.12s;
+}
+.cat-item:hover { background: rgba(217,45,32,0.06); color: #d92d20; text-decoration: none; }
+.active-cat { background: rgba(217,45,32,0.07); color: #d92d20; font-weight: 600; }
+.cat-count {
+  font-size: 12px;
+  color: rgba(26,29,35,0.4);
+  background: rgba(26,29,35,0.06);
+  padding: 1px 7px;
+  border-radius: 999px;
+}
+
+/* Tag cloud */
+.tag-cloud { display: flex; flex-wrap: wrap; gap: 6px; }
+.sidebar-tag {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(26,29,35,0.12);
+  color: #6b7280;
+  text-decoration: none;
+  transition: border-color 0.15s, color 0.15s;
+}
+.sidebar-tag:hover { border-color: #d92d20; color: #d92d20; text-decoration: none; }
+
+/* Quick links */
+.quick-links { display: flex; flex-direction: column; gap: 4px; }
+.quick-link {
+  display: block;
+  padding: 8px 10px;
+  font-size: 13.5px;
+  color: #374151;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: background 0.12s, color 0.12s;
+}
+.quick-link:hover { background: rgba(217,45,32,0.06); color: #d92d20; text-decoration: none; }
+</style>

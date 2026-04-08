@@ -1,0 +1,227 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "加拿大签证", href: "/visa/" },
+  { name: "续签 / 延期 / 境内转换", href: "/visa/extend/" },
+];
+---
+<BaseLayout
+  title={withSiteTitle("加拿大签证延期·续签·境内身份转换 2025 | 桥梁身份·身份恢复")}
+  description="详解加拿大临时居民签证延期、续签时间线（到期前90天）、桥梁身份（Maintained Status）、身份恢复（Restoration）及境内身份转换流程，附费用与FAQ。"
+  canonical="https://cachinavisa.com/visa/extend/"
+>
+  <Breadcrumbs items={breadcrumbs} />
+  <div class="grid" style="margin-top:16px">
+    <article class="content-card">
+      <div class="page-header">
+        <div class="page-kicker">境内延期 · 续签 · 转换</div>
+        <h1 class="page-h1">签证延期、续签与境内身份转换全攻略</h1>
+        <p class="page-intro">许多在加拿大境内的临时居民需要在现有签证到期前申请延期或转换身份。了解正确的时间线、维持合法身份的规则（Maintained Status）以及各类身份转换的可行路径，是保持在加拿大合规停留的关键。</p>
+      </div>
+
+      <div class="content-sections">
+
+        <div class="section-block">
+          <h2>续签/延期的时间线</h2>
+          <p>关键原则：<strong>在当前身份许可到期前提交申请</strong>，以确保合法身份的连续性。</p>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-card-label">建议提交时间</div>
+              <div class="info-card-value">到期前 90 天（最迟）</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">最佳提交时间</div>
+              <div class="info-card-value">到期前 4–6 个月（给处理留余量）</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">访客延期申请费</div>
+              <div class="info-card-value">$100 CAD</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">学签/工签续签费</div>
+              <div class="info-card-value">$150 / $155 CAD（按类别）</div>
+            </div>
+          </div>
+          <div class="tip-box" style="margin-top:12px">注意：不同类别的临时居民续签时间要求不同。访客最好提前90天；学签/工签建议提前4-6个月，因为材料准备（学校证明、雇主文件等）通常需要更多时间。</div>
+        </div>
+
+        <div class="section-block">
+          <h2>维持身份（Maintained Status / Implied Status）</h2>
+          <p>如果您在当前身份到期前已提交续签或转换申请，在IRCC做出决定之前，您的身份将自动维持（即使许可证已过期）。这称为"维持身份"（Maintained Status，又称 Implied Status）。</p>
+          <ul class="req-list">
+            <li>必须在当前许可证到期前提交申请，才能享有维持身份保护</li>
+            <li>在维持身份期间，可继续按原许可证授权的条件工作/学习/停留</li>
+            <li>维持身份期间出境加拿大，将无法凭原身份重新入境（需先获批新的许可证）</li>
+            <li>IRCC决定期间，您处于合法停留状态，不属于"过期停留（Overstay）"</li>
+            <li>维持身份不会影响未来申请记录，但长期处于此状态可能影响移民路径的CRS分数计算</li>
+          </ul>
+          <div class="tip-box" style="margin-top:12px">重要：维持身份期间如果出境加拿大，需要持有有效TRV签证或eTA才能重新入境，且原维持身份自动失效。出境前务必确认入境资格。</div>
+        </div>
+
+        <div class="section-block">
+          <h2>身份恢复（Restoration of Status）</h2>
+          <p>如果您的身份已过期（未在到期前提交续签申请），在某些条件下可申请恢复身份，而无需离境：</p>
+          <ul class="req-list">
+            <li>身份恢复申请必须在许可证到期后90天内提交</li>
+            <li>超过90天则无法境内恢复，需离境后重新申请入境签证</li>
+            <li>身份恢复申请费：$229 CAD（含$229恢复费，通常还需同时缴纳续签费）</li>
+            <li>申请时需解释身份过期的原因（如疾病、紧急情况等），并证明期间维持合规生活</li>
+            <li>在恢复申请等待期间，不得工作或就读（除非原身份有特殊授权）</li>
+            <li>恢复申请不保证批准，IRCC会综合评估申请人的整体记录</li>
+          </ul>
+        </div>
+
+        <div class="section-block">
+          <h2>境内身份转换</h2>
+          <p>在加拿大境内可以申请从一种身份转换为另一种身份，无需离境：</p>
+          <ul class="req-list">
+            <li><strong>访客转学签</strong>：获得DLI录取通知书后，可境内申请学签；批准前不可就读</li>
+            <li><strong>访客转工签</strong>：需先获得雇主支持（LMIA或IMP豁免），境内递交工签申请</li>
+            <li><strong>学签转工签（PGWP）</strong>：毕业后申请PGWP，可在维持身份或旅行证件有效期内递交</li>
+            <li><strong>工签转学签</strong>：获得录取通知书后申请学签，可与工签同期递交</li>
+            <li><strong>访客转省提名/快速通道PR</strong>：可在访客身份下提交PR申请，获批前维持合法身份</li>
+          </ul>
+          <div class="tip-box" style="margin-top:12px">境内转换不等于"无缝"切换——在新身份批准前，您只能按原身份授权的条件行事。如原身份为访客，即使工签申请在审中，也不得工作。</div>
+        </div>
+
+        <div class="section-block">
+          <h2>访客停留延期</h2>
+          <p>希望延长访客停留时间（超过边境官员最初授权的时长）的申请人：</p>
+          <ul class="req-list">
+            <li>在授权停留到期前（通常为入境印章日期起6个月）提交延期申请</li>
+            <li>在线申请，填写 IMM 5708（临时居民延期申请），附上访问目的、资金证明及约束力说明</li>
+            <li>申请费：$100 CAD</li>
+            <li>如申请成功，IRCC会签发新的记录卡（Record of Decision）说明授权停留期</li>
+            <li>延期通常最多每次延长6个月，且累计停留时间较长时审批更严格</li>
+          </ul>
+        </div>
+
+        <div class="section-block">
+          <h2>各类申请费用汇总</h2>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-card-label">访客身份延期</div>
+              <div class="info-card-value">$100 CAD</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">学签续签/申请</div>
+              <div class="info-card-value">$150 CAD</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">工签续签/申请</div>
+              <div class="info-card-value">$155 CAD</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">PGWP申请</div>
+              <div class="info-card-value">$255 CAD</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">身份恢复费</div>
+              <div class="info-card-value">$229 CAD + 续签费</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">境内处理时间</div>
+              <div class="info-card-value">6–20 周（因类别和时期而异）</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2>常见问题 FAQ</h2>
+          <details class="faq-item">
+            <summary class="faq-q">我的访客授权到期了但还在加拿大，会被遣返吗？</summary>
+            <p class="faq-a">如果您在到期前提交了延期申请，处于维持身份（Maintained Status）期间，不会被视为非法居留。但如果您在到期后既未提交申请也未离境，则属于违规停留（Overstay），需在90天内申请身份恢复，否则需要离境。建议立即联系专业顾问评估选项。</p>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">学签续签被拒怎么办？</summary>
+            <p class="faq-a">学签续签被拒后，您将处于非法身份（除非仍在90天身份恢复窗口内）。可以：1）在90天内申请身份恢复，同时补充被拒原因对应的新材料；2）离境加拿大，在海外重新申请学签；3）如符合其他身份要求（工签/PR），申请身份转换。建议立即咨询持牌顾问（RCIC）分析拒签信中的具体原因。</p>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">维持身份期间可以出境去美国再回来吗？</summary>
+            <p class="faq-a">不建议。维持身份（Implied Status）在您离境时自动失效。重新入境加拿大时，边境官员可能拒绝您入境，或给予较短的停留授权。如必须出境，需先确认您持有有效TRV签证（或eTA），且应在新许可证批准后再出行。</p>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">身份过期超过90天还有选项吗？</summary>
+            <p class="faq-a">如过期超过90天，境内身份恢复途径已关闭。此时必须离开加拿大（自愿离境比被遣返记录更好），并在境外重新申请访客签证/学签/工签。离境前建议咨询顾问，了解过期停留对未来申请的影响，并准备相应的解释材料。</p>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">从访客转换为工签，在工签批准前可以开始工作吗？</summary>
+            <p class="faq-a">不可以。工签申请提交后，在获批之前不得以任何原因为雇主工作（包括受薪或无薪）。如在工签申请审查期间开始工作，属于违反加拿大移民法，可能导致工签申请被拒并影响未来申请记录。IRCC对此审查较为严格。</p>
+          </details>
+        </div>
+
+      </div>
+      <div class="page-share">
+        <ShareBar url="https://cachinavisa.com/visa/extend/" title={"加拿大签证延期·续签·境内身份转换 2025 | 桥梁身份·身份恢复"} />
+      </div>
+
+
+      <div class="cta-inline">
+        <div class="cta-text">需要评估您当前的身份状态？</div>
+        <a class="cta-btn" href="/contact/">免费评估咨询 →</a>
+      </div>
+    </article>
+
+    <aside class="sidebar-stack">
+      <ContactCard />
+      <div class="sidebar-nav-card">
+        <div class="snc-title">签证子栏目</div>
+        <div class="snc-links">
+          <a class="snc-link" href="/visa/visitor/">访问签 / 旅游签</a>
+          <a class="snc-link" href="/visa/family-visit/">探亲签证</a>
+          <a class="snc-link" href="/visa/super-visa/">超级签证（父母/祖父母）</a>
+          <a class="snc-link" href="/visa/study-permit/">学习许可（学签）</a>
+          <a class="snc-link" href="/visa/work-permit/">工作签证（工签）</a>
+          <a class="snc-link" href="/visa/french-mobility-work-permit/">法语流动工签</a>
+          <a class="snc-link" href="/visa/c11-work-permit/">C11 重大利益工签</a>
+          <a class="snc-link active" href="/visa/extend/">续签 / 延期 / 境内转换</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+.grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 920px) { .grid { grid-template-columns: 1fr 300px; align-items: start; } }
+.content-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 16px; overflow: hidden; }
+.page-header { padding: 28px 28px 24px; border-bottom: 1px solid rgba(26,29,35,0.08); background: linear-gradient(135deg, #fafbff, #fff); }
+.page-kicker { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #d92d20; margin-bottom: 8px; }
+.page-h1 { font-size: clamp(22px, 4vw, 30px); font-weight: 800; color: #1a1d23; margin: 0 0 12px; letter-spacing: -0.02em; }
+.page-intro { font-size: 15px; color: rgba(26,29,35,0.62); line-height: 1.7; margin: 0; }
+.content-sections { padding: 24px 28px; display: grid; gap: 32px; }
+.section-block h2 { font-size: 18px; font-weight: 750; color: #1a1d23; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 2px solid rgba(217,45,32,0.12); }
+.section-block p { font-size: 14px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0 0 12px; }
+.req-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.req-list li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; background: rgba(26,29,35,0.025); border-radius: 10px; font-size: 14px; color: rgba(26,29,35,0.75); line-height: 1.55; }
+.req-list li::before { content: "✓"; color: #d92d20; font-weight: 700; flex-shrink: 0; }
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.info-card { padding: 14px 16px; background: rgba(26,29,35,0.03); border-radius: 12px; border: 1px solid rgba(26,29,35,0.07); }
+.info-card-label { font-size: 12px; color: rgba(26,29,35,0.45); margin-bottom: 4px; }
+.info-card-value { font-size: 14px; font-weight: 600; color: #1a1d23; }
+.tip-box { padding: 14px 16px; background: rgba(217,45,32,0.05); border-left: 3px solid #d92d20; border-radius: 0 10px 10px 0; font-size: 13px; color: rgba(26,29,35,0.7); line-height: 1.65; }
+.faq-item { border: 1px solid rgba(26,29,35,0.09); border-radius: 10px; overflow: hidden; }
+.faq-item + .faq-item { margin-top: 8px; }
+.faq-q { padding: 13px 16px; font-weight: 650; font-size: 14px; cursor: pointer; list-style: none; display: flex; justify-content: space-between; color: #1a1d23; }
+.faq-q::after { content: "+"; font-size: 18px; color: rgba(26,29,35,0.4); }
+details[open] .faq-q::after { content: "−"; }
+.faq-q::-webkit-details-marker { display: none; }
+.faq-a { padding: 0 16px 13px; font-size: 13px; color: rgba(26,29,35,0.65); line-height: 1.7; }
+.cta-inline { margin: 0 28px 28px; padding: 20px 24px; background: linear-gradient(135deg, #0a1628, #0f1f38); border-radius: 14px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.cta-text { font-size: 15px; font-weight: 700; color: #fff; }
+.cta-btn { display: inline-flex; padding: 10px 20px; border-radius: 10px; background: #d92d20; color: #fff; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; }
+.cta-btn:hover { background: #b52418; text-decoration: none; }
+.sidebar-stack { display: grid; gap: 16px; position: sticky; top: 80px; }
+.sidebar-nav-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 14px; padding: 18px 20px; }
+.snc-title { font-size: 14px; font-weight: 700; color: #1a1d23; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(26,29,35,0.08); }
+.snc-links { display: flex; flex-direction: column; gap: 2px; }
+.snc-link { display: block; padding: 8px 10px; font-size: 13.5px; color: #374151; text-decoration: none; border-radius: 8px; }
+.snc-link:hover { background: rgba(217,45,32,0.06); color: #d92d20; text-decoration: none; }
+.snc-link.active { background: rgba(217,45,32,0.07); color: #d92d20; font-weight: 600; }
+</style>

@@ -1,0 +1,97 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import Disclaimer from "@/components/Disclaimer.astro";
+import FaqBlock from "@/components/FaqBlock.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { formatDateCN } from "@/utils/dates";
+import { withSiteTitle } from "@/utils/seo";
+import { getAllPublishedServices } from "@/utils/content";
+
+export async function getStaticPaths() {
+  const services = await getAllPublishedServices();
+  return services.map((s) => ({ params: { slug: s.slug } }));
+}
+
+const services = await getAllPublishedServices();
+const service = services.find((s) => s.slug === Astro.params.slug);
+if (!service) throw new Error(`Service not found: ${Astro.params.slug}`);
+
+const { Content } = await service.render();
+const publish = new Date(service.data.publishDate);
+const updated = service.data.updatedDate ? new Date(service.data.updatedDate) : undefined;
+const canonical =
+  service.data.canonical ?? new URL(`/services/${service.slug}/`, site.url).toString();
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "服务", href: "/services/" },
+  { name: service.data.title, href: `/services/${service.slug}/` },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+
+const faqLd =
+  service.data.faq?.length
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: service.data.faq.map((i) => ({
+          "@type": "Question",
+          name: i.question,
+          acceptedAnswer: { "@type": "Answer", text: i.answer },
+        })),
+      }
+    : null;
+---
+
+<BaseLayout
+  title={withSiteTitle(service.data.title)}
+  description={service.data.description}
+  canonical={canonical}
+>
+  <JsonLd data={breadcrumbLd} />
+  {faqLd ? <JsonLd data={faqLd} /> : null}
+
+  <div class="grid">
+    <article class="card">
+      <div class="card-inner">
+        <Breadcrumbs items={breadcrumbs} />
+        <div style="margin-top:10px" class="kicker">服务</div>
+        <h1 class="h1" style="margin-top:6px">{service.data.title}</h1>
+        <div class="meta">
+          <span class="pill">发布：{formatDateCN(publish)}</span>
+          {updated ? <span class="pill">更新：{formatDateCN(updated)}</span> : null}
+          {service.data.tags?.map((t) => <span class="pill">#{t}</span>)}
+        </div>
+        <p class="muted" style="margin:14px 0 0">{service.data.excerpt}</p>
+        <div class="hr"></div>
+        <div class="prose">
+          <Content />
+        </div>
+      </div>
+    </article>
+
+    <aside class="list">
+      <ContactCard title="获取免费服务评估" />
+      {service.data.faq?.length ? <FaqBlock items={service.data.faq} /> : null}
+      <Disclaimer />
+    </aside>
+  </div>
+
+      <div class="page-share">
+        <ShareBar url={canonical} title={service.data.title} />
+      </div>
+</BaseLayout>

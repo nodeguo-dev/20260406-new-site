@@ -1,0 +1,98 @@
+---
+import "@/styles/toronto-life-guides.css";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import TorontoLifeSubNav from "@/components/guides/TorontoLifeSubNav.astro";
+import TorontoLifePartnerBand from "@/components/guides/TorontoLifePartnerBand.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+import { torontoLifeHubBandA } from "@/data/torontoLifeSponsors";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "多伦多生活指南", href: "/guides/toronto-life/" },
+  { name: "商务合作", href: "/guides/toronto-life/partners/" },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("多伦多生活指南 · 商务合作与广告位说明")}
+  description="常春藤多伦多生活专题：合作推广位、外链投放与品牌曝光合作说明。面向 GTA 本地合规服务商。"
+  canonical="https://cachinavisa.com/guides/toronto-life/partners/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <div class="container tl-page">
+    <Breadcrumbs items={breadcrumbs} />
+
+    <header class="tl-hero">
+      <p class="tl-kicker">多伦多生活子站</p>
+      <h1 class="tl-h1">商务合作 · 广告与外链</h1>
+      <p class="tl-lead">
+        本专题在总览页与各分册（租房、交通、医疗、教育、财税、市政）内设有<strong>多组「合作推广」卡片带</strong>，支持品牌曝光、落地页外链与软文定制。所有商业展示均会标注<strong>赞助/合作推广</strong>，付费外链默认使用
+        <code class="tl-code-inline">rel=&quot;sponsored&quot;</code> 等符合搜索引擎规范的属性。
+      </p>
+      <TorontoLifeSubNav activeKey="partners" />
+    </header>
+
+    <div class="tl-prose">
+      <h2>适合哪类合作方？</h2>
+      <ul>
+        <li>持牌地产经纪团队、合规租房/民宿平台</li>
+        <li>保险（车险、房屋险、健康险补充）、电讯、银行新移民专案</li>
+        <li>搬家、家政、装修、园艺、驾校、培训、日托等本地生活服务</li>
+        <li>希望获取华语新移民/留学生流量的<strong>合规</strong>机构（须自行满足行业监管与广告披露）</li>
+      </ul>
+
+      <h2>投放形式（可组合）</h2>
+      <ul>
+        <li><strong>卡片位</strong>：出现在总览与各分册的固定带区，可替换标题、一句介绍与外链。</li>
+        <li><strong>软文/指南植入</strong>：在相关分册正文中以「服务提示」「读者可选」等形式自然出现（仍须标注合作）。</li>
+        <li><strong>分类博客</strong>：<code class="tl-code-inline">toronto-life</code> 分类下的赞助稿件（由编辑部审核事实与合规表述）。</li>
+      </ul>
+
+      <h2>价格与档期</h2>
+      <p>
+        具体报价随位置、排期、是否独家行业而变动。请通过
+        <a href="/contact/?topic=toronto-life-sponsor">联系表单</a>
+        或邮件 <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a> 说明贵司业务、目标页面与预算区间，我们会在 1–2 个工作日内回复刊例与空位。
+      </p>
+
+      <h2>下方为总览页同款展示带（示例结构）</h2>
+      <p class="tl-muted-small">实际投放时，可将「虚位以待」替换为您的品牌名、介绍与官网链接（在 <code class="tl-code-inline">src/data/torontoLifeSponsors.ts</code> 中配置 <code class="tl-code-inline">active: true</code> 与 <code class="tl-code-inline">href</code>）。</p>
+    </div>
+
+    <TorontoLifePartnerBand band={torontoLifeHubBandA} bandId="partners-demo" />
+
+    <aside class="tl-disclaimer" role="note">
+      <strong>合规提示：</strong>合作方须自行确保广告内容真实、不侵犯第三方权益，并符合加拿大相关行业监管。常春藤保留拒登与下架的权利。
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+  .tl-code-inline {
+    font-size: 0.88em;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: rgba(26, 29, 35, 0.07);
+    font-family: ui-monospace, monospace;
+  }
+  .tl-muted-small {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-top: -6px;
+  }
+</style>

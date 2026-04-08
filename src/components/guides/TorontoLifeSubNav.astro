@@ -1,0 +1,45 @@
+---
+import { torontoLifeNav } from "@/data/torontoLifeNav";
+
+type Props = { activeKey: string };
+const { activeKey } = Astro.props;
+---
+
+<nav class="tl-nav-pills" aria-label="多伦多生活指南子栏目">
+  {torontoLifeNav.map((item) => (
+    <a class:list={["tl-pill", item.key === activeKey && "is-active"]} href={item.href}>
+      {item.label}
+    </a>
+  ))}
+</nav>
+
+<style>
+  .tl-nav-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  .tl-pill {
+    display: inline-flex;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    color: var(--text-2);
+    text-decoration: none;
+    background: #fff;
+  }
+  .tl-pill:hover {
+    border-color: rgba(217, 45, 32, 0.3);
+    color: var(--red);
+    text-decoration: none;
+  }
+  .tl-pill.is-active {
+    background: rgba(217, 45, 32, 0.08);
+    border-color: rgba(217, 45, 32, 0.25);
+    color: var(--red);
+  }
+</style>

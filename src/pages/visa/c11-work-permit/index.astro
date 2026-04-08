@@ -1,0 +1,226 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "加拿大签证", href: "/visa/" },
+  { name: "C11 重大利益工签（R205(a)）", href: "/visa/c11-work-permit/" },
+];
+
+const faqItems = [
+  {
+    q: "C11 和企业家签证是一回事吗？",
+    a: "业内常说的「C11」一般指移民法规框架下、国际流动项目中基于「对加拿大有重大利益（significant benefit）」理由的工签考量路径，常与创业、自雇或独特专业贡献相关。它不是一张单独的「签证贴纸名称」，而是审批时所依据的法律理由类别；是否批签取决于个案是否能说服签证官：你的工作将带来重大经济、社会或文化利益。具体与 SUV、省提名企业家等 PR 项目可并行咨询，但规则不同。",
+  },
+  {
+    q: "一定不需要 LMIA 吗？",
+    a: "在适用 R205(a) 且官员认可「重大利益」成立时，可免于 LMIA。但若材料无法证明 significant benefit，或官员认为应走 LMIA 路径，则可能被拒或要求补件。C11 类申请证据要求高，不是 LMIA 的「捷径替代品」。",
+  },
+  {
+    q: "哪些人较常被讨论走 C11？",
+    a: "典型讨论场景包括：计划在加拿大创业并已有清晰商业计划与资金安排的申请人；在某领域具备稀缺技能、能为加拿大带来明显经济或文化贡献的专业人士；部分自雇或合同性质但能对本地产业产生实质推动的项目。每一类都需量身整理证据链。",
+  },
+  {
+    q: "C11 工签能直接换 PR 吗？",
+    a: "工签本身是临时身份。持工签期间积累的经验、雇佣关系可能有助于后续走 CEC、省提名或其他经济类移民，但 C11 批签不等于自动获得 PR，需另符合 PR 项目条件。",
+  },
+];
+
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((i) => ({
+    "@type": "Question",
+    name: i.q,
+    acceptedAnswer: { "@type": "Answer", text: i.a },
+  })),
+};
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("C11 重大利益工签 | R205(a) 国际流动 · 创业与特殊贡献类")}
+  description="加拿大 C11 工签：基于 IRPR 国际流动 R205(a) 重大利益（significant benefit）的工签路径，常见于创业、自雇与特殊专业人才。材料要点与常见误区。"
+  canonical="https://cachinavisa.com/visa/c11-work-permit/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={faqLd} />
+  <Breadcrumbs items={breadcrumbs} />
+  <div class="grid" style="margin-top:16px">
+    <article class="content-card">
+      <div class="page-header">
+        <div class="page-kicker">国际流动项目 · Significant benefit · LMIA 豁免可能</div>
+        <h1 class="page-h1">C11 重大利益工签（R205(a)）</h1>
+        <p class="page-intro">
+          「C11」在实务中多指代依据《移民和难民保护条例》（IRPR）中<strong>国际流动项目</strong>、以<strong>对加拿大具有重大利益（significant benefit）</strong>为由、可能<strong>豁免 LMIA</strong>的一类工签审批思路（对应法规条款在实务与表格说明中常被归纳为 R205(a) 相关框架）。是否获批高度依赖<strong>个案论证</strong>：申请人须证明其工作将为加拿大公民或永久居民创造或维持显著的经济、社会或文化利益或机会。以下内容用于理解逻辑与准备方向，递交前请以
+          <a href="https://www.canada.ca/en/immigration-refugees-citizenship.html" target="_blank" rel="noopener noreferrer">IRCC</a>
+          及官方法规原文为准。
+        </p>
+      </div>
+
+      <div class="content-sections">
+        <div class="section-block">
+          <h2>签证官通常关注什么？</h2>
+          <ul class="req-list">
+            <li><strong>重大利益的可验证性</strong>——商业计划书、市场调研、投资与雇佣加拿大人/PR 的计划、税收与供应链贡献等。</li>
+            <li><strong>申请人资历与角色</strong>——教育、工作经验、过往创业或项目成果是否与在加拟开展活动直接相关。</li>
+            <li><strong>对本地劳动力市场的影响</strong>——为何该职位或活动在不发 LMIA 的情况下仍符合公共利益（例如独特技能、暂时性关键角色等）。</li>
+            <li><strong>合规与真实性</strong>——资金来源、企业注册、办公或运营安排是否清晰、可核查。</li>
+          </ul>
+          <div class="tip-box">若仅有一份模糊的商业想法、无资金与执行细节，很难满足「重大利益」标准。建议在做 C11 论证前与持牌顾问逐项对照官方指引。</div>
+        </div>
+
+        <div class="section-block">
+          <h2>材料与论证结构（常见做法）</h2>
+          <ol class="step-list">
+            <li><span class="step-text"><strong>执行摘要</strong>——用 1–2 页说明来加目的、业务性质、时间线与预期对加拿大的量化/质化利益。</span></li>
+            <li><span class="step-text"><strong>商业计划</strong>——市场分析、产品或服务、营销、财务预测、风险与合规（如行业许可）。</span></li>
+            <li><span class="step-text"><strong>个人证据</strong>——简历、学历认证、过往雇主信、奖项或项目证明。</span></li>
+            <li><span class="step-text"><strong>资金与股权</strong>——银行记录、投资安排、加拿大公司注册文件（如已设立）。</span></li>
+            <li><span class="step-text"><strong>工签申请表格与说明信</strong>——明确引用 IMP 与 significant benefit 逻辑，避免与事实矛盾的陈述。</span></li>
+          </ol>
+          <p class="bp-note">
+            商业计划书章节怎么写、常见误区与中英文<strong>大纲样例下载</strong>，见博文
+            <a href="/blog/c11-business-plan-guide/">《C11 重大利益工签：商业计划书怎么写？》</a>。
+          </p>
+        </div>
+
+        <div class="section-block">
+          <h2>与其他路径的对比</h2>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-card-label">LMIA 雇主工签</div>
+              <div class="info-card-value">由雇主完成招聘测试与 LMIA，适合已有确定雇主与岗位的雇员型申请。</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">法语流动工签</div>
+              <div class="info-card-value">须满足魁省外工作、岗位 TEER、法语听说（如 NCLC 5+）及雇主门户 C16 等 IRCC 条件，见 <a href="/visa/french-mobility-work-permit/">法语流动专题</a>。</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">ICT 内部调动</div>
+              <div class="info-card-value">需跨国公司与关联关系，与创业型 C11 论证材料侧重不同。</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">SUV 等 PR 项目</div>
+              <div class="info-card-value">永久居民申请与临时工签法律依据不同；可组合规划但不可混为一谈。</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2>常见问题（FAQ）</h2>
+          {faqItems.map((item) => (
+            <details class="faq-item">
+              <summary class="faq-q">{item.q}</summary>
+              <p class="faq-a">{item.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+
+      <div class="page-share">
+        <ShareBar
+          url="https://cachinavisa.com/visa/c11-work-permit/"
+          title={"C11 重大利益工签 | R205(a) 国际流动"}
+        />
+      </div>
+
+      <div class="cta-inline">
+        <div class="cta-text">创业或特殊人才类工签证据链复杂，建议先评估再走 C11 或 LMIA。</div>
+        <a class="cta-btn" href="/contact/">免费咨询 →</a>
+      </div>
+    </article>
+
+    <aside class="sidebar-stack">
+      <ContactCard title="工签与创业规划" />
+      <div class="sidebar-nav-card">
+        <div class="snc-title">签证子栏目</div>
+        <div class="snc-links">
+          <a class="snc-link" href="/visa/visitor/">访问签 / 旅游签</a>
+          <a class="snc-link" href="/visa/family-visit/">探亲签证</a>
+          <a class="snc-link" href="/visa/super-visa/">超级签证（父母/祖父母）</a>
+          <a class="snc-link" href="/visa/study-permit/">学习许可（学签）</a>
+          <a class="snc-link" href="/visa/work-permit/">工作签证（工签）总览</a>
+          <a class="snc-link" href="/visa/french-mobility-work-permit/">法语流动工签</a>
+          <a class="snc-link active" href="/visa/c11-work-permit/">C11 重大利益工签</a>
+          <a class="snc-link" href="/visa/extend/">续签 / 延期 / 境内转换</a>
+        </div>
+      </div>
+      <div class="sidebar-nav-card">
+        <div class="snc-title">相关项目</div>
+        <div class="snc-links">
+          <a class="snc-link" href="/blog/c11-business-plan-guide/">C11 商业计划书指南（含下载）</a>
+          <a class="snc-link" href="/projects/lmia-overview/">LMIA 雇主担保</a>
+          <a class="snc-link" href="/projects/lmia-exemptions/">LMIA 豁免类别</a>
+          <a class="snc-link" href="/visa/work-permit/">工签总览</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+  .grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+  @media (min-width: 920px) { .grid { grid-template-columns: 1fr 300px; align-items: start; } }
+  .content-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 16px; overflow: hidden; }
+  .page-header { padding: 28px 28px 24px; border-bottom: 1px solid rgba(26,29,35,0.08); background: linear-gradient(135deg, #fffaf8, #fff); }
+  .page-kicker { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #b45309; margin-bottom: 8px; }
+  .page-h1 { font-size: clamp(22px, 4vw, 30px); font-weight: 800; color: #1a1d23; margin: 0 0 12px; letter-spacing: -0.02em; }
+  .page-intro { font-size: 15px; color: rgba(26,29,35,0.62); line-height: 1.7; margin: 0; }
+  .page-intro a { color: #b45309; font-weight: 600; }
+  .content-sections { padding: 24px 28px; display: grid; gap: 32px; }
+  .section-block h2 { font-size: 18px; font-weight: 750; color: #1a1d23; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 2px solid rgba(180,83,9,0.18); }
+  .req-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  .req-list li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; background: rgba(26,29,35,0.025); border-radius: 10px; font-size: 14px; color: rgba(26,29,35,0.75); line-height: 1.55; }
+  .req-list li::before { content: "✓"; color: #b45309; font-weight: 700; flex-shrink: 0; }
+  .step-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; counter-reset: steps; }
+  .step-list li { display: flex; gap: 14px; align-items: flex-start; counter-increment: steps; }
+  .step-list li::before { content: counter(steps); display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #b45309; color: #fff; font-weight: 700; font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+  .step-text { font-size: 14px; color: rgba(26,29,35,0.75); line-height: 1.6; padding-top: 3px; }
+  .bp-note {
+    font-size: 14px; color: rgba(26,29,35,0.68); line-height: 1.65; margin: 14px 0 0;
+    padding: 12px 14px; border-radius: 10px; background: rgba(180,83,9,0.06);
+    border-left: 3px solid rgba(180,83,9,0.35);
+  }
+  .bp-note a { color: #b45309; font-weight: 650; }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .info-card { padding: 14px 16px; background: rgba(26,29,35,0.03); border-radius: 12px; border: 1px solid rgba(26,29,35,0.07); }
+  .info-card-label { font-size: 12px; color: rgba(26,29,35,0.45); margin-bottom: 4px; }
+  .info-card-value { font-size: 13px; font-weight: 600; color: #1a1d23; line-height: 1.5; }
+  .info-card-value a { color: #b45309; }
+  .tip-box { padding: 14px 16px; background: rgba(180,83,9,0.07); border-left: 3px solid #b45309; border-radius: 0 10px 10px 0; font-size: 13px; color: rgba(26,29,35,0.7); line-height: 1.65; margin-top: 12px; }
+  .faq-item { border: 1px solid rgba(26,29,35,0.09); border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+  .faq-q { padding: 13px 16px; font-weight: 650; font-size: 14px; cursor: pointer; list-style: none; display: flex; justify-content: space-between; color: #1a1d23; }
+  .faq-q::after { content: "+"; font-size: 18px; color: rgba(26,29,35,0.4); }
+  details[open] .faq-q::after { content: "−"; }
+  .faq-q::-webkit-details-marker { display: none; }
+  .faq-a { padding: 0 16px 13px; font-size: 13.5px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0; }
+  .cta-inline { margin: 0 28px 28px; padding: 20px 24px; background: linear-gradient(135deg, #0a1628, #1c1917); border-radius: 14px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .cta-text { font-size: 15px; font-weight: 700; color: #fff; }
+  .cta-btn { display: inline-flex; padding: 10px 20px; border-radius: 10px; background: #b45309; color: #fff; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; }
+  .cta-btn:hover { background: #92400e; text-decoration: none; }
+  .sidebar-stack { display: grid; gap: 16px; position: sticky; top: 80px; }
+  .sidebar-nav-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 14px; padding: 18px 20px; }
+  .snc-title { font-size: 14px; font-weight: 700; color: #1a1d23; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(26,29,35,0.08); }
+  .snc-links { display: flex; flex-direction: column; gap: 2px; }
+  .snc-link { display: block; padding: 8px 10px; font-size: 13.5px; color: #374151; text-decoration: none; border-radius: 8px; }
+  .snc-link:hover { background: rgba(180,83,9,0.08); color: #b45309; text-decoration: none; }
+  .snc-link.active { background: rgba(180,83,9,0.1); color: #b45309; font-weight: 600; }
+  .page-share { padding: 0 28px 16px; }
+</style>

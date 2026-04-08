@@ -1,0 +1,251 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import RelatedToolsCard from "@/components/RelatedToolsCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民项目", href: "/projects/" },
+  { name: "省提名项目", href: "/projects/provincial-nomination/" },
+  { name: "安大略省（OINP）", href: "/projects/province/ontario/" },
+];
+
+const streams = [
+  { name: "Human Capital Priorities（HCP）", desc: "IRCC直接从EE候选池中邀请符合条件的FSW或CEC类申请人，是OINP中最热门的类别之一，目前处于暂停阶段，定期重开。" },
+  { name: "Skilled Trades Stream", desc: "针对在特定技术工匠职业中有工作经验的申请人，需持有效工签且在安大略省有相关工作经验。" },
+  { name: "French-Speaking Skilled Worker", desc: "面向法语能力达CLB 7的技术工人，无需在安大略省有工作经验，适合法语移民群体。" },
+  { name: "Employer Job Offer（EJO）", desc: "持有安大略省雇主有效工作offer（需要LMIA或LMIA豁免的offer类型），雇主需满足OINP相关要求。" },
+  { name: "Masters Graduate Stream", desc: "在安大略省公立大学完成硕士学位并持有效学签/工签，满足语言和学位要求后可申请。" },
+  { name: "PhD Graduate Stream", desc: "在安大略省公立大学完成博士学位，处于在读或毕业后特定时间窗口内。" },
+  { name: "International Student with Job Offer", desc: "在安大略省指定院校毕业后，持有安大略省雇主的全职工作offer，申请省提名。" },
+];
+
+const faqItems = [
+  {
+    q: "OINP申请需要在安大略省工作吗？",
+    a: "不同类别要求不同。EJO类别和部分技术工人类别要求在安大略省有工作经验或offer；HCP类别（EE池）则不要求必须在安省工作，但申请人需在EE候选池中；国际学生类需在安省院校毕业后有当地offer。选错类别是最常见的问题，建议先逐一对照条件。"
+  },
+  {
+    q: "HCP类别分数线大概在哪里？",
+    a: "HCP直接从EE候选池中邀请人，但对CRS有最低要求（历史上在400分左右），同时还要求满足FSW或CEC的基本资格。安省发出的NOI（利益通知）不代表立即获得提名，你还需要在60天内向OINP正式申请省提名，再经OINP审核后才获得提名证书。"
+  },
+  {
+    q: "拿到OINP提名后，还要多久才能拿到PR？",
+    a: "HCP类走Enhanced通道：OINP提名后+600分CRS，基本可以立即获得ITA，之后60天内提交联邦PR申请，IRCC目标处理时间6个月。其他Base通道类别：直接向IRCC提交省提名PR申请，处理时间通常12–18个月。"
+  },
+  {
+    q: "OINP的雇主需要满足什么条件？",
+    a: "雇主必须是安大略省注册的合法企业，并非所有雇主都符合资格。通常要求：企业在安大略省运营超过一定年限，offer是永久全职职位，工资符合该职位的市场工资标准。雇主需要提交一份支持信（Support letter），说明企业情况和为何为境外申请人提名。"
+  },
+  {
+    q: "国际学生类需要毕业多久才能申请？",
+    a: "一般要求在毕业后的特定时间窗口内申请，不同类别有不同时间限制（通常是2年内），且申请时仍需持有效加拿大身份（学签、PGWP或其他工签）。具体时间要求以OINP官网当前政策为准，建议在毕业前就开始规划。"
+  },
+  {
+    q: "OINP处于暂停状态怎么办？",
+    a: "安大略省各类别经常有开放和暂停的情况，且重开时间难以预测。建议多关注其他省份的提名机会，同时继续提升EE分数，一旦HCP类重开可立即申请。也可以看看BC省、Alberta等处于开放状态的省份是否有适合你的类别。"
+  },
+];
+
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((i) => ({
+    "@type": "Question",
+    name: i.q,
+    acceptedAnswer: { "@type": "Answer", text: i.a },
+  })),
+};
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+---
+<BaseLayout
+  title={withSiteTitle("安大略省提名项目（OINP）申请指南 | 类别·条件·流程")}
+  description="安大略省提名项目（OINP）完整指南：HCP、技术工人、雇主担保、国际毕业生等类别详解，申请条件及6个常见问题解答。"
+  canonical="https://cachinavisa.com/projects/province/ontario/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={faqLd} />
+  <Breadcrumbs items={breadcrumbs} />
+  <div class="grid" style="margin-top:16px">
+    <article class="content-card">
+      <div class="page-header">
+        <div class="page-kicker">省提名 · Ontario OINP</div>
+        <h1 class="page-h1">安大略省提名项目（OINP）申请指南</h1>
+        <p class="page-intro">安大略省是加拿大人口最多、经济体量最大的省份，也是最热门的移民目的地之一。安大略省提名计划（OINP）提供多个类别，覆盖技术工人、国际学生、雇主担保以及EE候选人。每年联邦给予安大略省的提名配额约为1万多个，是各省中最多的。</p>
+      </div>
+
+      <div class="content-sections">
+
+        <div class="section-block">
+          <h2>安大略省基本情况</h2>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-card-label">省会城市</div>
+              <div class="info-card-value">多伦多（Toronto）</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">主要语言</div>
+              <div class="info-card-value">英语（少数法语区）</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">主要产业</div>
+              <div class="info-card-value">金融、科技、制造业、医疗</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">年OINP配额（约）</div>
+              <div class="info-card-value">12,000–15,000个（视年份）</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2>主要申请类别</h2>
+          <div class="streams-list">
+            {streams.map((s) => (
+              <div class="stream-item">
+                <div class="stream-name">{s.name}</div>
+                <div class="stream-desc">{s.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2>申请的核心条件（通用要求）</h2>
+          <ul class="req-list">
+            <li>有在安大略省定居的意愿</li>
+            <li>满足所申请类别的语言要求（通常CLB 7以上）</li>
+            <li>学历和工作经验符合对应NOC类别要求</li>
+            <li>申请时持有有效加拿大身份（部分境外类别除外）</li>
+            <li>无重大犯罪记录，移民背景清白</li>
+          </ul>
+          <div class="tip-box">OINP各类别的开放状态经常变化——有时类别会突然暂停或达到配额上限而关闭。建议定期查阅OINP官网动态，或关注我们的博客更新。</div>
+        </div>
+
+        <div class="section-block">
+          <h2>申请流程（HCP类为例）</h2>
+          <ol class="step-list">
+            <li><span class="step-text"><strong>建立并维护EE Profile</strong>——在IRCC官网创建Express Entry候选池档案，保持CRS分数在合理水平</span></li>
+            <li><span class="step-text"><strong>在OINP注册Expression of Interest（EOI）</strong>——在OINP平台登记意向，系统会从中筛选合适候选人</span></li>
+            <li><span class="step-text"><strong>收到OINP的NOI（利益通知）</strong>——OINP通知你符合条件，邀请你在60天内提交省提名申请</span></li>
+            <li><span class="step-text"><strong>向OINP提交省提名申请</strong>——上传所有材料，OINP审核（通常2–4个月）后颁发提名证书</span></li>
+            <li><span class="step-text"><strong>更新EE Profile获600分CRS</strong>——持提名证书更新EE档案后分数大幅提升，可立即接受ITA</span></li>
+            <li><span class="step-text"><strong>提交联邦PR申请并等待审批</strong>——ITA接受后60天内提交，IRCC目标处理时间6个月内</span></li>
+          </ol>
+        </div>
+
+        <div class="section-block">
+          <h2>常见问题（FAQ）</h2>
+          {faqItems.map((item) => (
+            <details class="faq-item">
+              <summary class="faq-q">{item.q}</summary>
+              <p class="faq-a">{item.a}</p>
+            </details>
+          ))}
+        </div>
+
+      </div>
+      <div class="page-share">
+        <ShareBar url="https://cachinavisa.com/projects/province/ontario/" title={"安大略省提名项目（OINP）申请指南 | 类别·条件·流程"} />
+      </div>
+
+
+      <div class="cta-inline">
+        <div class="cta-text">想免费评估 OINP 哪个类别最适合你？</div>
+        <a class="cta-btn" href="/contact/">免费咨询 →</a>
+      </div>
+    </article>
+
+    <aside class="sidebar-stack">
+      <ContactCard />
+      <RelatedToolsCard
+        title="相关打分工具"
+        subtitle="安省项目很多都要先过 OINP EOI，EE 类则要看 CRS。"
+        items={[
+          { href: "/tools/oinp-calculator/", label: "安省 OINP · EOI", desc: "安省雇主类 / 留学类先做分值预估。" },
+          { href: "/tools/crs-calculator/", label: "联邦 CRS 计算器", desc: "如果你走 EE 相关通道，建议同步计算。" },
+          { href: "/tools/", label: "打分工具总览", desc: "把安省和联邦工具放在一起对照。" },
+        ]}
+        footerHref="/tools/oinp-calculator/"
+        footerLabel="直接计算 OINP 分数"
+      />
+      <div class="sidebar-nav-card">
+        <div class="snc-title">各省提名</div>
+        <div class="snc-links">
+          <a class="snc-link active" href="/projects/province/ontario/">安大略省（OINP）</a>
+          <a class="snc-link" href="/projects/province/british-columbia/">不列颠哥伦比亚省</a>
+          <a class="snc-link" href="/projects/province/quebec/">魁北克省</a>
+        </div>
+      </div>
+      <div class="sidebar-nav-card">
+        <div class="snc-title">相关移民路径</div>
+        <div class="snc-links">
+          <a class="snc-link" href="/projects/federal/">联邦技术移民（EE）</a>
+          <a class="snc-link" href="/projects/provincial-nomination/">省提名项目总览</a>
+          <a class="snc-link" href="/visa/work-permit/">工签与移民衔接</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+.grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 920px) { .grid { grid-template-columns: 1fr 300px; align-items: start; } }
+.content-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 16px; overflow: hidden; }
+.page-header { padding: 28px 28px 24px; border-bottom: 1px solid rgba(26,29,35,0.08); background: linear-gradient(135deg, #fafbff, #fff); }
+.page-kicker { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #d92d20; margin-bottom: 8px; }
+.page-h1 { font-size: clamp(22px, 4vw, 30px); font-weight: 800; color: #1a1d23; margin: 0 0 12px; letter-spacing: -0.02em; }
+.page-intro { font-size: 15px; color: rgba(26,29,35,0.62); line-height: 1.7; margin: 0; }
+.content-sections { padding: 24px 28px; display: grid; gap: 32px; }
+.section-block h2 { font-size: 18px; font-weight: 750; color: #1a1d23; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 2px solid rgba(217,45,32,0.12); }
+.section-block p { font-size: 14px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0 0 12px; }
+.streams-list { display: grid; gap: 10px; }
+.stream-item { padding: 14px 16px; background: rgba(26,29,35,0.025); border-radius: 12px; border: 1px solid rgba(26,29,35,0.07); }
+.stream-name { font-size: 14px; font-weight: 700; color: #1a1d23; margin-bottom: 5px; }
+.stream-desc { font-size: 13.5px; color: rgba(26,29,35,0.6); line-height: 1.55; }
+.req-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.req-list li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; background: rgba(26,29,35,0.025); border-radius: 10px; font-size: 14px; color: rgba(26,29,35,0.75); line-height: 1.55; }
+.req-list li::before { content: "✓"; color: #d92d20; font-weight: 700; flex-shrink: 0; }
+.step-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; counter-reset: steps; }
+.step-list li { display: flex; gap: 14px; align-items: flex-start; counter-increment: steps; }
+.step-list li::before { content: counter(steps); display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #d92d20; color: #fff; font-weight: 700; font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+.step-text { font-size: 14px; color: rgba(26,29,35,0.75); line-height: 1.6; padding-top: 3px; }
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.info-card { padding: 14px 16px; background: rgba(26,29,35,0.03); border-radius: 12px; border: 1px solid rgba(26,29,35,0.07); }
+.info-card-label { font-size: 12px; color: rgba(26,29,35,0.45); margin-bottom: 4px; }
+.info-card-value { font-size: 14px; font-weight: 600; color: #1a1d23; }
+.tip-box { padding: 14px 16px; background: rgba(217,45,32,0.05); border-left: 3px solid #d92d20; border-radius: 0 10px 10px 0; font-size: 13px; color: rgba(26,29,35,0.7); line-height: 1.65; margin-top: 12px; }
+.faq-item { border: 1px solid rgba(26,29,35,0.09); border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+.faq-q { padding: 13px 16px; font-weight: 650; font-size: 14px; cursor: pointer; list-style: none; display: flex; justify-content: space-between; color: #1a1d23; }
+.faq-q::after { content: "+"; font-size: 18px; color: rgba(26,29,35,0.4); }
+details[open] .faq-q::after { content: "−"; }
+.faq-q::-webkit-details-marker { display: none; }
+.faq-a { padding: 0 16px 13px; font-size: 13.5px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0; }
+.cta-inline { margin: 0 28px 28px; padding: 20px 24px; background: linear-gradient(135deg, #0a1628, #0f1f38); border-radius: 14px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.cta-text { font-size: 15px; font-weight: 700; color: #fff; }
+.cta-btn { display: inline-flex; padding: 10px 20px; border-radius: 10px; background: #d92d20; color: #fff; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; }
+.cta-btn:hover { background: #b52418; text-decoration: none; }
+.sidebar-stack { display: grid; gap: 16px; position: sticky; top: 80px; }
+.sidebar-nav-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 14px; padding: 18px 20px; }
+.snc-title { font-size: 14px; font-weight: 700; color: #1a1d23; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(26,29,35,0.08); }
+.snc-links { display: flex; flex-direction: column; gap: 2px; }
+.snc-link { display: block; padding: 8px 10px; font-size: 13.5px; color: #374151; text-decoration: none; border-radius: 8px; }
+.snc-link:hover { background: rgba(217,45,32,0.06); color: #d92d20; text-decoration: none; }
+.snc-link.active { background: rgba(217,45,32,0.07); color: #d92d20; font-weight: 600; }
+</style>

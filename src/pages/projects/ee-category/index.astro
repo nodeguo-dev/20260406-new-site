@@ -1,0 +1,742 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import RelatedToolsCard from "@/components/RelatedToolsCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民项目", href: "/projects/" },
+  { name: "联邦项目总览", href: "/projects/federal-programs/" },
+  { name: "EE 定向邀请（Category-Based）", href: "/projects/ee-category/" },
+];
+
+const categories = [
+  {
+    id: "french",
+    color: "#1a56c4",
+    emoji: "🇫🇷",
+    name: "法语人才",
+    enName: "French-Language Proficiency",
+    target: "overseas",
+    detailLink: "/projects/ee-french/",
+    desc: "四项语言成绩均达 NCLC 7（CLB 7）即可入围，无需加拿大工作经验，定向邀请分数历来最低（350–450 分），是非英语国家申请人的重要弯道。",
+    requirement: "法语四项（听说读写）均达 NCLC 7，参加 TEF Canada 或 TCF Canada 考试",
+    noteForStudents: "在加拿大法语区（如魁北克、渥太华）就读或工作并强化法语，可同时兼顾两个移民通道。",
+  },
+  {
+    id: "healthcare",
+    color: "#059669",
+    emoji: "🏥",
+    name: "医疗与社会服务类",
+    enName: "Healthcare & Social Services",
+    target: "both",
+    detailLink: "/projects/ee-healthcare/",
+    desc: "覆盖医生、护士、牙医、药剂师、社会工作者等 37 个 NOC 职业，境内外工作经验均可计算，PSW 只需 6 个月课程即可入门。",
+    requirement: "过去 3 年内，在以上指定职业累计 ≥ 12 个月全职工作经验（可境内或境外）",
+    noteForStudents: "护理、药学、社工、医技类专业的留学毕业生，毕业后进入对口职位并积累 1 年工作经验，即可进入该定向通道。",
+  },
+  {
+    id: "stem",
+    color: "#7c3aed",
+    emoji: "💻",
+    name: "STEM 科学技术工程数学类",
+    enName: "Science, Technology, Engineering & Math",
+    target: "both",
+    desc: "2026年名单大幅精简，目前覆盖土木/机械/电气工程师、网络安全、工业制造工程等核心工程类岗位。注意：软件工程师、IT经理、数据科学家已从列表移除。",
+    requirement: "过去 3 年内，在指定 STEM 职业累计 ≥ 12 个月全职工作经验（境内或境外均可）",
+    noteForStudents: "2026年调整后，纯 CS/软件开发背景无法直接通过 STEM 定向通道，需评估是否符合工程师类别，或转向其他策略（如PNP、法语）。",
+  },
+  {
+    id: "trades",
+    color: "#b45309",
+    emoji: "🔧",
+    name: "特定技工职业类",
+    enName: "Trade Occupations",
+    target: "both",
+    detailLink: "/projects/ee-trades/",
+    desc: "覆盖电工、管道工、焊工、木工、厨师等 25 个技工职业，多数无需省级执照，是邀请分数最低（390–450）、入行门槛最低的类别。",
+    requirement: "过去 3 年内，在指定技工职业累计 ≥ 12 个月全职工作经验（境内或境外均可）",
+    noteForStudents: "烹饪、建筑技术、电工等职业技术学院（College）毕业生，持 PGWP 工签后在对口职业积累 1 年经验，满足条件即可进入定向通道。",
+  },
+  {
+    id: "education",
+    color: "#dc6b19",
+    emoji: "📚",
+    name: "教育类职业",
+    enName: "Education Occupations",
+    target: "both",
+    desc: "覆盖中小学教师、幼教工作者、教师助理及残障人士辅导教师，境内外经验均可，需 1 年工作经验。",
+    requirement: "过去 3 年内，在指定教育类职业累计 ≥ 12 个月全职工作经验",
+    noteForStudents: "教育类专业（教育学、幼教）毕业生，持 PGWP 进入对口学校工作后可快速满足 CBS 条件，并结合 PNP 双管齐下效果最优。",
+  },
+  {
+    id: "transport",
+    color: "#0891b2",
+    emoji: "✈️",
+    name: "交通运输类职业",
+    enName: "Transport Occupations",
+    target: "both",
+    desc: "2026 年重新调整后，涵盖飞行员/飞行工程师、飞机机械师、航电技术员、汽车/卡车维修技师，需 1 年工作经验。",
+    requirement: "过去 3 年内，在指定交通运输类职业累计 ≥ 12 个月全职工作经验",
+    noteForStudents: "航空维修、航电技术、汽车技术专业的 College 毕业生，持 PGWP 在相关公司工作满 1 年后即可进入该通道。",
+  },
+  {
+    id: "physicians",
+    color: "#be185d",
+    emoji: "👨‍⚕️",
+    name: "有加拿大经验的医生",
+    enName: "Physicians with Canadian Work Experience",
+    target: "canada",
+    desc: "专为在加拿大工作的全科医生、内科/外科专科医生设计，要求在加拿大境内积累工作经验（不接受境外经验）。",
+    requirement: "过去 3 年内，在加拿大从事医生类职业（NOC 31100/31101/31102）累计 ≥ 12 个月",
+    noteForStudents: "适合通过 CGFNS/医师执照认证后在加拿大医疗机构任职的国际医学毕业生，是加拿大医生PR最明确的定向通道。",
+  },
+  {
+    id: "managers",
+    color: "#374151",
+    emoji: "👔",
+    name: "有加拿大经验的高管",
+    enName: "Senior Managers with Canadian Work Experience",
+    target: "canada",
+    desc: "面向在加拿大担任高级管理职位（C-suite/VP 级别，NOC 00012–00015）的人士，要求加拿大境内经验，分数线历来较低。",
+    requirement: "过去 3 年内，在加拿大担任高级管理职位（NOC 000xx 类）累计 ≥ 12 个月",
+    noteForStudents: "MBA 毕业生在加拿大企业晋升至高管职位后可适用，通道罕见但门槛清晰，获邀分数远低于普通抽签。",
+  },
+  {
+    id: "researchers",
+    color: "#1e40af",
+    emoji: "🔬",
+    name: "有加拿大经验的研究人员",
+    enName: "Researchers with Canadian Work Experience",
+    target: "canada",
+    desc: "适用于在加拿大高校担任教授/讲师或博士后/研究助理的人士，需在加拿大境内积累工作经验。",
+    requirement: "过去 3 年内，在加拿大担任大学教授/讲师或博士后（NOC 41200/41201）累计 ≥ 12 个月",
+    noteForStudents: "在加拿大完成博士学位并留校担任博士后或 Sessional Lecturer 的毕业生，这是最直接的定向通道，无需在候选池中等待分数线。",
+  },
+];
+
+const studentPathways = [
+  {
+    profile: "工程/理工类（土木、机械、电气等）",
+    path: "PGWP → 积累 1 年工程师工作经验 → STEM 定向通道",
+    tips: "2026 年 STEM 列表已移除软件工程师，土木/机械/电气工程师仍在列，且历年 STEM 定向邀请分数比普通邀请低约 40–80 分。",
+    highlight: "STEM 定向",
+  },
+  {
+    profile: "护理/医技/社工类",
+    path: "PGWP 或直接注册执照 → 医疗机构工作 1 年 → 医疗类定向通道",
+    tips: "护士（RN/LPN）和社会工作者等岗位需求极大，定向通道每年均有开放，加拿大境内外工作经验均算。",
+    highlight: "医疗类定向",
+  },
+  {
+    profile: "烹饪/建筑技术/电工等技工类",
+    path: "College 毕业 → PGWP → 技工类工作 1 年 → 技工定向通道",
+    tips: "技工定向（Trades）分数历来在各类别中最低，2026 年新增厨师（NOC 63200），是烹饪专业毕业生的新机会。",
+    highlight: "技工定向",
+  },
+  {
+    profile: "教育/幼教/社区服务类",
+    path: "教育类专业毕业 → PGWP → 学校/托育机构工作 1 年 → 教育类定向 + PNP 双管",
+    tips: "教育类定向历年均有开放，配合 PNP 省提名（如 BC/Saskatchewan 对教育类需求明显），可大幅加速时间线。",
+    highlight: "教育定向 + PNP",
+  },
+  {
+    profile: "有法语基础（任何专业）",
+    path: "参加 TEF/TCF 考试达 NCLC 7 → 进入法语定向候选池",
+    tips: "法语定向每次邀请数量大（历次 3000–8500 人），邀请分数最低，是 CRS 分数不足者的最有效突破口。",
+    highlight: "法语定向",
+  },
+  {
+    profile: "博士生 / 博士后 / 学术研究人员",
+    path: "博士毕业 → 博士后/讲师职位 ≥ 1 年 → 研究人员定向通道",
+    tips: "该通道仅限加拿大境内工作经验，且对应 NOC 范围窄，但邀请时分数极具竞争力，适合留在学术界的博士毕业生。",
+    highlight: "研究人员定向",
+  },
+  {
+    profile: "MBA / 管理方向留学生",
+    path: "MBA 毕业 → 在加拿大企业晋升至高管 → 高管定向通道",
+    tips: "需达到 NOC 00012–00015 真实高管职责，门槛较高，但一旦满足条件，邀请几乎是确定性的。",
+    highlight: "高管定向",
+  },
+  {
+    profile: "软件/IT 背景（2026 年后）",
+    path: "PGWP → 工作经验 → 提高 CRS 分数 + PNP 省提名",
+    tips: "2026 年 STEM 定向移除了绝大多数 IT/软件职位，软件工程师目前无对应定向通道，需依赖提高 CRS 分数或申请 PNP（BC Tech、OINP Tech 等）。",
+    highlight: "PNP 策略",
+  },
+];
+
+const faqItems = [
+  {
+    q: "定向邀请（CBS）和普通邀请有什么区别？",
+    a: "普通邀请（General Round）只看 CRS 分数，候选池内排名前 X 名的人全部收到 ITA。定向邀请（Category-Based Selection, CBS）则只邀请符合特定类别（法语/特定职业）条件的候选人，并在这部分人里按 CRS 排序。两种邀请可以同时进行。如果你符合某类别条件，你既有机会进入普通邀请，也可以被 CBS 定向邀请——只需要在 EE Profile 里正确填写即可。",
+  },
+  {
+    q: "CBS 的邀请分数通常比普通邀请低多少？",
+    a: "历史数据显示，定向邀请分数通常比同期普通邀请低 30–80 分。其中：技工类定向邀请分数最低（历史上低至 380–430 分），法语定向次之（历史 350–450 分），医疗/教育类在 430–480 分区间，STEM 定向在 450–500 分区间浮动。这对 CRS 分数在 400–500 分区间的候选人意义极大。",
+  },
+  {
+    q: "我在加拿大留学，毕业后多久能参加定向邀请？",
+    a: "毕业后持 PGWP（毕业后工签）在相关职业工作，从第一天起就开始积累工作经验。满 12 个月后即符合大多数职业类别的定向邀请最低要求（CBS 对大多数类别的要求是过去 3 年内累计 12 个月，不要求连续）。建议毕业后尽快进入符合 NOC TEER 0/1/2/3 类别的全职工作，越早开始积累越好。",
+  },
+  {
+    q: "2026 年 STEM 定向移除了大量 IT 职位，软件工程师该怎么办？",
+    a: "2026年 IRCC 对 STEM 类别做了大幅精简，移除了软件工程师、数据科学家、IT经理等大量此前热门职位。目前建议：（1）评估自己的岗位是否仍符合工程师类别（如嵌入式工程师有时可归类为电气工程师 NOC 21310）；（2）积极准备 PNP 省提名，BC Tech、OINP Tech Stream、Alberta EE Stream 等省份对 IT 类职业仍有专项支持；（3）提高 CRS 分数（语言冲刺 CLB 9+）配合普通抽签；（4）有法语基础的可冲刺 NCLC 7 进入法语定向通道。",
+  },
+  {
+    q: "法语定向每次邀请多少人？分数线是多少？",
+    a: "法语定向是目前规模最大的 CBS 类别，历次邀请人数在 3,000–8,500 人之间，而分数线历史上在 350–450 分区间——远低于普通邀请的 480–540 分。这意味着即使 CRS 分数只有 380–400 分，只要法语成绩达标（TEF/TCF 四项均达 NCLC 7），被邀请的概率非常高。",
+  },
+  {
+    q: "CBS 条件里的工作经验，兼职可以算吗？",
+    a: "可以，但必须折算成全职等效时长。以 30 小时/周为全职标准，若你以 15 小时/周工作，则需要 24 个月才达到「12 个月等效全职」的要求。不同类别对兼职的计算方式完全一致。注意：工作经验可以来自不同雇主，也不需要连续，只要在过去 3 年内累计满足即可。",
+  },
+  {
+    q: "我同时满足多个定向类别怎么办？",
+    a: "你不需要「选择」某一个类别——只要 EE Profile 中如实填写了所有满足的职业经验，当 IRCC 举行任何一个你符合条件的 CBS 轮次时，你都会自动被纳入考量。满足多个类别是好事，意味着你被邀请的机会更多。建议确保 EE Profile 信息完整准确，尤其是工作经验的 NOC 分类。",
+  },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem", position: i + 1, name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((i) => ({
+    "@type": "Question", name: i.q,
+    acceptedAnswer: { "@type": "Answer", text: i.a },
+  })),
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("EE 定向邀请（CBS）完整指南 | 2026年十大类别 · 留学生路径")}
+  description="2026年 Express Entry 定向邀请（Category-Based Selection）完整解析：法语、医疗、STEM、技工、教育、交通等 10 大类别条件、邀请分数对比，以及在加拿大留学毕业生的最优申请策略。"
+  canonical="https://cachinavisa.com/projects/ee-category/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={faqLd} />
+  <Breadcrumbs items={breadcrumbs} />
+
+  <div class="cbs-layout" style="margin-top:16px">
+    <main>
+
+      <!-- Hero -->
+      <div class="cbs-hero">
+        <div class="cbs-hero-badge">
+          <span class="badge-dot"></span>
+          2026 年最新政策
+        </div>
+        <h1 class="cbs-hero-title">EE 定向邀请<br /><span class="hero-sub">Category-Based Selection</span></h1>
+        <p class="cbs-hero-desc">
+          从 2023 年起，IRCC 在 Express Entry 体系中引入定向邀请机制（CBS），专门针对法语人才和特定紧缺职业人群发放邀请，
+          分数线通常比普通邀请低 <strong>30–80 分</strong>。
+          2026 年调整后共设 <strong>10 大类别</strong>，覆盖医疗、技工、教育、STEM、交通等领域，
+          是 CRS 分数不足或正在加拿大读书/工作的人的重要突破口。
+        </p>
+        <div class="cbs-hero-stats">
+          <div class="hs-item">
+            <div class="hs-val">10</div>
+            <div class="hs-label">定向邀请类别</div>
+          </div>
+          <div class="hs-sep"></div>
+          <div class="hs-item">
+            <div class="hs-val">−30~80</div>
+            <div class="hs-label">低于普通邀请分数</div>
+          </div>
+          <div class="hs-sep"></div>
+          <div class="hs-item">
+            <div class="hs-val">12月</div>
+            <div class="hs-label">最低工作经验要求</div>
+          </div>
+          <div class="hs-sep"></div>
+          <div class="hs-item">
+            <div class="hs-val">3年内</div>
+            <div class="hs-label">经验累计时间窗口</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- What is CBS -->
+      <div class="section-card">
+        <h2 class="sc-title">什么是 EE 定向邀请（CBS）？</h2>
+        <div class="explainer-grid">
+          <div class="explainer-item">
+            <div class="ei-icon">🎯</div>
+            <div class="ei-text">
+              <div class="ei-name">针对特定人群</div>
+              <div class="ei-desc">IRCC 在某一轮次中，只向满足特定类别条件（职业或语言）的 EE 候选人发出邀请，其余不符合条件的候选人不参与该轮次。</div>
+            </div>
+          </div>
+          <div class="explainer-item">
+            <div class="ei-icon">📊</div>
+            <div class="ei-text">
+              <div class="ei-name">独立于普通邀请</div>
+              <div class="ei-desc">CBS 轮次与普通 General Round 同时存在，互不影响。同一批候选人可能同时被普通邀请触及，也可能通过 CBS 更早获得 ITA。</div>
+            </div>
+          </div>
+          <div class="explainer-item">
+            <div class="ei-icon">⚡</div>
+            <div class="ei-text">
+              <div class="ei-name">更低的分数门槛</div>
+              <div class="ei-desc">由于参与竞争的候选人总数更少（只有符合条件的那部分人），CBS 轮次的邀请分数通常明显低于同期普通邀请。</div>
+            </div>
+          </div>
+          <div class="explainer-item">
+            <div class="ei-icon">✅</div>
+            <div class="ei-text">
+              <div class="ei-name">无需额外申请</div>
+              <div class="ei-desc">只需在 EE Profile 中如实填写工作经验和语言成绩，IRCC 会自动判断你是否符合某类别条件——你不需要主动申请进入特定 CBS 类别。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 10 Categories -->
+      <div class="section-card">
+        <h2 class="sc-title">2026 年十大定向邀请类别</h2>
+        <p class="sc-desc">以下类别由 IRCC 于 2026 年 3 月正式确认，所有类别（法语类除外）的统一要求：在过去 3 年内，在指定职业类别累计完成 ≥ 12 个月全职工作经验（或等效兼职时长），可来自境内或境外（部分类别要求加拿大境内经验，见下方标注）。</p>
+
+        <div class="cat-legend">
+          <span class="legend-item"><span class="legend-dot" style="background:#d92d20"></span>仅限加拿大境内经验</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#059669"></span>境内外经验均可</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#1a56c4"></span>语言要求（不限职业）</span>
+        </div>
+
+        <div class="categories-grid">
+          {categories.map((cat) => (
+            <div class="cat-card" id={cat.id}>
+              <div class="cat-card-top">
+                <div class="cat-emoji">{cat.emoji}</div>
+                <div>
+                  <div class="cat-name">{cat.name}</div>
+                  <div class="cat-en">{cat.enName}</div>
+                </div>
+                <div class="cat-badge" style={`background: ${cat.target === 'canada' ? 'rgba(217,45,32,0.1)' : cat.target === 'overseas' ? 'rgba(26,86,196,0.1)' : 'rgba(5,150,105,0.1)'};
+                  color: ${cat.target === 'canada' ? '#d92d20' : cat.target === 'overseas' ? '#1a56c4' : '#059669'};`}>
+                  {cat.target === 'canada' ? '仅境内' : cat.target === 'overseas' ? '语言类' : '境内外'}
+                </div>
+              </div>
+              <p class="cat-desc">{cat.desc}</p>
+              <div class="cat-req">
+                <span class="req-label">核心条件：</span>{cat.requirement}
+              </div>
+              <div class="cat-student-tip">
+                <span class="tip-label">💡 留学生路径：</span>{cat.noteForStudents}
+              </div>
+              {cat.detailLink && (
+                <a class="cat-detail-link" href={cat.detailLink}>查看完整指南 →</a>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Student Pathway Table -->
+      <div class="section-card">
+        <div class="sp-header">
+          <h2 class="sc-title" style="margin:0">在加拿大留学的你，最适合哪条定向通道？</h2>
+          <div class="sp-subtitle">毕业后持 PGWP 工签积累工作经验，是进入 CBS 定向通道的核心路径</div>
+        </div>
+
+        <div class="pathway-table">
+          <div class="pt-header pt-row">
+            <div>你的专业/背景</div>
+            <div>推荐路径</div>
+            <div>关键提示</div>
+          </div>
+          {studentPathways.map((p) => (
+            <div class="pt-row">
+              <div class="pt-profile">{p.profile}</div>
+              <div class="pt-path">
+                <span class="pt-highlight">{p.highlight}</span>
+                <span class="pt-path-text">{p.path}</span>
+              </div>
+              <div class="pt-tips">{p.tips}</div>
+            </div>
+          ))}
+        </div>
+
+        <div class="pathway-cta">
+          <div class="pct-text">不确定自己的专业背景对应哪条路径？我们帮你逐一分析。</div>
+          <a href="/contact/" class="pct-btn">免费路径评估 →</a>
+        </div>
+      </div>
+
+      <!-- Score comparison -->
+      <div class="section-card">
+        <h2 class="sc-title">定向邀请 vs 普通邀请：分数对比参考</h2>
+        <p class="sc-desc">以下数据基于 2023–2026 年 IRCC 实际邀请记录，仅供参考，实际分数随候选池情况而变化。</p>
+
+        <div class="score-compare">
+          <div class="sc-row sc-header">
+            <div>类别</div>
+            <div>典型邀请分数区间</div>
+            <div>同期普通邀请参考</div>
+            <div>分数优势</div>
+          </div>
+          <div class="sc-row">
+            <div>🇫🇷 法语定向</div>
+            <div class="sc-low">350 – 450 分</div>
+            <div>490 – 540 分</div>
+            <div class="sc-diff">低约 60–130 分</div>
+          </div>
+          <div class="sc-row">
+            <div>🔧 技工类定向</div>
+            <div class="sc-low">390 – 450 分</div>
+            <div>490 – 540 分</div>
+            <div class="sc-diff">低约 60–100 分</div>
+          </div>
+          <div class="sc-row">
+            <div>🏥 医疗类定向</div>
+            <div class="sc-low">430 – 485 分</div>
+            <div>490 – 540 分</div>
+            <div class="sc-diff">低约 30–60 分</div>
+          </div>
+          <div class="sc-row">
+            <div>📚 教育类定向</div>
+            <div class="sc-low">430 – 490 分</div>
+            <div>490 – 540 分</div>
+            <div class="sc-diff">低约 20–60 分</div>
+          </div>
+          <div class="sc-row">
+            <div>💻 STEM 定向</div>
+            <div class="sc-low">460 – 510 分</div>
+            <div>490 – 540 分</div>
+            <div class="sc-diff">低约 20–40 分</div>
+          </div>
+          <div class="sc-row">
+            <div>✈️ 交通运输定向</div>
+            <div class="sc-low">430 – 480 分</div>
+            <div>490 – 540 分</div>
+            <div class="sc-diff">低约 30–60 分</div>
+          </div>
+          <div class="sc-row">
+            <div>👔 高管 / 研究人员</div>
+            <div class="sc-low">400 – 460 分</div>
+            <div>490 – 540 分</div>
+            <div class="sc-diff">低约 50–100 分</div>
+          </div>
+        </div>
+        <div class="note-box">
+          📌 <strong>注意：</strong>分数线会随每次抽签的候选池结构变化。省提名（PNP +600 分）加持的候选人在普通抽签中具有压倒性优势，但 CBS 定向邀请则更关注职业类别资格，是没有省提名加分的候选人的重要竞争通道。
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div class="section-card">
+        <h2 class="sc-title">常见问题（FAQ）</h2>
+        {faqItems.map((item) => (
+          <details class="faq-item">
+            <summary class="faq-q">{item.q}</summary>
+            <p class="faq-a">{item.a}</p>
+          </details>
+        ))}
+      </div>
+
+      <!-- CTA -->
+      <div class="cta-banner">
+        <div class="cta-left">
+          <div class="cta-title">想知道你是否符合 CBS 定向条件？</div>
+          <p class="cta-desc">把你的专业背景、工作经验和语言成绩发给我们，顾问将在 1 个工作日内为你分析最优申请路径。</p>
+        </div>
+        <div class="cta-actions">
+          <a href="/contact/" class="cta-btn-primary">免费路径评估 →</a>
+          <a href="/projects/cec/" class="cta-btn-ghost">了解 CEC 申请 →</a>
+        </div>
+      </div>
+
+    </main>
+
+    <aside class="cbs-sidebar">
+      <ContactCard title="评估 CBS 资格" />
+      <RelatedToolsCard
+        title="相关打分工具"
+        subtitle="EE 定向前，先把 CRS 和各省 EOI 都看一遍。"
+        items={[
+          { href: "/tools/crs-calculator/", label: "联邦 CRS 计算器", desc: "法语 / 医护 / 技工类都绕不开 EE 总分。" },
+          { href: "/tools/oinp-calculator/", label: "安省 OINP · EOI", desc: "安省提名常见入口，适合对照省内打分。" },
+          { href: "/tools/bc-pnp-calculator/", label: "BC SIRS 计算器", desc: "BC 科技与常规类别常用的注册打分。" },
+          { href: "/tools/aaip-calculator/", label: "AAIP Worker EOI", desc: "阿省相关省提名路径的分数预估。" },
+        ]}
+        footerHref="/tools/"
+        footerLabel="进入所有打分工具"
+      />
+      <div class="sidebar-card">
+        <div class="scard-title">快速跳转</div>
+        <div class="scard-links">
+          <a href="#french" class="scard-link">🇫🇷 法语定向</a>
+          <a href="#healthcare" class="scard-link">🏥 医疗类定向</a>
+          <a href="#stem" class="scard-link">💻 STEM 定向</a>
+          <a href="#trades" class="scard-link">🔧 技工类定向</a>
+          <a href="#education" class="scard-link">📚 教育类定向</a>
+          <a href="#transport" class="scard-link">✈️ 交通运输定向</a>
+          <a href="#physicians" class="scard-link">👨‍⚕️ 医生类</a>
+          <a href="#managers" class="scard-link">👔 高管类</a>
+          <a href="#researchers" class="scard-link">🔬 研究人员类</a>
+        </div>
+      </div>
+      <div class="sidebar-card">
+        <div class="scard-title">相关移民路径</div>
+        <div class="scard-links">
+          <a href="/projects/federal-programs/" class="scard-link">联邦项目总览</a>
+          <a href="/projects/cec/" class="scard-link">加拿大经验类（CEC）</a>
+          <a href="/projects/provincial-nomination/" class="scard-link">省提名计划（PNP）</a>
+          <a href="/projects/study-to-pr/" class="scard-link">留学转移民路径</a>
+          <a href="/visa/work-permit/" class="scard-link">工签申请指南</a>
+        </div>
+      </div>
+      <div class="sidebar-card tip-card">
+        <div class="scard-title">⚠️ 2026 年重要变化</div>
+        <div class="tip-list">
+          <div class="tip-item red">软件工程师、数据科学家、IT 经理等职位已从 STEM 定向列表中移除</div>
+          <div class="tip-item green">农业类别已完全取消</div>
+          <div class="tip-item green">交通运输类别重新调整，仅保留 4 个职业</div>
+          <div class="tip-item green">厨师（NOC 63200）新增进入技工类别</div>
+          <div class="tip-item">所有职业类别统一要求：过去 3 年内累计 ≥ 12 个月工作经验</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+      <div class="page-share">
+        <ShareBar url="https://cachinavisa.com/projects/ee-category/" title={"EE 定向邀请（CBS）完整指南 | 2026年十大类别 · 留学生路径"} />
+      </div>
+</BaseLayout>
+
+<style>
+.cbs-layout {
+  display: grid; grid-template-columns: 1fr; gap: 24px; align-items: start;
+}
+@media (min-width: 1000px) { .cbs-layout { grid-template-columns: 1fr 280px; } }
+
+/* ── HERO ─────────────────────────────────────────────── */
+.cbs-hero {
+  background: linear-gradient(135deg, #0a1628 0%, #0f2040 50%, #1a0828 100%);
+  border-radius: 20px; padding: 44px 36px 36px;
+  margin-bottom: 20px; position: relative; overflow: hidden;
+}
+.cbs-hero::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 55% 70% at 95% 10%, rgba(217,45,32,0.25), transparent 55%),
+    radial-gradient(ellipse 40% 50% at 10% 90%, rgba(26,86,196,0.15), transparent 55%);
+}
+.cbs-hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 5px 14px; border-radius: 999px;
+  background: rgba(217,45,32,0.2); border: 1px solid rgba(217,45,32,0.35);
+  font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.8);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  margin-bottom: 16px; position: relative; z-index: 1;
+}
+.badge-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: #f87171;
+  animation: pulse-r 2s infinite;
+}
+@keyframes pulse-r {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(248,113,113,0.4); }
+  50% { opacity: 0.8; box-shadow: 0 0 0 6px rgba(248,113,113,0); }
+}
+.cbs-hero-title {
+  font-size: clamp(26px, 4.5vw, 42px); font-weight: 900; color: #fff;
+  margin: 0 0 14px; letter-spacing: -0.03em; line-height: 1.15;
+  position: relative; z-index: 1;
+}
+.hero-sub { font-size: 0.6em; font-weight: 500; color: rgba(255,255,255,0.5); display: block; }
+.cbs-hero-desc {
+  font-size: 15px; color: rgba(255,255,255,0.65); line-height: 1.75;
+  margin: 0 0 28px; max-width: 700px; position: relative; z-index: 1;
+}
+.cbs-hero-desc strong { color: rgba(255,255,255,0.9); }
+.cbs-hero-stats {
+  display: flex; gap: 0; align-items: center; flex-wrap: wrap;
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px; padding: 4px 0; position: relative; z-index: 1;
+  width: fit-content;
+}
+.hs-item { padding: 12px 22px; text-align: center; }
+.hs-val { font-size: 22px; font-weight: 900; color: #fff; line-height: 1.2; }
+.hs-label { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 3px; white-space: nowrap; }
+.hs-sep { width: 1px; height: 36px; background: rgba(255,255,255,0.1); }
+
+/* ── SECTION CARD ──────────────────────────────────────── */
+.section-card {
+  background: #fff; border: 1px solid rgba(13,17,23,0.09);
+  border-radius: 18px; padding: 28px 32px; margin-bottom: 16px;
+}
+.sc-title {
+  font-size: 20px; font-weight: 800; color: #0d1117;
+  margin: 0 0 14px; letter-spacing: -0.02em;
+  padding-bottom: 10px; border-bottom: 2px solid rgba(217,45,32,0.12);
+}
+.sc-desc { font-size: 14px; color: rgba(13,17,23,0.6); line-height: 1.75; margin: 0 0 20px; }
+
+/* Explainer */
+.explainer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 640px) { .explainer-grid { grid-template-columns: 1fr; } }
+.explainer-item {
+  display: flex; gap: 12px; padding: 16px; border-radius: 14px;
+  background: rgba(13,17,23,0.02); border: 1px solid rgba(13,17,23,0.07);
+}
+.ei-icon { font-size: 24px; flex-shrink: 0; }
+.ei-name { font-size: 14px; font-weight: 700; color: #0d1117; margin-bottom: 5px; }
+.ei-desc { font-size: 13px; color: rgba(13,17,23,0.6); line-height: 1.6; }
+
+/* Category Legend */
+.cat-legend { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 16px; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: rgba(13,17,23,0.6); }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+/* Categories Grid */
+.categories-grid { display: grid; gap: 14px; }
+@media (min-width: 640px) { .categories-grid { grid-template-columns: 1fr 1fr; } }
+.cat-card {
+  padding: 20px; border-radius: 16px;
+  border: 1.5px solid rgba(13,17,23,0.09); background: #fff;
+  display: flex; flex-direction: column; gap: 10px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.cat-card:hover { border-color: rgba(217,45,32,0.2); box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+.cat-card-top { display: flex; align-items: flex-start; gap: 10px; }
+.cat-emoji { font-size: 24px; flex-shrink: 0; }
+.cat-name { font-size: 14px; font-weight: 800; color: #0d1117; line-height: 1.3; }
+.cat-en { font-size: 11px; color: rgba(13,17,23,0.45); margin-top: 2px; }
+.cat-badge {
+  margin-left: auto; flex-shrink: 0; padding: 3px 9px;
+  border-radius: 8px; font-size: 11px; font-weight: 700; white-space: nowrap;
+}
+.cat-desc { font-size: 13px; color: rgba(13,17,23,0.6); line-height: 1.6; margin: 0; }
+.cat-req {
+  font-size: 12.5px; color: rgba(13,17,23,0.65); line-height: 1.55;
+  padding: 10px 12px; background: rgba(13,17,23,0.03); border-radius: 10px;
+}
+.req-label { font-weight: 700; color: #0d1117; }
+.cat-student-tip {
+  font-size: 12.5px; color: rgba(5,150,105,0.85); line-height: 1.55;
+  padding: 10px 12px; background: rgba(5,150,105,0.05); border-radius: 10px;
+  border-left: 3px solid rgba(5,150,105,0.3);
+}
+.tip-label { font-weight: 700; }
+.cat-detail-link {
+  display: inline-flex; align-items: center; gap: 4px; margin-top: 10px;
+  font-size: 12.5px; font-weight: 700; color: #1a56c4; text-decoration: none;
+  padding: 5px 12px; border-radius: 8px; border: 1.5px solid rgba(26,86,196,0.2);
+  background: rgba(26,86,196,0.04); transition: all 0.12s;
+}
+.cat-detail-link:hover { background: rgba(26,86,196,0.1); border-color: rgba(26,86,196,0.35); text-decoration: none; }
+
+/* Pathway Table */
+.sp-header { margin-bottom: 20px; }
+.sp-subtitle { font-size: 13px; color: rgba(13,17,23,0.5); margin-top: 6px; }
+.pathway-table { border: 1px solid rgba(13,17,23,0.09); border-radius: 14px; overflow: hidden; margin-bottom: 16px; }
+.pt-row { display: grid; grid-template-columns: 1.4fr 2fr 2fr; border-bottom: 1px solid rgba(13,17,23,0.07); }
+.pt-row:last-child { border-bottom: none; }
+.pt-row > div { padding: 12px 14px; font-size: 13px; color: rgba(13,17,23,0.7); line-height: 1.55; border-right: 1px solid rgba(13,17,23,0.06); }
+.pt-row > div:last-child { border-right: none; }
+.pt-header { background: rgba(13,17,23,0.04); }
+.pt-header > div { font-weight: 700; font-size: 12px; color: #0d1117; text-transform: uppercase; letter-spacing: 0.05em; }
+.pt-profile { font-weight: 600; color: #0d1117; }
+.pt-path { display: flex; flex-direction: column; gap: 4px; }
+.pt-highlight {
+  display: inline-block; width: fit-content;
+  padding: 2px 8px; background: rgba(217,45,32,0.08); color: #d92d20;
+  border-radius: 6px; font-size: 11.5px; font-weight: 700;
+}
+.pt-path-text { font-size: 12.5px; }
+.pt-tips { font-size: 12px; color: rgba(13,17,23,0.55); }
+
+.pathway-cta {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  padding: 16px 20px; background: rgba(217,45,32,0.04); border-radius: 12px;
+  border: 1px solid rgba(217,45,32,0.12);
+}
+.pct-text { font-size: 14px; font-weight: 600; color: #0d1117; }
+.pct-btn { padding: 9px 20px; background: #d92d20; color: #fff; border-radius: 10px; font-weight: 700; font-size: 13.5px; text-decoration: none; white-space: nowrap; }
+.pct-btn:hover { background: #b52418; text-decoration: none; }
+
+/* Score Compare */
+.score-compare { border: 1px solid rgba(13,17,23,0.09); border-radius: 14px; overflow: hidden; margin-bottom: 14px; }
+.sc-row { display: grid; grid-template-columns: 1.6fr 1fr 1fr 0.9fr; border-bottom: 1px solid rgba(13,17,23,0.07); }
+.sc-row:last-child { border-bottom: none; }
+.sc-row > div { padding: 11px 14px; font-size: 13px; color: rgba(13,17,23,0.7); line-height: 1.4; border-right: 1px solid rgba(13,17,23,0.06); }
+.sc-row > div:last-child { border-right: none; }
+.sc-header { background: rgba(13,17,23,0.04); }
+.sc-header > div { font-weight: 700; font-size: 12px; color: #0d1117; text-transform: uppercase; letter-spacing: 0.05em; }
+.sc-low { font-weight: 700; color: #059669; }
+.sc-diff { font-weight: 700; color: #d92d20; }
+
+.note-box {
+  padding: 14px 16px; background: rgba(59,130,246,0.05); border-left: 3px solid rgba(59,130,246,0.35);
+  border-radius: 0 12px 12px 0; font-size: 13.5px; color: rgba(13,17,23,0.65); line-height: 1.65;
+}
+
+/* FAQ */
+.faq-item { border: 1px solid rgba(13,17,23,0.08); border-radius: 12px; overflow: hidden; margin-bottom: 8px; }
+.faq-q { padding: 14px 18px; font-size: 14px; font-weight: 600; color: #0d1117; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.faq-q::after { content: '+'; font-size: 18px; color: #d92d20; font-weight: 400; flex-shrink: 0; }
+details[open] .faq-q::after { content: '−'; }
+.faq-a { padding: 12px 18px 14px; font-size: 13.5px; color: rgba(13,17,23,0.65); line-height: 1.75; margin: 0; border-top: 1px solid rgba(13,17,23,0.06); }
+
+/* CTA Banner */
+.cta-banner {
+  background: linear-gradient(135deg, #0a1628 0%, #0f2040 100%);
+  border-radius: 18px; padding: 32px 32px; margin-bottom: 8px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 24px; flex-wrap: wrap; position: relative; overflow: hidden;
+}
+.cta-banner::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 60% 80% at 90% 10%, rgba(217,45,32,0.2), transparent 55%);
+}
+.cta-left { position: relative; z-index: 1; }
+.cta-title { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+.cta-desc { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.7; margin: 0; max-width: 520px; }
+.cta-actions { display: flex; gap: 10px; flex-shrink: 0; position: relative; z-index: 1; }
+.cta-btn-primary { padding: 12px 24px; background: #d92d20; color: #fff; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; }
+.cta-btn-primary:hover { background: #b52418; text-decoration: none; }
+.cta-btn-ghost { padding: 12px 20px; background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.85); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; font-weight: 600; font-size: 14px; text-decoration: none; white-space: nowrap; }
+.cta-btn-ghost:hover { background: rgba(255,255,255,0.15); text-decoration: none; }
+
+/* Sidebar */
+.cbs-sidebar { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 88px; }
+.sidebar-card { background: #fff; border: 1px solid rgba(13,17,23,0.09); border-radius: 16px; overflow: hidden; }
+.scard-title { font-size: 13px; font-weight: 700; color: #0d1117; padding: 14px 18px 10px; border-bottom: 1px solid rgba(13,17,23,0.07); }
+.scard-links { padding: 6px 0; }
+.scard-link { display: block; padding: 8px 18px; font-size: 13px; color: rgba(13,17,23,0.7); text-decoration: none; transition: background 0.12s, color 0.12s; }
+.scard-link:hover { background: rgba(217,45,32,0.04); color: #d92d20; text-decoration: none; }
+
+.tip-card .scard-title { background: rgba(255,237,213,0.5); }
+.tip-list { padding: 10px 14px; display: flex; flex-direction: column; gap: 7px; }
+.tip-item { font-size: 12.5px; color: rgba(13,17,23,0.65); line-height: 1.5; padding-left: 12px; position: relative; }
+.tip-item::before { content: '•'; position: absolute; left: 0; color: rgba(13,17,23,0.3); }
+.tip-item.red { color: rgba(217,45,32,0.8); }
+.tip-item.red::before { color: #d92d20; }
+.tip-item.green { color: rgba(5,150,105,0.8); }
+.tip-item.green::before { color: #059669; }
+
+@media (max-width: 640px) {
+  .section-card { padding: 20px 18px; }
+  .cbs-hero { padding: 28px 20px 24px; }
+  .cbs-hero-stats { display: none; }
+  .pathway-table .pt-row { grid-template-columns: 1fr; }
+  .pathway-table .pt-row > div { border-right: none; border-bottom: 1px solid rgba(13,17,23,0.06); }
+  .pathway-table .pt-row > div:last-child { border-bottom: none; }
+  .sc-row { grid-template-columns: 1fr 1fr; }
+  .sc-row > div:nth-child(3), .sc-row > div:nth-child(4) { display: none; }
+  .sc-header > div:nth-child(3), .sc-header > div:nth-child(4) { display: none; }
+  .cta-banner { padding: 24px 20px; }
+  .cta-actions { flex-direction: column; width: 100%; }
+}
+</style>

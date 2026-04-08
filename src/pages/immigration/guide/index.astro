@@ -1,0 +1,330 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+import { getAllPublishedPosts } from "@/utils/content";
+
+const posts = await getAllPublishedPosts();
+const guidePosts = posts.filter((p) =>
+  ["policy", "inland-affairs", "study-permit", "work-permit-lmia"].includes(p.data.category)
+).slice(0, 8);
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民资讯", href: "/immigration/" },
+  { name: "移民新手必读", href: "/immigration/guide/" },
+];
+
+const faqItems = [
+  {
+    q: "我现在在中国，第一步应该怎么做？",
+    a: "先搞清楚你最终想要什么——是旅游/探亲（短期）、留学/工作（中期）还是移民定居（长期）？这三个目标对应的路径完全不同，需要准备的材料和时间线也差很多。很多人犯的错是同时做三件事，结果每件都没做好。先确定目标，再倒推材料和时间线。"
+  },
+  {
+    q: "移民顾问和移民律师有什么区别？我需要哪个？",
+    a: "在加拿大，持牌移民顾问（RCIC）和移民律师（Immigration Lawyer）都是合法可以代理移民申请的专业人员，受各自机构（CICC和省律师协会）监管。区别在于：律师可以处理移民诉讼（如上诉）；顾问专注申请代理，通常费用相对更低。大多数常规申请（技术移民、签证、省提名）找有牌照的顾问就足够，复杂案件（有拒绝记录、上诉）考虑律师。"
+  },
+  {
+    q: "申请周期一般要多长时间？",
+    a: "差距很大，取决于申请类型：访问签证通常4–12周；学签SDS通道约20个工作日，普通通道8–16周；工签2–8周（境内）；Express Entry PR申请IRCC目标6个月内；省提名Base通道PR通常12–18个月；配偶/家庭团聚PR目前约12个月。所有时间均为估算，以IRCC官网实时数据为准。"
+  },
+  {
+    q: "移民路径可以中途改变吗？",
+    a: "可以，但要注意衔接。比如：先申学签留学，毕业后用PGWP工作积累CEC经验，再申Express Entry——这是常见的组合路径。但如果中途出现身份中断（过期停留、违规工作等），会对后续申请产生影响。建议每一步转换前都提前规划，留出足够的材料准备时间。"
+  },
+  {
+    q: "PR（永久居民）和入籍（公民）有什么区别？",
+    a: "PR（永久居民）可以在加拿大永久工作、居住，享受大多数公共福利，但不能投票、不能持加拿大护照、有一定的居住义务（5年内必须在加拿大住满730天才能维持PR资格）。入籍（加拿大公民）则是完整公民权利，可以投票、申请护照、离开加拿大不受时间限制。入籍条件：在过去5年中，PR或公民身份下在加拿大实际居住满1095天（3年），满足语言和知识测试要求。"
+  },
+  {
+    q: "中间有拒签记录，后续申请会受影响吗？",
+    a: "会，但不是永久性的障碍。拒签记录会在IRCC系统中保留，后续申请的审核员可以看到历史记录。关键是：你是否真正改善了导致拒签的问题？仅仅重新提交原材料几乎不会有不同结果。建议通过GCMS notes了解具体拒签原因，再针对性补强材料，或咨询顾问评估风险后再决定是否重新申请。"
+  },
+  {
+    q: "家人能一起移民吗？",
+    a: "可以，大多数移民申请允许主申请人携带配偶（或同居伴侣）和未满22岁的未婚子女同时申请PR。获得PR后，你也可以通过家庭团聚类别为父母/祖父母申请PR（等待时间较长，需通过每年的抽签才能提交申请）。如果家人想短期来访，可以申请访问签证或超级签证（父母/祖父母）。"
+  },
+];
+
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((i) => ({
+    "@type": "Question",
+    name: i.q,
+    acceptedAnswer: { "@type": "Answer", text: i.a },
+  })),
+};
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+---
+<BaseLayout
+  title={withSiteTitle("加拿大移民新手必读 | 路径选择·时间线·基础概念全解")}
+  description="加拿大移民入门指南：三大移民路径对比、关键时间节点、PR与公民权区别、常见误区及7个新手高频问题解答。从零开始看这一页。"
+  canonical="https://cachinavisa.com/immigration/guide/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={faqLd} />
+  <Breadcrumbs items={breadcrumbs} />
+  <div class="grid" style="margin-top:16px">
+    <article class="content-card">
+      <div class="page-header">
+        <div class="page-kicker">移民新手 · 入门必读</div>
+        <h1 class="page-h1">加拿大移民新手必读：从零开始看这一页</h1>
+        <p class="page-intro">如果你刚开始研究加拿大移民，这里是最好的起点。我们把最常被问到的基础问题汇总在这里，帮你在花大量时间查资料之前，先建立一个清晰的框架。</p>
+      </div>
+
+      <div class="content-sections">
+
+        <div class="section-block">
+          <h2>加拿大移民的三条主路径</h2>
+          <p>把移民目标分成三类，每类的准备逻辑完全不同：</p>
+          <div class="path-cards">
+            <div class="path-card">
+              <div class="path-icon">✈️</div>
+              <div class="path-name">短期访问</div>
+              <div class="path-desc">旅游、探亲、短期商务（签证类型：TRV访问签证、超级签证）</div>
+              <div class="path-key">核心：证明你会回来，有足够资金</div>
+            </div>
+            <div class="path-card">
+              <div class="path-icon">🎓</div>
+              <div class="path-name">留学 / 工作</div>
+              <div class="path-desc">在加拿大学习或工作一段时间（签证类型：学签、工签）</div>
+              <div class="path-key">核心：证明目的合法，有能力负担，有离境计划</div>
+            </div>
+            <div class="path-card">
+              <div class="path-icon">🏠</div>
+              <div class="path-name">永久居留（PR）</div>
+              <div class="path-desc">长期定居加拿大（路径：EE技术移民、省提名、家庭团聚等）</div>
+              <div class="path-key">核心：语言、学历、工作经验、年龄等综合评分</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2>常见移民路径对比</h2>
+          <div class="compare-table">
+            <div class="compare-header">
+              <div>路径</div>
+              <div>适合人群</div>
+              <div>大概时间线</div>
+            </div>
+            <div class="compare-row">
+              <div><strong>Express Entry（EE）</strong></div>
+              <div>有技术工作经验，语言好，年龄较轻</div>
+              <div>通常6–12个月</div>
+            </div>
+            <div class="compare-row">
+              <div><strong>省提名（PNP）</strong></div>
+              <div>有工作offer，或在省内工作/学习</div>
+              <div>12–24个月（基础类）</div>
+            </div>
+            <div class="compare-row">
+              <div><strong>留学后移民</strong></div>
+              <div>希望先来加拿大读书再转PR</div>
+              <div>3–5年（含学习期）</div>
+            </div>
+            <div class="compare-row">
+              <div><strong>工签后移民</strong></div>
+              <div>已有雇主担保，积累经验后申请</div>
+              <div>2–4年（含工作期）</div>
+            </div>
+            <div class="compare-row">
+              <div><strong>家庭团聚</strong></div>
+              <div>配偶/子女已是PR或公民</div>
+              <div>12–18个月</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2>最常被问到的基础问题</h2>
+          <ul class="req-list">
+            <li><strong>EE分数（CRS）不够怎么办？</strong>——提升语言成绩、寻找省提名机会、积累加拿大工作经验（转CEC）</li>
+            <li><strong>没有工作经验怎么移民？</strong>——可以先申请学签，毕业后持PGWP工作积累经验，再申请CEC或省提名</li>
+            <li><strong>年纪大了还能移民吗？</strong>——可以，但EE的年龄分数在45岁后急剧下降，建议重点看省提名和家庭团聚类别</li>
+            <li><strong>不懂英语可以移民吗？</strong>——大多数联邦项目需要CLB 7以上的英语成绩，魁北克例外（法语替代）；家庭团聚类申请人可以不需要语言成绩但配额有限</li>
+            <li><strong>钱够重要吗？</strong>——对于访问签证和学签，资金证明非常重要；对于EE和省提名PR申请，资金要求相对宽松（除部分企业家类别）</li>
+          </ul>
+        </div>
+
+        <div class="section-block">
+          <h2>新手容易走的弯路</h2>
+          <ul class="req-list">
+            <li>目标不清晰，什么都想做，结果什么都做得不完整</li>
+            <li>从网上或朋友圈获取移民信息，但来源已过时或针对其他国籍</li>
+            <li>轻信"包过""低分保录"等承诺——合法的顾问不会给任何申请做结果担保</li>
+            <li>材料准备太晚，临近截止日期才发现文件不齐或需要翻译公证</li>
+            <li>忽视身份连续性，让学签或工签过期后才想到续签</li>
+            <li>把所有精力放在"怎么提分"，却没花时间真正理解每个项目的条件</li>
+          </ul>
+        </div>
+
+        <div class="section-block">
+          <h2>你的下一步</h2>
+          <div class="next-step-grid">
+            <a class="next-step-card" href="/projects/federal/">
+              <div class="nsc-title">我想了解联邦技术移民</div>
+              <div class="nsc-desc">Express Entry系统：FSW / CEC / FSTP →</div>
+            </a>
+            <a class="next-step-card" href="/projects/provincial-nomination/">
+              <div class="nsc-title">我想了解省提名</div>
+              <div class="nsc-desc">各省PNP项目，CRS分数不够的替代路径 →</div>
+            </a>
+            <a class="next-step-card" href="/visa/study-permit/">
+              <div class="nsc-title">我想先来加拿大读书</div>
+              <div class="nsc-desc">学签申请、DLI、SDS通道及PGWP →</div>
+            </a>
+            <a class="next-step-card" href="/visa/work-permit/">
+              <div class="nsc-title">我想申请工作签证</div>
+              <div class="nsc-desc">LMIA、豁免类别、封闭与开放工签 →</div>
+            </a>
+            <a class="next-step-card" href="/visa/french-mobility-work-permit/">
+              <div class="nsc-title">我有法语能力 · 魁省外工作</div>
+              <div class="nsc-desc">法语流动工签（Mobilité francophone）→</div>
+            </a>
+            <a class="next-step-card" href="/visa/c11-work-permit/">
+              <div class="nsc-title">创业或特殊人才 · 重大利益</div>
+              <div class="nsc-desc">C11 / significant benefit 工签路径 →</div>
+            </a>
+            <a class="next-step-card" href="/visa/visitor/">
+              <div class="nsc-title">我只想先来旅游/探亲</div>
+              <div class="nsc-desc">访问签证和超级签证申请指南 →</div>
+            </a>
+            <a class="next-step-card" href="/contact/">
+              <div class="nsc-title">我想直接咨询</div>
+              <div class="nsc-desc">告诉我们你的情况，我们帮你评估 →</div>
+            </a>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2>常见问题（FAQ）</h2>
+          {faqItems.map((item) => (
+            <details class="faq-item">
+              <summary class="faq-q">{item.q}</summary>
+              <p class="faq-a">{item.a}</p>
+            </details>
+          ))}
+        </div>
+
+        {guidePosts.length > 0 && (
+          <div class="section-block">
+            <h2>推荐阅读</h2>
+            <div class="post-list">
+              {guidePosts.map((p) => (
+                <a class="post-item" href={`/blog/${p.slug}/`}>
+                  <div class="post-title">{p.data.title}</div>
+                  <div class="post-excerpt">{p.data.excerpt}</div>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
+      </div>
+      <div class="page-share">
+        <ShareBar url="https://cachinavisa.com/immigration/guide/" title={"加拿大移民新手必读 | 路径选择·时间线·基础概念全解"} />
+      </div>
+
+
+      <div class="cta-inline">
+        <div class="cta-text">不知道从哪条路走最合适？和我们聊聊你的情况。</div>
+        <a class="cta-btn" href="/contact/">免费评估 →</a>
+      </div>
+    </article>
+
+    <aside class="sidebar-stack">
+      <ContactCard />
+      <div class="sidebar-nav-card">
+        <div class="snc-title">移民路径</div>
+        <div class="snc-links">
+          <a class="snc-link" href="/projects/federal/">联邦技术移民（EE）</a>
+          <a class="snc-link" href="/projects/provincial-nomination/">省提名（PNP）</a>
+          <a class="snc-link" href="/visa/study-permit/">学签与PGWP</a>
+          <a class="snc-link" href="/visa/work-permit/">工签与雇主担保</a>
+          <a class="snc-link" href="/visa/french-mobility-work-permit/">法语流动工签</a>
+          <a class="snc-link" href="/visa/c11-work-permit/">C11 重大利益工签</a>
+          <a class="snc-link" href="/category/work-permit-lmia/">工签 / LMIA 博客分类</a>
+          <a class="snc-link" href="/visa/visitor/">访问签证</a>
+        </div>
+      </div>
+      <div class="sidebar-nav-card">
+        <div class="snc-title">快速导航</div>
+        <div class="snc-links">
+          <a class="snc-link" href="/faq/">常见问题汇总</a>
+          <a class="snc-link" href="/inland/">境内身份管理</a>
+          <a class="snc-link" href="/blog/">移民资讯博客</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+.grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 920px) { .grid { grid-template-columns: 1fr 300px; align-items: start; } }
+.content-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 16px; overflow: hidden; }
+.page-header { padding: 28px 28px 24px; border-bottom: 1px solid rgba(26,29,35,0.08); background: linear-gradient(135deg, #fafbff, #fff); }
+.page-kicker { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #d92d20; margin-bottom: 8px; }
+.page-h1 { font-size: clamp(22px, 4vw, 30px); font-weight: 800; color: #1a1d23; margin: 0 0 12px; letter-spacing: -0.02em; }
+.page-intro { font-size: 15px; color: rgba(26,29,35,0.62); line-height: 1.7; margin: 0; }
+.content-sections { padding: 24px 28px; display: grid; gap: 32px; }
+.section-block h2 { font-size: 18px; font-weight: 750; color: #1a1d23; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 2px solid rgba(217,45,32,0.12); }
+.section-block p { font-size: 14px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0 0 12px; }
+.path-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+@media (max-width: 640px) { .path-cards { grid-template-columns: 1fr; } }
+.path-card { padding: 16px; background: rgba(26,29,35,0.025); border-radius: 12px; border: 1px solid rgba(26,29,35,0.07); }
+.path-icon { font-size: 24px; margin-bottom: 8px; }
+.path-name { font-size: 15px; font-weight: 700; color: #1a1d23; margin-bottom: 6px; }
+.path-desc { font-size: 13px; color: rgba(26,29,35,0.6); line-height: 1.55; margin-bottom: 8px; }
+.path-key { font-size: 12.5px; color: #d92d20; font-weight: 600; }
+.compare-table { border: 1px solid rgba(26,29,35,0.09); border-radius: 12px; overflow: hidden; }
+.compare-header { display: grid; grid-template-columns: 2fr 2fr 1fr; background: rgba(26,29,35,0.04); padding: 10px 14px; font-size: 12px; font-weight: 700; color: rgba(26,29,35,0.5); text-transform: uppercase; letter-spacing: 0.04em; gap: 12px; }
+.compare-row { display: grid; grid-template-columns: 2fr 2fr 1fr; padding: 11px 14px; font-size: 13.5px; color: rgba(26,29,35,0.7); gap: 12px; border-top: 1px solid rgba(26,29,35,0.06); line-height: 1.5; }
+.compare-row:hover { background: rgba(26,29,35,0.02); }
+.req-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.req-list li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; background: rgba(26,29,35,0.025); border-radius: 10px; font-size: 14px; color: rgba(26,29,35,0.75); line-height: 1.55; }
+.req-list li::before { content: "→"; color: #d92d20; font-weight: 700; flex-shrink: 0; }
+.next-step-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 640px) { .next-step-grid { grid-template-columns: 1fr; } }
+.next-step-card { display: block; padding: 14px 16px; background: rgba(26,29,35,0.025); border-radius: 12px; border: 1px solid rgba(26,29,35,0.07); text-decoration: none; transition: all 0.15s; }
+.next-step-card:hover { border-color: rgba(217,45,32,0.3); background: rgba(217,45,32,0.03); text-decoration: none; }
+.nsc-title { font-size: 14px; font-weight: 700; color: #1a1d23; margin-bottom: 4px; }
+.nsc-desc { font-size: 13px; color: rgba(26,29,35,0.5); line-height: 1.45; }
+.post-list { display: grid; gap: 8px; }
+.post-item { display: block; padding: 12px 14px; background: rgba(26,29,35,0.025); border-radius: 10px; text-decoration: none; }
+.post-item:hover { background: rgba(217,45,32,0.04); text-decoration: none; }
+.post-title { font-size: 14px; font-weight: 650; color: #1a1d23; margin-bottom: 4px; }
+.post-excerpt { font-size: 13px; color: rgba(26,29,35,0.55); line-height: 1.5; }
+.faq-item { border: 1px solid rgba(26,29,35,0.09); border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+.faq-q { padding: 13px 16px; font-weight: 650; font-size: 14px; cursor: pointer; list-style: none; display: flex; justify-content: space-between; color: #1a1d23; }
+.faq-q::after { content: "+"; font-size: 18px; color: rgba(26,29,35,0.4); }
+details[open] .faq-q::after { content: "−"; }
+.faq-q::-webkit-details-marker { display: none; }
+.faq-a { padding: 0 16px 13px; font-size: 13.5px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0; }
+.cta-inline { margin: 0 28px 28px; padding: 20px 24px; background: linear-gradient(135deg, #0a1628, #0f1f38); border-radius: 14px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.cta-text { font-size: 15px; font-weight: 700; color: #fff; }
+.cta-btn { display: inline-flex; padding: 10px 20px; border-radius: 10px; background: #d92d20; color: #fff; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; }
+.cta-btn:hover { background: #b52418; text-decoration: none; }
+.sidebar-stack { display: grid; gap: 16px; position: sticky; top: 80px; }
+.sidebar-nav-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 14px; padding: 18px 20px; }
+.snc-title { font-size: 14px; font-weight: 700; color: #1a1d23; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(26,29,35,0.08); }
+.snc-links { display: flex; flex-direction: column; gap: 2px; }
+.snc-link { display: block; padding: 8px 10px; font-size: 13.5px; color: #374151; text-decoration: none; border-radius: 8px; }
+.snc-link:hover { background: rgba(217,45,32,0.06); color: #d92d20; text-decoration: none; }
+.snc-link.active { background: rgba(217,45,32,0.07); color: #d92d20; font-weight: 600; }
+</style>

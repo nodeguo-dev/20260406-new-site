@@ -1,0 +1,133 @@
+---
+import "@/styles/toronto-life-guides.css";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import TorontoLifeSubNav from "@/components/guides/TorontoLifeSubNav.astro";
+import TorontoLifePartnerBand from "@/components/guides/TorontoLifePartnerBand.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+import { torontoLifePageBands } from "@/data/torontoLifeSponsors";
+
+const pageKey = "housing";
+const bands = torontoLifePageBands[pageKey]!;
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "多伦多生活指南", href: "/guides/toronto-life/" },
+  { name: "安居与租房", href: "/guides/toronto-life/housing/" },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("多伦多租房与安居指南 | GTA 新移民手册")}
+  description="GTA 租房类型、租约与押金、租客权益、学区与通勤权衡；内含本地服务商合作展示位。"
+  canonical="https://cachinavisa.com/guides/toronto-life/housing/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <div class="container tl-page">
+    <Breadcrumbs items={breadcrumbs} />
+    <header class="tl-hero">
+      <p class="tl-kicker">多伦多生活指南 · 分册</p>
+      <h1 class="tl-h1">安居与租房</h1>
+      <p class="tl-lead">
+        从公寓（Condo）、独栋/联排（House/Townhouse）到地下室分租，GTA 选择极多；租金与通勤、学区、车位往往联动。下文为通用框架，签约前请以<strong>省租赁法规</strong>与书面租约为准。
+      </p>
+      <TorontoLifeSubNav activeKey="housing" />
+    </header>
+
+    <TorontoLifePartnerBand band={bands.top} bandId="housing-top" />
+
+    <div class="tl-prose">
+      <p class="tl-muted">
+        <strong>搬家后改地址：</strong>站内已发布两篇长文清单（CRA、健康卡、IRCC、学校等），并含本地搬运服务商
+        <a href="https://www.gtmoving.ca/zh/" target="_blank" rel="noopener noreferrer sponsored">多伦多国泰搬运 GTMoving</a>
+        官网与地图入口——
+        <a href="/blog/moving-address-checklist-after-relocation-canada/">《加拿大搬家后必改地址清单》</a>、
+        <a href="/blog/newcomer-student-toronto-moving-address-complete-guide/">《留学生与新移民地址更新超全指南》</a>。
+      </p>
+
+      <h2>租房前先看什么？</h2>
+      <ul>
+        <li><strong>预算</strong>：除租金外预留电费、暖气、网络与租客保险（部分房东强制）。</li>
+        <li><strong>通勤</strong>：TTC 地铁/公交与 GO 火车覆盖不同；可先锁定工作/学校再反推选址。</li>
+        <li><strong>房型</strong>：Condo 楼管理规则多；House 分租注意共用空间与隔音。</li>
+      </ul>
+      <p class="tl-inline-tip">
+        需要<strong>华语团队</strong>带看、解释标准租约（Standard Lease）与押金规则的用户，可通过
+        <a href="/contact/?topic=toronto-life-referral&vertical=housing">本站合作推荐通道</a>
+        对接 GTA 持牌经纪或合规平台（合作推广；服务与收费以对方披露为准）。
+      </p>
+
+      <h2>租约与押金（概念级）</h2>
+      <p>
+        安省对住宅租赁有格式化租约与押金上限等规则；入住前后建议拍照记录物业状况。与房东/经纪沟通尽量保留书面记录。涉及纠纷可向社区法律援助或持牌 Paralegal/律师咨询。
+      </p>
+    </div>
+
+    <TorontoLifePartnerBand band={bands.mid} bandId="housing-mid" />
+
+    <div class="tl-prose">
+      <h2>常见区域线索（非排名）</h2>
+      <p>
+        北约克、士嘉堡、怡陶碧谷、密西沙加、万锦、列治文山等各有通勤与租金特点；新移民家庭常在学校教育局边界与预算之间折中。具体校网请以教育局官网地图为准。
+      </p>
+    </div>
+
+    <TorontoLifePartnerBand band={bands.bottom} bandId="housing-bottom" />
+
+    <p class="tl-back">
+      <a href="/guides/toronto-life/">← 返回多伦多生活指南总览</a>
+      ·
+      <a href="/category/toronto-life/">浏览 toronto-life 分类文章</a>
+    </p>
+
+    <aside class="tl-disclaimer" role="note">
+      本站不构成法律意见；租约签署与争议处理请咨询持牌专业人士。合作推广位由广告主对其宣传内容负责。
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+  .tl-inline-tip {
+    font-size: 14px;
+    line-height: 1.65;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: rgba(26, 86, 196, 0.06);
+    border-left: 3px solid rgba(26, 86, 196, 0.35);
+    color: rgba(26, 29, 35, 0.78);
+    margin: 16px 0;
+  }
+  .tl-inline-tip a {
+    color: #1a56c4;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .tl-inline-tip a:hover {
+    text-decoration: underline;
+  }
+  .tl-back {
+    font-size: 14px;
+    margin-top: 28px;
+  }
+  .tl-back a {
+    color: var(--red);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .tl-back a:hover {
+    text-decoration: underline;
+  }
+</style>

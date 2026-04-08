@@ -1,0 +1,119 @@
+---
+import "@/styles/toronto-life-guides.css";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import TorontoLifeSubNav from "@/components/guides/TorontoLifeSubNav.astro";
+import TorontoLifePartnerBand from "@/components/guides/TorontoLifePartnerBand.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+import { torontoLifePageBands } from "@/data/torontoLifeSponsors";
+
+const pageKey = "transit";
+const bands = torontoLifePageBands[pageKey]!;
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "多伦多生活指南", href: "/guides/toronto-life/" },
+  { name: "交通出行", href: "/guides/toronto-life/transit/" },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("多伦多交通与出行指南 | TTC · GO · 驾照")}
+  description="GTA 公共交通 PRESTO、冬季驾车与车险线索、驾照衔接说明；内含驾校/车险等合作展示位。"
+  canonical="https://cachinavisa.com/guides/toronto-life/transit/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <div class="container tl-page">
+    <Breadcrumbs items={breadcrumbs} />
+    <header class="tl-hero">
+      <p class="tl-kicker">多伦多生活指南 · 分册</p>
+      <h1 class="tl-h1">交通与出行</h1>
+      <p class="tl-lead">
+        大多伦多由 TTC、GO Transit、各市区公交与公路网共同支撑；是否买车取决于居住区域与通勤。以下为落地常见事项框架。
+      </p>
+      <TorontoLifeSubNav activeKey="transit" />
+    </header>
+
+    <TorontoLifePartnerBand band={bands.top} bandId="transit-top" />
+
+    <div class="tl-prose">
+      <h2>公共交通与 PRESTO</h2>
+      <p>
+        PRESTO 卡可用于 TTC、GO 及参与机构；换乘规则与票价以运营商更新为准。建议下载官方 App 或设置自动充值，避免高峰闸机延误。
+      </p>
+      <p class="tl-inline-tip">
+        刚落地需要<strong>短期租车</strong>或<strong>长期车险比价</strong>的读者，可通过
+        <a href="/contact/?topic=toronto-life-referral&vertical=transit">合作推荐通道</a>
+        获取华语服务线索（合作推广）。
+      </p>
+
+      <h2>驾照与冬季驾车</h2>
+      <p>
+        外省/外国驾照在安省可短期使用，长期驾驶需按 ServiceOntario 规则换证或考试。冬季胎、除冰与安全车距在 GTA 同样重要；车险与驾龄、车型、邮编等相关。
+      </p>
+    </div>
+
+    <TorontoLifePartnerBand band={bands.mid} bandId="transit-mid" />
+
+    <div class="tl-prose">
+      <h2>骑行与步行</h2>
+      <p>市区自行车道逐年增加；共享单车站点与头盔法规请留意市政网站。步行通勤注意路口礼让与冬季防滑。</p>
+    </div>
+
+    <TorontoLifePartnerBand band={bands.bottom} bandId="transit-bottom" />
+
+    <p class="tl-back">
+      <a href="/guides/toronto-life/">← 返回总览</a>
+      ·
+      <a href="/category/toronto-life/">分类文章</a>
+    </p>
+
+    <aside class="tl-disclaimer" role="note">服务供应商以自身牌照与条款为准；本站不担保报价与承保结果。</aside>
+  </div>
+</BaseLayout>
+
+<style>
+  .tl-inline-tip {
+    font-size: 14px;
+    line-height: 1.65;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: rgba(26, 86, 196, 0.06);
+    border-left: 3px solid rgba(26, 86, 196, 0.35);
+    color: rgba(26, 29, 35, 0.78);
+    margin: 16px 0;
+  }
+  .tl-inline-tip a {
+    color: #1a56c4;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .tl-inline-tip a:hover {
+    text-decoration: underline;
+  }
+  .tl-back {
+    font-size: 14px;
+    margin-top: 28px;
+  }
+  .tl-back a {
+    color: var(--red);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .tl-back a:hover {
+    text-decoration: underline;
+  }
+</style>

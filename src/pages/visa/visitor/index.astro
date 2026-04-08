@@ -1,0 +1,288 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "加拿大签证", href: "/visa/" },
+  { name: "访问签证 / 旅游签证", href: "/visa/visitor/" },
+];
+
+const faqItems = [
+  {
+    q: "拿到签证后，每次能在加拿大待多久？",
+    a: "签证批准不等于你可以住多久。真正决定停留时长的是入境时的边境官（CBSA），他们在护照上盖的章才是正式授权期。通常是6个月，但也可能短一些。如果护照上没有盖章，以入境之日算6个月。想延长停留需在授权到期前向IRCC网上提交延期申请。"
+  },
+  {
+    q: "签证上写着10年有效，是不是每次都能进去？",
+    a: "不是。10年多次入境签证的意思是：在这10年内，只要签证没过期且护照有效，你可以多次申请入境。但每次入境后能住多久，仍由CBSA决定。另外，如果你的护照在签证到期前就换了，签证一般会失效，需申请将签证迁移至新护照或重新申请。"
+  },
+  {
+    q: "我以前拒签过，这次还能申请吗？",
+    a: "可以再申请，但成功率取决于你是否真的解决了上次被拒的根本原因——而不只是重新提交一份材料。IRCC系统里有完整记录，如果你上次因约束力不足被拒，这次还是同样的材料，基本上结果也一样。建议通过GCMS notes获取拒签原因，再决定如何改进。"
+  },
+  {
+    q: "探亲访友和纯旅游，申请有区别吗？",
+    a: "有一些差异，主要在材料侧。探亲需要被访者的邀请信，以及其在加拿大的身份证明（如PR卡复印件、公民护照）。纯旅游则需要更详细的行程表和酒店预订。两者的核心评估逻辑一致：你有足够的资金、有回来的理由、目的清楚且可信。"
+  },
+  {
+    q: "银行存款要多少才算够？",
+    a: "没有官方规定的具体金额，签证官会结合你的行程长短、消费水平和收入来综合判断。粗略参考：2-3周旅游，通常建议流水账户余额稳定在5-10万人民币左右（含日常收入来源）。临时存入的大额资金效果有限，反而可能被质疑资金来源。"
+  },
+  {
+    q: "在加拿大境内，访客身份能转成学签或工签吗？",
+    a: "可以在境内提交申请，但不一定会批。访客身份转学签通常问题不大，只要有合格学校录取并满足资金条件；转工签相对复杂，很多类别要求境外申请。建议在现有身份到期前至少6-8周就提交申请，以保持「维持身份」（Maintained Status）期间合法待在加拿大。"
+  },
+  {
+    q: "需要购买旅行医疗保险吗？",
+    a: "普通旅游签不是强制要求，但强烈建议买。加拿大医疗费用不由政府为访客承担，急诊住院一次轻松超过1万加元，心脏或骨科手术费用更高。特别是超级签证（父母/祖父母探亲）明确要求购买不低于10万加元的医疗保险作为申请条件之一。"
+  },
+  {
+    q: "已有美国签证，申请加拿大签证会更容易吗？",
+    a: "有效美签不等于可以免签进加拿大，中国公民无论如何都需要申请加拿大签证（TRV）。但持有效美签且有良好美国入境记录，可以作为申请时的有力约束力证明，签证官通常会积极看待这一点。有效美签还能帮助你在某些情况下申请eTA（电子旅行授权），但与TRV是不同的签证类别。"
+  },
+  {
+    q: "收到了让我去签证中心面谈的通知，是要拒我吗？",
+    a: "不一定，也不必惊慌。部分申请被要求补充面谈是正常流程，面谈官可能只是想当面确认行程或关系。建议做好以下准备：熟悉自己的申请材料和行程细节、保持回答简洁真实、对不确定的问题如实说不清楚比猜测回答要好。"
+  },
+  {
+    q: "申请费交了但被拒了，能退款吗？",
+    a: "申请费（$100 CAD）一般不退，无论结果如何。生物特征费（$85 CAD）则在特定情况下可以保留用于下次申请（5年内）。具体退款规则请以IRCC官网最新说明为准。"
+  },
+];
+
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((i) => ({
+    "@type": "Question",
+    name: i.q,
+    acceptedAnswer: { "@type": "Answer", text: i.a },
+  })),
+};
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+---
+<BaseLayout
+  title={withSiteTitle("加拿大访问签证（TRV）申请指南 | 条件·材料·流程·常见拒签原因")}
+  description="加拿大访问签证（TRV）实用申请指南：适用人群、材料清单、完整申请流程、官方费用、处理周期及10个高频问题解答。"
+  canonical="https://cachinavisa.com/visa/visitor/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={faqLd} />
+  <Breadcrumbs items={breadcrumbs} />
+  <div class="grid" style="margin-top:16px">
+    <article class="content-card">
+      <div class="page-header">
+        <div class="page-kicker">临时居民签证 · TRV</div>
+        <h1 class="page-h1">加拿大访问签证（旅游签证）申请指南</h1>
+        <p class="page-intro">中国公民赴加拿大旅游、探亲或短期商务，都需要持有访问签证（Temporary Resident Visa，TRV）才能入境。这里整理了申请所需的基本条件、材料和流程，以及10个申请人最常问的问题。</p>
+      </div>
+
+      <div class="content-sections">
+
+        <div class="section-block">
+          <h2>谁需要申请访问签证？</h2>
+          <p>以下情况适用访问签证（TRV）：</p>
+          <ul class="req-list">
+            <li>赴加拿大旅游观光，计划停留不超过6个月</li>
+            <li>探望在加拿大的家人或朋友</li>
+            <li>短期商务出行（参会、谈判、参展，不在加拿大受雇取酬）</li>
+            <li>参加婚礼、毕业礼等家庭活动</li>
+            <li>陪同子女参观院校（不正式注册就读）</li>
+          </ul>
+          <div class="tip-box">访问签证不允许你在加拿大工作或就读超过6个月的课程。有这类需求需申请工作签证或学习许可，不同的签证用途不能混用。</div>
+        </div>
+
+        <div class="section-block">
+          <h2>签证官主要审核哪些方面？</h2>
+          <p>评估访问签证申请时，签证官重点关注以下四个方面，每个方面都需要材料来佐证：</p>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-card-label">资金能力</div>
+              <div class="info-card-value">足以负担旅行费用及回程</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">回国约束力</div>
+              <div class="info-card-value">有充分理由按期离开加拿大</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">健康状况</div>
+              <div class="info-card-value">不构成公共卫生风险（部分需体检）</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">背景记录</div>
+              <div class="info-card-value">无犯罪记录，无移民法违规历史</div>
+            </div>
+          </div>
+          <p style="margin-top:14px"><strong>约束力往往是最关键的一环。</strong>签证官需要相信你不会"赖着不走"，能证明这一点的包括：工作单位证明、家庭成员留在国内、房产、正在进行的学业、稳定存款等。这些条件越多越强，申请越有把握。</p>
+        </div>
+
+        <div class="section-block">
+          <h2>申请材料清单（中国大陆公民）</h2>
+          <ul class="req-list">
+            <li>有效护照原件，以及所有旧护照（包含历史签证记录）</li>
+            <li>IMM 5257 申请表（在IRCC官网在线填写并生成条形码页）</li>
+            <li>近期白底彩色证件照（35mm × 45mm）</li>
+            <li>生物特征预约确认函（首次申请或上次采集已超5年）</li>
+            <li>在职证明或营业执照（注明职位、入职时间、月收入）</li>
+            <li>近6个月银行流水及存款余额证明</li>
+            <li>房产证或租房合同（体现在国内有稳定居所）</li>
+            <li>详细行程表（含日期、城市、住宿安排）</li>
+            <li>机票预订单（可为预订记录，无需购买正式机票）</li>
+            <li>酒店或住宿预订记录</li>
+            <li>如为探亲：被访人邀请信 + 其加拿大身份证明（PR卡/公民护照）</li>
+            <li>家庭成员留守证明（如配偶/子女留在国内，附结婚证/户口本）</li>
+          </ul>
+        </div>
+
+        <div class="section-block">
+          <h2>申请流程</h2>
+          <ol class="step-list">
+            <li><span class="step-text"><strong>整理材料</strong>——按清单逐项准备，重点检查银行流水与在职证明中的收入数字是否一致，护照姓名拼音与表格信息是否完全一致。</span></li>
+            <li><span class="step-text"><strong>在线注册账号并填写申请表</strong>——登录 IRCC 网站，通过 GCKey 创建账号，填写 IMM 5257（主申请表）及 IMM 5645（家庭信息表）。</span></li>
+            <li><span class="step-text"><strong>上传材料并缴费</strong>——在线提交扫描件并支付 $100 CAD 申请费（每人）。如需采集生物特征，系统会告知 $85 CAD 生物特征费。</span></li>
+            <li><span class="step-text"><strong>预约采集生物特征</strong>——收到IRCC的生物特征采集通知后，前往指定签证申请中心（VAC）采集指纹和照片。北京、上海、广州、成都等主要城市均设有采集点。</span></li>
+            <li><span class="step-text"><strong>等待审核</strong>——IRCC可能要求补充材料或安排面谈（较少见）。通过账号内的消息通知跟踪进度，不要轻易添加新信息干扰审核。</span></li>
+            <li><span class="step-text"><strong>签证批准，安排出行</strong>——护照返还并贴签后，核对签证有效期、入境次数（单次/多次）及签证类别，确认无误后再购买机票。</span></li>
+          </ol>
+        </div>
+
+        <div class="section-block">
+          <h2>费用与处理时间</h2>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-card-label">签证申请费</div>
+              <div class="info-card-value">$100 CAD / 人</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">生物特征费</div>
+              <div class="info-card-value">$85 CAD / 人（首次或满5年后）</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">当前处理时间</div>
+              <div class="info-card-value">通常 4–12 周（旺季更长）</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">签证有效期</div>
+              <div class="info-card-value">最长10年（多次入境）</div>
+            </div>
+          </div>
+          <div class="tip-box">处理时间在IRCC官网「Check processing times」页面可以实时查询。每年5–8月是申请旺季，处理周期通常会延长，建议出行前3个月提交申请。</div>
+        </div>
+
+        <div class="section-block">
+          <h2>常被拒签的原因</h2>
+          <ul class="req-list">
+            <li><strong>约束力不足</strong>——无固定工作、无家庭牵绊、无房产资产。建议提供雇主证明 + 年假批准函 + 配偶/子女留守国内的证明文件。</li>
+            <li><strong>资金解释有问题</strong>——账户里大额资金突然出现，来源无法解释。建议使用日常收入流水账户；如有转账赠款，附上转款证明和说明。</li>
+            <li><strong>行程表太简单</strong>——只写"旅游7天"而无具体城市和日程安排。建议按天列出行程，包括景点、住宿、交通计划。</li>
+            <li><strong>历史违规记录</strong>——曾经过期停留或在加非法工作。需主动在申请表中如实申报，同时附上解释信，隐瞒只会让情况更差。</li>
+            <li><strong>材料之间有矛盾</strong>——护照信息、工作单位名称、住址等在不同文件中不一致。提交前务必做最终一致性核查。</li>
+          </ul>
+        </div>
+
+        <div class="section-block">
+          <h2>常见问题（FAQ）</h2>
+          {faqItems.map((item) => (
+            <details class="faq-item">
+              <summary class="faq-q">{item.q}</summary>
+              <p class="faq-a">{item.a}</p>
+            </details>
+          ))}
+        </div>
+
+      </div>
+      <div class="page-share">
+        <ShareBar url="https://cachinavisa.com/visa/visitor/" title={"加拿大访问签证（TRV）申请指南 | 条件·材料·流程·常见拒签原因"} />
+      </div>
+
+
+      <div class="cta-inline">
+        <div class="cta-text">材料准备没把握？我们可以帮你过一遍。</div>
+        <a class="cta-btn" href="/contact/">免费咨询 →</a>
+      </div>
+    </article>
+
+    <aside class="sidebar-stack">
+      <ContactCard />
+      <div class="sidebar-nav-card">
+        <div class="snc-title">签证子栏目</div>
+        <div class="snc-links">
+          <a class="snc-link active" href="/visa/visitor/">访问签 / 旅游签</a>
+          <a class="snc-link" href="/visa/family-visit/">探亲签证</a>
+          <a class="snc-link" href="/visa/super-visa/">超级签证（父母/祖父母）</a>
+          <a class="snc-link" href="/visa/study-permit/">学习许可（学签）</a>
+          <a class="snc-link" href="/visa/work-permit/">工作签证（工签）</a>
+          <a class="snc-link" href="/visa/french-mobility-work-permit/">法语流动工签</a>
+          <a class="snc-link" href="/visa/c11-work-permit/">C11 重大利益工签</a>
+          <a class="snc-link" href="/visa/extend/">续签 / 延期 / 境内转换</a>
+        </div>
+      </div>
+      <div class="sidebar-nav-card">
+        <div class="snc-title">相关页面</div>
+        <div class="snc-links">
+          <a class="snc-link" href="/visa/super-visa/">父母/祖父母来探亲？看超级签证</a>
+          <a class="snc-link" href="/inland/status-extension/">已在加拿大？查身份续签指南</a>
+          <a class="snc-link" href="/faq/">更多常见问题</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+.grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 920px) { .grid { grid-template-columns: 1fr 300px; align-items: start; } }
+.content-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 16px; overflow: hidden; }
+.page-header { padding: 28px 28px 24px; border-bottom: 1px solid rgba(26,29,35,0.08); background: linear-gradient(135deg, #fafbff, #fff); }
+.page-kicker { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #d92d20; margin-bottom: 8px; }
+.page-h1 { font-size: clamp(22px, 4vw, 30px); font-weight: 800; color: #1a1d23; margin: 0 0 12px; letter-spacing: -0.02em; }
+.page-intro { font-size: 15px; color: rgba(26,29,35,0.62); line-height: 1.7; margin: 0; }
+.content-sections { padding: 24px 28px; display: grid; gap: 32px; }
+.section-block h2 { font-size: 18px; font-weight: 750; color: #1a1d23; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 2px solid rgba(217,45,32,0.12); }
+.section-block p { font-size: 14px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0 0 12px; }
+.req-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.req-list li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; background: rgba(26,29,35,0.025); border-radius: 10px; font-size: 14px; color: rgba(26,29,35,0.75); line-height: 1.55; }
+.req-list li::before { content: "✓"; color: #d92d20; font-weight: 700; flex-shrink: 0; }
+.step-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; counter-reset: steps; }
+.step-list li { display: flex; gap: 14px; align-items: flex-start; counter-increment: steps; }
+.step-list li::before { content: counter(steps); display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #d92d20; color: #fff; font-weight: 700; font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+.step-text { font-size: 14px; color: rgba(26,29,35,0.75); line-height: 1.6; padding-top: 3px; }
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.info-card { padding: 14px 16px; background: rgba(26,29,35,0.03); border-radius: 12px; border: 1px solid rgba(26,29,35,0.07); }
+.info-card-label { font-size: 12px; color: rgba(26,29,35,0.45); margin-bottom: 4px; }
+.info-card-value { font-size: 14px; font-weight: 600; color: #1a1d23; }
+.tip-box { padding: 14px 16px; background: rgba(217,45,32,0.05); border-left: 3px solid #d92d20; border-radius: 0 10px 10px 0; font-size: 13px; color: rgba(26,29,35,0.7); line-height: 1.65; margin-top: 12px; }
+.faq-item { border: 1px solid rgba(26,29,35,0.09); border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+.faq-q { padding: 13px 16px; font-weight: 650; font-size: 14px; cursor: pointer; list-style: none; display: flex; justify-content: space-between; color: #1a1d23; }
+.faq-q::after { content: "+"; font-size: 18px; color: rgba(26,29,35,0.4); }
+details[open] .faq-q::after { content: "−"; }
+.faq-q::-webkit-details-marker { display: none; }
+.faq-a { padding: 0 16px 13px; font-size: 13.5px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0; }
+.cta-inline { margin: 0 28px 28px; padding: 20px 24px; background: linear-gradient(135deg, #0a1628, #0f1f38); border-radius: 14px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.cta-text { font-size: 15px; font-weight: 700; color: #fff; }
+.cta-btn { display: inline-flex; padding: 10px 20px; border-radius: 10px; background: #d92d20; color: #fff; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; }
+.cta-btn:hover { background: #b52418; text-decoration: none; }
+.sidebar-stack { display: grid; gap: 16px; position: sticky; top: 80px; }
+.sidebar-nav-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 14px; padding: 18px 20px; }
+.snc-title { font-size: 14px; font-weight: 700; color: #1a1d23; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(26,29,35,0.08); }
+.snc-links { display: flex; flex-direction: column; gap: 2px; }
+.snc-link { display: block; padding: 8px 10px; font-size: 13.5px; color: #374151; text-decoration: none; border-radius: 8px; }
+.snc-link:hover { background: rgba(217,45,32,0.06); color: #d92d20; text-decoration: none; }
+.snc-link.active { background: rgba(217,45,32,0.07); color: #d92d20; font-weight: 600; }
+</style>

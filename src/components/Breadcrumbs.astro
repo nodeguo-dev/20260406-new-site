@@ -1,0 +1,16 @@
+---
+type Crumb = { name: string; href: string };
+type Props = { items: Crumb[] };
+
+const { items } = Astro.props;
+---
+
+<nav class="muted" aria-label="面包屑" style="font-size:13px;">
+  {items.map((c, i) => (
+    <>
+      <a href={c.href}>{c.name}</a>
+      {i < items.length - 1 ? <span> / </span> : null}
+    </>
+  ))}
+</nav>
+

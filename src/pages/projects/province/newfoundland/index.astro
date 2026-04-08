@@ -1,0 +1,273 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民项目", href: "/projects/" },
+  { name: "省提名计划（PNP）", href: "/projects/provincial-nomination/" },
+  { name: "纽省省提名（NLNP）", href: "/projects/province/newfoundland/" },
+];
+
+const streams = [
+  {
+    title: "纽省技术工人类（Skilled Worker Category）",
+    badge: "雇主担保",
+    badgeColor: "#1a56c4",
+    req: [
+      "纽芬兰省雇主提供全职工作 offer（TEER 0–3）",
+      "对口工作经验 ≥ 1 年（最近 5 年内，含境外）",
+      "教育/培训与工作职位匹配",
+      "满足语言要求（CLB 4+，TEER 0–1 要求更高）",
+      "满足最低定居资金要求",
+    ],
+    target: "有纽芬兰省雇主 offer 的境外技术工人",
+    processing: "6–12 个月",
+    notes: "纽省技术工人通道是 NLNP 中申请量最大的类别，雇主担保是核心。圣约翰斯（St. John's）能源、渔业、制造业雇主每年都有大量需求。",
+  },
+  {
+    title: "纽省国际毕业生类（International Graduate Category）",
+    badge: "留学生专属",
+    badgeColor: "#059669",
+    req: [
+      "在纽芬兰纪念大学（MUN）或其他纽省认可院校完成 ≥ 2 年学习",
+      "持有 PGWP 工签",
+      "在纽省找到全职工作 offer（TEER 0–3）",
+      "意愿定居纽芬兰省",
+      "满足语言基本要求",
+    ],
+    target: "在纽省院校毕业、有省内工作 offer 的留学生",
+    processing: "6–10 个月",
+    notes: "纽芬兰纪念大学（Memorial University of Newfoundland，MUN）是纽省最主要的院校，学费是加拿大全国本科中最低的之一，是留学性价比极高的选择。",
+  },
+  {
+    title: "纽省优先职业通道（Priority Skills NL）",
+    badge: "紧缺职业",
+    badgeColor: "#7c3aed",
+    req: [
+      "职业位于纽省优先紧缺职业清单（Priority Occupations）",
+      "有纽省认可雇主（含大西洋 AIP 认可雇主）的工作 offer",
+      "相关工作经验和学历符合职位要求",
+      "满足语言要求（CLB 5+）",
+    ],
+    target: "从事纽省最紧缺行业（医护、工程、信息技术等）的申请人",
+    processing: "6–12 个月",
+    notes: "优先职业通道处理速度更快，适合从事医护、石油天然气工程、护理等极度紧缺行业的候选人。",
+  },
+  {
+    title: "大西洋移民试点（AIP）",
+    badge: "联邦通道",
+    badgeColor: "#b45309",
+    req: [
+      "取得纽芬兰省 AIP 认可雇主的全职 offer（TEER 0–3）",
+      "满足 AIP 的教育、语言和定居资金要求",
+      "有定居纽省的意愿",
+    ],
+    target: "有纽省认可雇主 offer 的境外申请人（无需省内经验）",
+    processing: "6–12 个月",
+    notes: "AIP 是联邦项目，覆盖大西洋四省，不需要事先有省内工作经验，只需要认可雇主提供 offer。纽省的能源和建筑业雇主中有不少已在 AIP 系统注册。",
+  },
+];
+
+const facts = [
+  { icon: "🏙️", title: "首府", value: "圣约翰斯（St. John's）" },
+  { icon: "👥", title: "华人社区", value: "规模较小，以 MUN 留学生为主" },
+  { icon: "🏠", title: "房价（均价）", value: "约 30–45 万加元（全国最低之一）" },
+  { icon: "⛽", title: "主要产业", value: "石油天然气、渔业、制造业、旅游" },
+  { icon: "🎓", title: "主要院校", value: "纽芬兰纪念大学（MUN）、College of the North Atlantic" },
+  { icon: "🌡️", title: "气候特点", value: "大西洋性气候，冬季多雪、多风，夏季凉爽" },
+];
+
+const faqs = [
+  {
+    q: "纽芬兰省（NL）适合中国移民去定居吗？",
+    a: "纽芬兰省是加拿大东部的大西洋省份，华人社区规模较小，但正在持续增长（以 MUN 留学生群体为主）。主要优势：① 房价全国最低，圣约翰斯均价约 30–45 万加元；② MUN（纽芬兰纪念大学）学费全国最便宜（本科约 3,000–6,000 加元/年）；③ 就业机会相对集中在能源和医护行业；④ 生活成本低、治安相对好。主要挑战：远离大城市，就业机会不如多伦多丰富，社区多元化程度较低。",
+  },
+  {
+    q: "纽芬兰纪念大学（MUN）值得去读吗？",
+    a: "MUN 是加拿大学费最低的大学之一（国际留学生本科约 CAD $11,000–$20,000/年，远低于全国平均 3–4 万），是留学移民性价比极高的选择。主要特点：综合性研究型大学，工程、商科、护理、海洋科学强；在纽省就读满 2 年后毕业可申请 PGWP 工签，再通过 NLNP 国际毕业生通道申请省提名，是成熟路线。",
+  },
+  {
+    q: "NLNP 和 AIP 有什么区别，哪个更好申请？",
+    a: "NLNP（纽省省提名）：纽省政府独立管理，适合已在省内工作或有省内雇主 offer 的申请人，通过省政府审批后再联邦 PR。AIP（大西洋移民试点）：联邦政府管理，覆盖大西洋四省，雇主须获得联邦 AIP 认可，申请人不需要事先在省内生活。两者各有适用场景——已在省内工作选 NLNP，境外有 offer 选 AIP。",
+  },
+  {
+    q: "纽省最缺哪些职业？",
+    a: "① 医护类：注册护士（RN/LPN）、个人支援工作者（PSW）——省内医护缺口每年数百至上千人；② 石油天然气相关工程师和技术人员（Hibernia、White Rose 等近海油田项目）；③ 建筑和技工类（电工、管道工、焊工）；④ 信息技术和网络安全；⑤ 餐饮服务业（厨师、厨房员工）。",
+  },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org", "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({ "@type": "ListItem", position: i + 1, name: c.name, item: new URL(c.href, site.url).toString() })),
+};
+const faqLd = {
+  "@context": "https://schema.org", "@type": "FAQPage",
+  mainEntity: faqs.map((i) => ({ "@type": "Question", name: i.q, acceptedAnswer: { "@type": "Answer", text: i.a } })),
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("纽芬兰省提名（NLNP）完整指南 | MUN留学·技术移民·AIP大西洋通道")}
+  description="纽芬兰与拉布拉多省省提名计划（NLNP）详解：技术工人、国际毕业生、优先职业通道完整条件，纽芬兰纪念大学（MUN）留学转移民路径，以及 AIP 大西洋移民试点对接。"
+  canonical="https://cachinavisa.com/projects/province/newfoundland/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={faqLd} />
+  <Breadcrumbs items={breadcrumbs} />
+
+  <div class="page-layout" style="margin-top:16px">
+    <main>
+      <div class="page-hero">
+        <div class="hero-kicker">纽芬兰与拉布拉多省 · 省提名</div>
+        <h1 class="hero-title">纽省省提名<br /><span class="hero-title-en">Newfoundland & Labrador Provincial Nominee Program (NLNP)</span></h1>
+        <p class="hero-desc">
+          纽芬兰省是加拿大大西洋地区的省份，拥有<strong>全国最低的大学学费之一</strong>（纽芬兰纪念大学 MUN）
+          和<strong>全国最低的房价之一</strong>。
+          对于愿意在大西洋省份生活和工作的移民来说，NLNP 是竞争相对低、通过率较高的省提名通道。
+        </p>
+        <div class="hero-tags">
+          <span class="htag blue">MUN 学费全国最低</span>
+          <span class="htag blue">房价极低</span>
+          <span class="htag blue">AIP 联邦通道对接</span>
+          <span class="htag blue">能源/医护需求大</span>
+        </div>
+      </div>
+
+      <!-- Province facts -->
+      <div class="content-card">
+        <h2 class="cc-title">纽芬兰省基本信息</h2>
+        <div class="facts-grid">
+          {facts.map((f) => (
+            <div class="fact-item">
+              <span class="fact-icon">{f.icon}</span>
+              <div>
+                <div class="fact-title">{f.title}</div>
+                <div class="fact-val">{f.value}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {streams.map((s) => (
+        <div class="content-card">
+          <div class="stream-header">
+            <h2 class="stream-title">{s.title}</h2>
+            <span class="stream-badge" style={`background:${s.badgeColor}18; color:${s.badgeColor}; border-color:${s.badgeColor}40`}>{s.badge}</span>
+          </div>
+          <div class="stream-target">🎯 适合人群：{s.target}</div>
+          <div class="stream-meta"><span class="sm-label">预计处理时间：</span>{s.processing}</div>
+          <div class="req-list">
+            {s.req.map((r) => <div class="req-item"><span class="ri-check">✓</span>{r}</div>)}
+          </div>
+          {s.notes && <div class="stream-note">💡 {s.notes}</div>}
+        </div>
+      ))}
+
+      <div class="content-card">
+        <h2 class="cc-title">常见问题（FAQ）</h2>
+        {faqs.map((item) => (
+          <details class="faq-item">
+            <summary class="faq-q">{item.q}</summary>
+            <p class="faq-a">{item.a}</p>
+          </details>
+        ))}
+      </div>
+
+      <div class="cta-block">
+        <div class="cta-text">
+          <div class="cta-title">免费评估你的 NLNP 申请资格</div>
+          <p class="cta-desc">有纽省工作 offer 或考虑去 MUN 读书？填写表单获取专业评估。</p>
+        </div>
+        <a href="/contact/" class="cta-btn">免费评估 →</a>
+      </div>
+    </main>
+
+    <aside class="page-sidebar">
+      <ContactCard title="咨询纽省移民" />
+      <div class="sidebar-card">
+        <div class="sc-title">海洋四省通道</div>
+        <div class="sc-links">
+          <a class="sc-link active" href="/projects/province/newfoundland/">纽芬兰 NL（当前）</a>
+          <a class="sc-link" href="/projects/province/nova-scotia/">新斯科舍 NS（NSNP）</a>
+          <a class="sc-link" href="/projects/province/new-brunswick/">新不伦瑞克 NB（NBPNP）</a>
+          <a class="sc-link" href="/projects/province/prince-edward-island/">爱德华王子岛 PEI</a>
+        </div>
+      </div>
+      <div class="sidebar-card">
+        <div class="sc-title">其他省提名</div>
+        <div class="sc-links">
+          <a class="sc-link" href="/projects/province/ontario/">安省 OINP</a>
+          <a class="sc-link" href="/projects/province/british-columbia/">BC省 BCPNP</a>
+          <a class="sc-link" href="/projects/province/alberta/">阿省 AAIP</a>
+          <a class="sc-link" href="/projects/province/manitoba/">曼省 MPNP</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+      <div class="page-share">
+        <ShareBar url="https://cachinavisa.com/projects/province/newfoundland/" title={"纽芬兰省提名（NLNP）完整指南 | MUN留学·技术移民·AIP大西洋通道"} />
+      </div>
+</BaseLayout>
+
+<style>
+.page-layout { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: start; }
+@media (min-width: 960px) { .page-layout { grid-template-columns: 1fr 280px; } }
+.page-hero { background: linear-gradient(135deg,#0c1a3b 0%,#1a3a7a 55%,#0a1628 100%); border-radius: 20px; padding: 40px 36px; margin-bottom: 16px; position: relative; overflow: hidden; }
+.hero-kicker { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(147,197,253,0.8); margin-bottom: 12px; }
+.hero-title { font-size: clamp(22px, 4vw, 36px); font-weight: 900; color: #fff; margin: 0 0 14px; line-height: 1.15; }
+.hero-title-en { font-size: 0.45em; font-weight: 500; color: rgba(255,255,255,0.4); display: block; margin-top: 4px; }
+.hero-desc { font-size: 14.5px; color: rgba(255,255,255,0.65); line-height: 1.75; margin: 0 0 22px; max-width: 680px; }
+.hero-desc strong { color: #93c5fd; }
+.hero-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+.htag { padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; border: 1px solid transparent; }
+.htag.blue { background: rgba(26,86,196,0.2); border-color: rgba(26,86,196,0.35); color: #93c5fd; }
+
+.content-card { background: #fff; border: 1px solid rgba(13,17,23,0.09); border-radius: 18px; padding: 24px 28px; margin-bottom: 16px; }
+.cc-title { font-size: 18px; font-weight: 800; color: #0d1117; margin: 0 0 16px; padding-bottom: 10px; border-bottom: 2px solid rgba(26,86,196,0.15); }
+
+.facts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 560px) { .facts-grid { grid-template-columns: 1fr; } }
+.fact-item { display: flex; gap: 12px; align-items: flex-start; padding: 12px; border-radius: 12px; border: 1px solid rgba(13,17,23,0.07); }
+.fact-icon { font-size: 20px; flex-shrink: 0; }
+.fact-title { font-size: 11.5px; color: rgba(13,17,23,0.45); font-weight: 600; margin-bottom: 3px; }
+.fact-val { font-size: 13px; font-weight: 700; color: #0d1117; line-height: 1.45; }
+
+.stream-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+.stream-title { font-size: 16px; font-weight: 800; color: #0d1117; margin: 0; }
+.stream-badge { font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 999px; border: 1.5px solid; white-space: nowrap; }
+.stream-target { font-size: 13px; color: rgba(13,17,23,0.6); margin-bottom: 6px; }
+.stream-meta { font-size: 12.5px; color: rgba(13,17,23,0.5); margin-bottom: 10px; }
+.sm-label { font-weight: 700; }
+.req-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.req-item { display: flex; gap: 8px; font-size: 13px; color: rgba(13,17,23,0.7); line-height: 1.55; }
+.ri-check { color: #1a56c4; font-weight: 700; flex-shrink: 0; }
+.stream-note { font-size: 12.5px; color: rgba(13,17,23,0.55); background: rgba(26,86,196,0.04); padding: 10px 14px; border-radius: 10px; border-left: 3px solid rgba(26,86,196,0.2); line-height: 1.55; }
+
+.faq-item { border: 1px solid rgba(13,17,23,0.08); border-radius: 12px; overflow: hidden; margin-bottom: 8px; }
+.faq-q { padding: 14px 18px; font-size: 14px; font-weight: 600; color: #0d1117; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.faq-q::after { content: '+'; font-size: 18px; color: #1a56c4; font-weight: 400; }
+details[open] .faq-q::after { content: '−'; }
+.faq-a { padding: 12px 18px 14px; font-size: 13.5px; color: rgba(13,17,23,0.65); line-height: 1.75; margin: 0; border-top: 1px solid rgba(13,17,23,0.06); }
+
+.cta-block { background: linear-gradient(135deg,#0c1a3b,#1a3a7a); border-radius: 18px; padding: 28px 32px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.cta-title { font-size: 17px; font-weight: 800; color: #fff; margin-bottom: 7px; }
+.cta-desc { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.65; margin: 0; max-width: 500px; }
+.cta-btn { padding: 12px 26px; background: #1a56c4; color: #fff; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
+.cta-btn:hover { background: #1e40af; text-decoration: none; }
+
+.page-sidebar { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 88px; }
+.sidebar-card { background: #fff; border: 1px solid rgba(13,17,23,0.09); border-radius: 16px; overflow: hidden; }
+.sc-title { font-size: 13px; font-weight: 700; color: #0d1117; padding: 14px 18px 10px; border-bottom: 1px solid rgba(13,17,23,0.07); }
+.sc-links { padding: 6px 0; }
+.sc-link { display: block; padding: 8px 18px; font-size: 13px; color: rgba(13,17,23,0.7); text-decoration: none; transition: all 0.12s; }
+.sc-link:hover { background: rgba(26,86,196,0.04); color: #1a56c4; text-decoration: none; }
+.sc-link.active { background: rgba(26,86,196,0.07); color: #1a56c4; font-weight: 700; }
+</style>

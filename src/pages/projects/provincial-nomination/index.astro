@@ -1,0 +1,252 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import RelatedToolsCard from "@/components/RelatedToolsCard.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民项目", href: "/projects/" },
+  { name: "省提名项目（PNP）", href: "/projects/provincial-nomination/" },
+];
+
+const provinces = [
+  { name: "安大略省（OINP）", href: "/projects/province/ontario/", desc: "加拿大最大移民目的地省份，提供技术人才、雇主需求、企业家和国际学生等多个类别。" },
+  { name: "不列颠哥伦比亚省（BC PNP）", href: "/projects/province/british-columbia/", desc: "科技移民（Tech Pilot）发展迅速，对IT类和STEM类职业需求旺盛，处理速度也相对较快。" },
+  { name: "魁北克省（QSWP/PEQ）", href: "/projects/province/quebec/", desc: "独立的移民体系，使用法语，有自己的技术移民评分（QSWP）和经验类（PEQ）路径。" },
+  { name: "阿尔伯塔省（AAIP）", href: "/projects/province/alberta/", desc: "能源与科技产业并重，机遇类与快速通道衔接灵活。" },
+  { name: "曼尼托巴省（MPNP）", href: "/projects/province/manitoba/", desc: "重视留省意愿与雇主担保，留学转移民路径成熟。" },
+  { name: "纽芬兰与拉布拉多（NLNP）", href: "/projects/province/newfoundland/", desc: "海洋四省之一，MUN 学费低，NLNP 与 AIP 双通道。" },
+  { name: "新斯科舍省（NSNP）", href: "/projects/province/nova-scotia/", desc: "海洋四省核心省份之一，哈利法克斯科技与医护岗位需求大。" },
+  { name: "新不伦瑞克省（NBPNP）", href: "/projects/province/new-brunswick/", desc: "海洋四省之一，蒙克顿双语环境，NBPNP 与 AIP 并行。" },
+  { name: "爱德华王子岛（PEIPNP）", href: "/projects/province/prince-edward-island/", desc: "海洋四省最小省份，夏洛特敦周边旅游与服务业机会多。" },
+];
+
+const faqItems = [
+  {
+    q: "省提名和Express Entry有什么关系？",
+    a: "省提名分两个渠道：Enhanced通道（通过EE）和Base通道（不通过EE）。通过Enhanced通道获得省提名后，IRCC会给你额外600分CRS，基本等于直接获得ITA邀请，之后走联邦PR申请流程；Base通道获提名后，直接向IRCC提交PR申请，不经过EE候选池，但处理时间通常更长。"
+  },
+  {
+    q: "我能同时申请几个省的省提名吗？",
+    a: "可以同时在EE候选池中接受多个省的EOI（意向申请），但一旦某个省发出提名，你需要接受后才能申请PR。各省有自己的意向申请系统，你可以根据条件分别投递，增加获得提名的机会。"
+  },
+  {
+    q: "省提名之后还需要多久才能拿到PR？",
+    a: "Enhanced通道（通过EE）：获提名后60天内提交PR申请，IRCC目标处理时间6个月内。Base通道：处理时间通常较长，15–24个月都有可能，因省份和类别而异。"
+  },
+  {
+    q: "没有加拿大工作经验，能申请省提名吗？",
+    a: "很多省份有专门面向境外申请人（Without Canadian work experience）的类别，但条件通常会更严格，比如要求有工作offer，或特定行业背景。也有些省份优先省内有工作或有亲属担保的申请人。建议根据你的具体背景逐一对照各省条件。"
+  },
+  {
+    q: "省提名一定要定居在提名省份吗？",
+    a: "原则上，申请省提名时你需要有在该省定居的意愿，申请中也会被问到这一点。获批PR后，加拿大宪法保障公民和PR自由在各省流动的权利，IRCC不会强制执行「必须住在提名省份」，但如果你明显无意在该省定居，提名申请时可能被省政府质疑。"
+  },
+  {
+    q: "企业家类省提名适合什么人？",
+    a: "通常适合：有创业经历或管理经验、有一定净资产（各省要求不同，$300K–$2M CAD不等）、愿意在目标省份投资设立或购买企业并创造本地就业。企业家类往往需要先以临时状态来加拿大运营企业，满足业绩考核条件后才获正式提名，整个过程一般需要2–3年。"
+  },
+];
+
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((i) => ({
+    "@type": "Question",
+    name: i.q,
+    acceptedAnswer: { "@type": "Answer", text: i.a },
+  })),
+};
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+---
+<BaseLayout
+  title={withSiteTitle("加拿大省提名项目（PNP）申请指南 | 各省条件·流程·与EE关系")}
+  description="加拿大省提名移民（PNP）完整指南：各省提名项目介绍、与Express Entry的关系、Enhanced vs Base通道区别及6个常见问题解答。"
+  canonical="https://cachinavisa.com/projects/provincial-nomination/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={faqLd} />
+  <Breadcrumbs items={breadcrumbs} />
+  <div class="grid" style="margin-top:16px">
+    <article class="content-card">
+      <div class="page-header">
+        <div class="page-kicker">省提名移民 · PNP</div>
+        <h1 class="page-h1">加拿大省提名项目（PNP）申请指南</h1>
+        <p class="page-intro">省提名计划（Provincial Nominee Program，PNP）允许各省根据本省经济需求，提名符合条件的移民申请人。对于EE分数不够高的申请人来说，省提名是一条非常重要的替代路径——尤其是Enhanced通道的提名附带600分CRS加分，相当于直接进入快车道。</p>
+      </div>
+
+      <div class="content-sections">
+
+        <div class="section-block">
+          <h2>Enhanced通道 vs. Base通道</h2>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-card-label">Enhanced通道（与EE结合）</div>
+              <div class="info-card-value">获提名后+600分CRS，60天内提交PR申请，目标处理6个月内</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">Base通道（独立于EE）</div>
+              <div class="info-card-value">直接向IRCC提交省提名PR申请，处理时间通常15–24个月</div>
+            </div>
+          </div>
+          <div class="tip-box">并非所有省提名类别都有Enhanced通道。很多针对特定职业或企业家的类别只有Base通道。申请前需确认该类别支持哪条路径。</div>
+        </div>
+
+        <div class="section-block">
+          <h2>各省提名项目概览</h2>
+          <div class="province-list">
+            {provinces.map((p) => (
+              <a class="province-card" href={p.href}>
+                <div class="province-name">{p.name}</div>
+                <div class="province-desc">{p.desc}</div>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2>常见省提名类别</h2>
+          <ul class="req-list">
+            <li><strong>技术工人类</strong>——有工作offer并在特定NOC职业类别工作，可直接申请省提名</li>
+            <li><strong>国际毕业生类</strong>——在该省院校毕业，有相关工作经验，可申请省内国际毕业生类别</li>
+            <li><strong>企业家/自雇类</strong>——有创业经历和净资产，愿意在该省投资并创造就业</li>
+            <li><strong>半技术工人类</strong>——部分省份（如BC、AB）有针对TEER 4/5类别的提名通道</li>
+            <li><strong>农业类</strong>——部分省份对农业工人或农场主有专属提名类别</li>
+            <li><strong>EE人才征召</strong>——省份主动从EE候选池发出邀请（Notification of Interest，NOI）给特定分数段或职业的申请人</li>
+          </ul>
+        </div>
+
+        <div class="section-block">
+          <h2>申请省提名的基本流程</h2>
+          <ol class="step-list">
+            <li><span class="step-text"><strong>研究目标省份及类别</strong>——根据个人背景（工作经验、学历、有无offer）逐一对照各省要求，确定最适合的类别</span></li>
+            <li><span class="step-text"><strong>提交省级EOI或直接申请</strong>——部分省份有积分抽签系统（EOI），分数高的优先收到邀请；部分类别可直接递交申请</span></li>
+            <li><span class="step-text"><strong>省政府审核并发出提名</strong>——如获批，你会收到省级提名证书（Nomination Certificate）</span></li>
+            <li><span class="step-text"><strong>向IRCC提交联邦PR申请</strong>——Enhanced通道通过EE提交；Base通道单独递交联邦PR申请</span></li>
+            <li><span class="step-text"><strong>完成移民体检、警察证明等材料</strong>——提交后IRCC审核，通过后获COPR并登陆加拿大</span></li>
+          </ol>
+        </div>
+
+        <div class="section-block">
+          <h2>常见问题（FAQ）</h2>
+          {faqItems.map((item) => (
+            <details class="faq-item">
+              <summary class="faq-q">{item.q}</summary>
+              <p class="faq-a">{item.a}</p>
+            </details>
+          ))}
+        </div>
+
+      </div>
+
+      <div class="cta-inline">
+        <div class="cta-text">哪个省的提名项目最适合你？让我们帮你评估。</div>
+        <a class="cta-btn" href="/contact/">免费评估 →</a>
+      </div>
+    </article>
+
+    <aside class="sidebar-stack">
+      <ContactCard />
+      <RelatedToolsCard
+        title="相关打分工具"
+        subtitle="PNP 不只看省内表达分，很多通道也要对照 CRS。"
+        items={[
+          { href: "/tools/oinp-calculator/", label: "安省 OINP · EOI", desc: "安省雇主类 / 留学类常见打分入口。" },
+          { href: "/tools/bc-pnp-calculator/", label: "BC SIRS 计算器", desc: "BC 技术类与部分定向项目会用到。" },
+          { href: "/tools/aaip-calculator/", label: "AAIP Worker EOI", desc: "阿省 Worker 类分值可直接预估。" },
+          { href: "/tools/crs-calculator/", label: "联邦 CRS 计算器", desc: "Enhanced 通道最终仍会回到 EE 总分。" },
+        ]}
+        footerHref="/tools/"
+        footerLabel="查看全部打分工具"
+      />
+      <div class="sidebar-nav-card">
+        <div class="snc-title">海洋四省（NL · NS · NB · PEI）</div>
+        <div class="snc-links">
+          <a class="snc-link" href="/projects/province/newfoundland/">纽芬兰 NL（NLNP）</a>
+          <a class="snc-link" href="/projects/province/nova-scotia/">新斯科舍 NS（NSNP）</a>
+          <a class="snc-link" href="/projects/province/new-brunswick/">新不伦瑞克 NB（NBPNP）</a>
+          <a class="snc-link" href="/projects/province/prince-edward-island/">爱德华王子岛 PEI</a>
+        </div>
+      </div>
+      <div class="sidebar-nav-card">
+        <div class="snc-title">其他省份</div>
+        <div class="snc-links">
+          <a class="snc-link" href="/projects/province/ontario/">安省（OINP）</a>
+          <a class="snc-link" href="/projects/province/british-columbia/">BC 省（BCPNP）</a>
+          <a class="snc-link" href="/projects/province/quebec/">魁北克省</a>
+          <a class="snc-link" href="/projects/province/alberta/">阿省（AAIP）</a>
+          <a class="snc-link" href="/projects/province/manitoba/">曼省（MPNP）</a>
+        </div>
+      </div>
+      <div class="sidebar-nav-card">
+        <div class="snc-title">移民项目</div>
+        <div class="snc-links">
+          <a class="snc-link" href="/projects/federal/">联邦技术移民（EE）</a>
+          <a class="snc-link active" href="/projects/provincial-nomination/">省提名项目（PNP）</a>
+          <a class="snc-link" href="/projects/">全部移民项目</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+.grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 920px) { .grid { grid-template-columns: 1fr 300px; align-items: start; } }
+.content-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 16px; overflow: hidden; }
+.page-header { padding: 28px 28px 24px; border-bottom: 1px solid rgba(26,29,35,0.08); background: linear-gradient(135deg, #fafbff, #fff); }
+.page-kicker { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #d92d20; margin-bottom: 8px; }
+.page-h1 { font-size: clamp(22px, 4vw, 30px); font-weight: 800; color: #1a1d23; margin: 0 0 12px; letter-spacing: -0.02em; }
+.page-intro { font-size: 15px; color: rgba(26,29,35,0.62); line-height: 1.7; margin: 0; }
+.content-sections { padding: 24px 28px; display: grid; gap: 32px; }
+.section-block h2 { font-size: 18px; font-weight: 750; color: #1a1d23; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 2px solid rgba(217,45,32,0.12); }
+.section-block p { font-size: 14px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0 0 12px; }
+.province-list { display: grid; gap: 10px; }
+.province-card { display: block; padding: 14px 16px; background: rgba(26,29,35,0.025); border-radius: 12px; border: 1px solid rgba(26,29,35,0.07); text-decoration: none; transition: border-color 0.15s; }
+.province-card:hover { border-color: rgba(217,45,32,0.3); background: rgba(217,45,32,0.03); text-decoration: none; }
+.province-name { font-size: 15px; font-weight: 700; color: #1a1d23; margin-bottom: 4px; }
+.province-desc { font-size: 13.5px; color: rgba(26,29,35,0.6); line-height: 1.55; }
+.req-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.req-list li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; background: rgba(26,29,35,0.025); border-radius: 10px; font-size: 14px; color: rgba(26,29,35,0.75); line-height: 1.55; }
+.req-list li::before { content: "✓"; color: #d92d20; font-weight: 700; flex-shrink: 0; }
+.step-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; counter-reset: steps; }
+.step-list li { display: flex; gap: 14px; align-items: flex-start; counter-increment: steps; }
+.step-list li::before { content: counter(steps); display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #d92d20; color: #fff; font-weight: 700; font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+.step-text { font-size: 14px; color: rgba(26,29,35,0.75); line-height: 1.6; padding-top: 3px; }
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.info-card { padding: 14px 16px; background: rgba(26,29,35,0.03); border-radius: 12px; border: 1px solid rgba(26,29,35,0.07); }
+.info-card-label { font-size: 12px; color: rgba(26,29,35,0.45); margin-bottom: 4px; }
+.info-card-value { font-size: 14px; font-weight: 600; color: #1a1d23; }
+.tip-box { padding: 14px 16px; background: rgba(217,45,32,0.05); border-left: 3px solid #d92d20; border-radius: 0 10px 10px 0; font-size: 13px; color: rgba(26,29,35,0.7); line-height: 1.65; margin-top: 12px; }
+.faq-item { border: 1px solid rgba(26,29,35,0.09); border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+.faq-q { padding: 13px 16px; font-weight: 650; font-size: 14px; cursor: pointer; list-style: none; display: flex; justify-content: space-between; color: #1a1d23; }
+.faq-q::after { content: "+"; font-size: 18px; color: rgba(26,29,35,0.4); }
+details[open] .faq-q::after { content: "−"; }
+.faq-q::-webkit-details-marker { display: none; }
+.faq-a { padding: 0 16px 13px; font-size: 13.5px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0; }
+.cta-inline { margin: 0 28px 28px; padding: 20px 24px; background: linear-gradient(135deg, #0a1628, #0f1f38); border-radius: 14px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.cta-text { font-size: 15px; font-weight: 700; color: #fff; }
+.cta-btn { display: inline-flex; padding: 10px 20px; border-radius: 10px; background: #d92d20; color: #fff; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; }
+.cta-btn:hover { background: #b52418; text-decoration: none; }
+.sidebar-stack { display: grid; gap: 16px; position: sticky; top: 80px; }
+.sidebar-nav-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 14px; padding: 18px 20px; }
+.snc-title { font-size: 14px; font-weight: 700; color: #1a1d23; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(26,29,35,0.08); }
+.snc-links { display: flex; flex-direction: column; gap: 2px; }
+.snc-link { display: block; padding: 8px 10px; font-size: 13.5px; color: #374151; text-decoration: none; border-radius: 8px; }
+.snc-link:hover { background: rgba(217,45,32,0.06); color: #d92d20; text-decoration: none; }
+.snc-link.active { background: rgba(217,45,32,0.07); color: #d92d20; font-weight: 600; }
+</style>

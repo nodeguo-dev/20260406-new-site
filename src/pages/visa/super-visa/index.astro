@@ -1,0 +1,283 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "加拿大签证", href: "/visa/" },
+  { name: "超级签证", href: "/visa/super-visa/" },
+];
+
+const faqItems = [
+  {
+    q: "超级签证每次最多可以住多久？",
+    a: "超级签证持有人每次入境，CBSA边境官可以授权最长5年的停留期。这比普通探亲签证的6个月要长得多。到期前，可以在加拿大境内申请延长停留，或者出境后重新入境重新获授新的停留期。"
+  },
+  {
+    q: "超级签证和父母团聚移民（PGP）有什么区别？",
+    a: "超级签证是临时签证，父母可以来加长住但最终仍需回国，不能在加拿大工作；PGP（父母祖父母移民）是永久居民申请，获批后父母可以在加拿大永久定居、享受公共医疗，但申请名额有限，每年通过抽签方式决定谁可以提交申请。超级签证作为等待PGP期间的过渡或长期探访方案非常实用。"
+  },
+  {
+    q: "医疗保险必须从哪里买？有什么具体要求？",
+    a: "保险必须从加拿大境内保险公司购买（或在加拿大注册的保险机构），并且：保额至少$100,000 CAD；覆盖医疗、住院和遣返；在加拿大全境有效；有效期至少覆盖计划停留的整个期间。不是所有外国保险公司的产品都被接受，购买时需仔细核查保单是否符合IRCC要求。"
+  },
+  {
+    q: "子女需要满足什么收入要求？",
+    a: "加拿大的子女或孙子女（担保人）需要证明家庭收入达到IRCC规定的低收入临界线（LICO）的150%。2024年的参考标准：一个2人家庭约需年收入$38,000 CAD以上；家庭人口越多，要求越高。提交近12个月的T4税单、NOA（报税评估单）或雇主收入证明即可佐证。"
+  },
+  {
+    q: "超级签证会拒签吗？常见原因是什么？",
+    a: "会。常见拒签原因包括：医疗保险保单不符合要求、担保人收入未达标、申请人有健康状况使签证官担心会过度使用医疗资源、或申请人历史上有过期停留记录等。申请前认真核查每一项条件，或咨询顾问，能大幅降低被拒风险。"
+  },
+  {
+    q: "父母/祖父母的健康状况会影响申请吗？",
+    a: "可能会。IRCC在审批时会评估申请人的医疗状况是否会对加拿大公共医疗系统造成过重负担。有严重慢性病或需要大量医疗资源的情况下，可能会影响审批结果。移民体检（IME）会评估这些因素，建议提前了解可能的影响。"
+  },
+  {
+    q: "超级签证生效后，父母还能回国吗？会失效吗？",
+    a: "超级签证是多次入境签证，父母可以在有效期内自由往返中加两国，出境不会导致签证失效。每次重新入境加拿大时，CBSA会重新授权停留期限（最长5年）。建议父母每次出境前确认当次停留期内的返程计划，以避免过期停留风险。"
+  },
+  {
+    q: "配偶也想一起来，需要各自分开申请吗？",
+    a: "是的，父母双方各自需要独立的签证申请，各自提交材料、各自缴费，各自进行生物特征采集。两人可以同时提交，由担保人（子女）统一出具担保信，保险单可以是联合保单。"
+  },
+];
+
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((i) => ({
+    "@type": "Question",
+    name: i.q,
+    acceptedAnswer: { "@type": "Answer", text: i.a },
+  })),
+};
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+---
+<BaseLayout
+  title={withSiteTitle("加拿大超级签证申请指南 | 父母/祖父母探亲·每次最多住5年")}
+  description="超级签证（Super Visa）完整指南：申请条件、担保人收入要求、医疗保险标准、材料清单及8个高频问题解答。适合父母祖父母来加拿大长住。"
+  canonical="https://cachinavisa.com/visa/super-visa/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={faqLd} />
+  <Breadcrumbs items={breadcrumbs} />
+  <div class="grid" style="margin-top:16px">
+    <article class="content-card">
+      <div class="page-header">
+        <div class="page-kicker">超级签证 · Super Visa</div>
+        <h1 class="page-h1">加拿大超级签证（父母/祖父母探亲）申请指南</h1>
+        <p class="page-intro">超级签证（Super Visa）是专为加拿大公民或永久居民的父母和祖父母设计的长期探亲签证。与普通探亲签证最大的不同在于：每次入境最多可停留5年，有效期长达10年。适合希望来加拿大长期陪伴子女、享受天伦之乐的父母。</p>
+      </div>
+
+      <div class="content-sections">
+
+        <div class="section-block">
+          <h2>超级签证的核心优势</h2>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-card-label">每次停留时长</div>
+              <div class="info-card-value">最多 5 年（普通探亲签证仅6个月）</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">签证有效期</div>
+              <div class="info-card-value">最长 10 年，多次入境</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">可延长停留</div>
+              <div class="info-card-value">可在境内申请延长，无需出境重新申请</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">适用人群</div>
+              <div class="info-card-value">加拿大公民或PR的父母、祖父母、外祖父母</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2>申请条件（三个关键门槛）</h2>
+
+          <p><strong>1. 担保人资格</strong>——在加拿大的子女或孙子女必须是加拿大公民或永久居民。</p>
+          <p><strong>2. 担保人家庭收入</strong>——担保人家庭年收入必须达到低收入临界线（LICO）的150%。以下是2024年的参考标准：</p>
+          <div class="info-grid" style="margin-bottom:14px">
+            <div class="info-card">
+              <div class="info-card-label">家庭2人</div>
+              <div class="info-card-value">约 $38,000 CAD / 年</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">家庭3人</div>
+              <div class="info-card-value">约 $46,700 CAD / 年</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">家庭4人</div>
+              <div class="info-card-value">约 $56,800 CAD / 年</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">家庭5人+</div>
+              <div class="info-card-value">以此类推，人口越多要求越高</div>
+            </div>
+          </div>
+          <div class="tip-box">以上为参考数字，IRCC每年会更新LICO标准，申请前请以IRCC官网最新公布数据为准。</div>
+
+          <p style="margin-top:16px"><strong>3. 医疗保险</strong>——申请人（父母/祖父母）在入境前必须购买以下标准的医疗保险：</p>
+          <ul class="req-list">
+            <li>保险公司须为加拿大境内机构</li>
+            <li>保额不低于 $100,000 CAD</li>
+            <li>覆盖：医疗、住院及遣返费用</li>
+            <li>有效期须涵盖计划在加拿大的整个停留期间</li>
+            <li>在加拿大全境有效（不仅限于某一省份）</li>
+          </ul>
+        </div>
+
+        <div class="section-block">
+          <h2>申请材料清单</h2>
+          <p><strong>申请人（父母/祖父母）需提交：</strong></p>
+          <ul class="req-list">
+            <li>有效护照原件及所有旧护照</li>
+            <li>IMM 5257 申请表（在线填写并生成条形码页）</li>
+            <li>近期白底彩色证件照（35mm × 45mm）</li>
+            <li>生物特征预约确认（首次或已逾5年）</li>
+            <li>医疗保险保单（须符合上述标准，英文或法文版）</li>
+            <li>移民体检报告（由IRCC指定的DMC面板医生出具）</li>
+          </ul>
+          <p style="margin-top:12px"><strong>担保人（子女/孙子女）需提供：</strong></p>
+          <ul class="req-list">
+            <li>担保信（说明愿意承担责任，包含担保人的姓名、联系方式、身份）</li>
+            <li>加拿大公民护照复印件 或 PR卡复印件</li>
+            <li>收入证明：近12个月T4税单 + 最新报税评估单（NOA）</li>
+            <li>如收入不足，可添加同住配偶的收入共同担保</li>
+          </ul>
+        </div>
+
+        <div class="section-block">
+          <h2>申请流程</h2>
+          <ol class="step-list">
+            <li><span class="step-text"><strong>确认担保人收入</strong>——核查担保人的家庭年收入是否达标，收集近期税务文件。</span></li>
+            <li><span class="step-text"><strong>购买医疗保险</strong>——选择符合IRCC要求的加拿大保险产品，确认保单涵盖整个停留期。</span></li>
+            <li><span class="step-text"><strong>预约移民体检</strong>——联系IRCC指定的DMC医生（指定移民体检诊所）完成体检，体检结果直接上传至IRCC系统。</span></li>
+            <li><span class="step-text"><strong>填写申请表格、上传材料</strong>——通过IRCC官网账号填写申请表，上传所有材料并缴费（$100 CAD申请费）。</span></li>
+            <li><span class="step-text"><strong>采集生物特征</strong>——前往指定签证申请中心（VAC）采集指纹和照片（$85 CAD）。</span></li>
+            <li><span class="step-text"><strong>等待审核结果</strong>——审核期间可能收到补件通知，通过IRCC账号跟踪进度。</span></li>
+          </ol>
+        </div>
+
+        <div class="section-block">
+          <h2>费用概览</h2>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-card-label">签证申请费</div>
+              <div class="info-card-value">$100 CAD / 人</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">生物特征费</div>
+              <div class="info-card-value">$85 CAD / 人</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">移民体检</div>
+              <div class="info-card-value">约 $200–$350 CAD（视诊所而定）</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">医疗保险</div>
+              <div class="info-card-value">约 $1,500–$3,000 CAD / 年（视年龄和健康情况）</div>
+            </div>
+          </div>
+          <div class="tip-box">处理时间目前一般为8–20周，旺季更长。建议在计划入境日期前至少5个月提交申请，以留足余量。</div>
+        </div>
+
+        <div class="section-block">
+          <h2>常见问题（FAQ）</h2>
+          {faqItems.map((item) => (
+            <details class="faq-item">
+              <summary class="faq-q">{item.q}</summary>
+              <p class="faq-a">{item.a}</p>
+            </details>
+          ))}
+        </div>
+
+      </div>
+      <div class="page-share">
+        <ShareBar url="https://cachinavisa.com/visa/super-visa/" title={"加拿大超级签证申请指南 | 父母/祖父母探亲·每次最多住5年"} />
+      </div>
+
+
+      <div class="cta-inline">
+        <div class="cta-text">想让父母来加拿大长住？我们帮你评估超级签证申请可行性。</div>
+        <a class="cta-btn" href="/contact/">免费咨询 →</a>
+      </div>
+    </article>
+
+    <aside class="sidebar-stack">
+      <ContactCard />
+      <div class="sidebar-nav-card">
+        <div class="snc-title">签证子栏目</div>
+        <div class="snc-links">
+          <a class="snc-link" href="/visa/visitor/">访问签 / 旅游签</a>
+          <a class="snc-link" href="/visa/family-visit/">探亲签证</a>
+          <a class="snc-link active" href="/visa/super-visa/">超级签证（父母/祖父母）</a>
+          <a class="snc-link" href="/visa/study-permit/">学习许可（学签）</a>
+          <a class="snc-link" href="/visa/work-permit/">工作签证（工签）</a>
+          <a class="snc-link" href="/visa/french-mobility-work-permit/">法语流动工签</a>
+          <a class="snc-link" href="/visa/c11-work-permit/">C11 重大利益工签</a>
+          <a class="snc-link" href="/visa/extend/">续签 / 延期 / 境内转换</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+.grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 920px) { .grid { grid-template-columns: 1fr 300px; align-items: start; } }
+.content-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 16px; overflow: hidden; }
+.page-header { padding: 28px 28px 24px; border-bottom: 1px solid rgba(26,29,35,0.08); background: linear-gradient(135deg, #fafbff, #fff); }
+.page-kicker { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #d92d20; margin-bottom: 8px; }
+.page-h1 { font-size: clamp(22px, 4vw, 30px); font-weight: 800; color: #1a1d23; margin: 0 0 12px; letter-spacing: -0.02em; }
+.page-intro { font-size: 15px; color: rgba(26,29,35,0.62); line-height: 1.7; margin: 0; }
+.content-sections { padding: 24px 28px; display: grid; gap: 32px; }
+.section-block h2 { font-size: 18px; font-weight: 750; color: #1a1d23; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 2px solid rgba(217,45,32,0.12); }
+.section-block p { font-size: 14px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0 0 12px; }
+.req-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.req-list li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; background: rgba(26,29,35,0.025); border-radius: 10px; font-size: 14px; color: rgba(26,29,35,0.75); line-height: 1.55; }
+.req-list li::before { content: "✓"; color: #d92d20; font-weight: 700; flex-shrink: 0; }
+.step-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; counter-reset: steps; }
+.step-list li { display: flex; gap: 14px; align-items: flex-start; counter-increment: steps; }
+.step-list li::before { content: counter(steps); display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #d92d20; color: #fff; font-weight: 700; font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+.step-text { font-size: 14px; color: rgba(26,29,35,0.75); line-height: 1.6; padding-top: 3px; }
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.info-card { padding: 14px 16px; background: rgba(26,29,35,0.03); border-radius: 12px; border: 1px solid rgba(26,29,35,0.07); }
+.info-card-label { font-size: 12px; color: rgba(26,29,35,0.45); margin-bottom: 4px; }
+.info-card-value { font-size: 14px; font-weight: 600; color: #1a1d23; }
+.tip-box { padding: 14px 16px; background: rgba(217,45,32,0.05); border-left: 3px solid #d92d20; border-radius: 0 10px 10px 0; font-size: 13px; color: rgba(26,29,35,0.7); line-height: 1.65; margin-top: 12px; }
+.faq-item { border: 1px solid rgba(26,29,35,0.09); border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+.faq-q { padding: 13px 16px; font-weight: 650; font-size: 14px; cursor: pointer; list-style: none; display: flex; justify-content: space-between; color: #1a1d23; }
+.faq-q::after { content: "+"; font-size: 18px; color: rgba(26,29,35,0.4); }
+details[open] .faq-q::after { content: "−"; }
+.faq-q::-webkit-details-marker { display: none; }
+.faq-a { padding: 0 16px 13px; font-size: 13.5px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0; }
+.cta-inline { margin: 0 28px 28px; padding: 20px 24px; background: linear-gradient(135deg, #0a1628, #0f1f38); border-radius: 14px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.cta-text { font-size: 15px; font-weight: 700; color: #fff; }
+.cta-btn { display: inline-flex; padding: 10px 20px; border-radius: 10px; background: #d92d20; color: #fff; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; }
+.cta-btn:hover { background: #b52418; text-decoration: none; }
+.sidebar-stack { display: grid; gap: 16px; position: sticky; top: 80px; }
+.sidebar-nav-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 14px; padding: 18px 20px; }
+.snc-title { font-size: 14px; font-weight: 700; color: #1a1d23; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(26,29,35,0.08); }
+.snc-links { display: flex; flex-direction: column; gap: 2px; }
+.snc-link { display: block; padding: 8px 10px; font-size: 13.5px; color: #374151; text-decoration: none; border-radius: 8px; }
+.snc-link:hover { background: rgba(217,45,32,0.06); color: #d92d20; text-decoration: none; }
+.snc-link.active { background: rgba(217,45,32,0.07); color: #d92d20; font-weight: 600; }
+</style>

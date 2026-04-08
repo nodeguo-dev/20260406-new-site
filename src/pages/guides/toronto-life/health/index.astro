@@ -1,0 +1,120 @@
+---
+import "@/styles/toronto-life-guides.css";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import TorontoLifeSubNav from "@/components/guides/TorontoLifeSubNav.astro";
+import TorontoLifePartnerBand from "@/components/guides/TorontoLifePartnerBand.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+import { torontoLifePageBands } from "@/data/torontoLifeSponsors";
+
+const pageKey = "health";
+const bands = torontoLifePageBands[pageKey]!;
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "多伦多生活指南", href: "/guides/toronto-life/" },
+  { name: "医疗保险", href: "/guides/toronto-life/health/" },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("多伦多医疗与保险指南 | OHIP · UHIP · 诊所")}
+  description="OHIP 等候期、留学生保险、家庭医生与急诊常识；内含保险与诊所类合作展示位。"
+  canonical="https://cachinavisa.com/guides/toronto-life/health/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <div class="container tl-page">
+    <Breadcrumbs items={breadcrumbs} />
+    <header class="tl-hero">
+      <p class="tl-kicker">多伦多生活指南 · 分册</p>
+      <h1 class="tl-h1">医疗与保险</h1>
+      <p class="tl-lead">
+        安省公共医保 OHIP 与学校/私保产品并存；新移民与留学生衔接期务必避免「无保空窗」。以下为信息框架，具体资格以官方与保单为准。若你关心<strong>团险里的按摩、针灸、整骨额度怎么用</strong>，可另读站内长文
+        <a href="/blog/toronto-newcomer-wellness-rmt-acupuncture-insurance-guide/">《针灸推拿与注册按摩 · 团险额度实用说明》</a>（含公开来源链接）。
+      </p>
+      <TorontoLifeSubNav activeKey="health" />
+    </header>
+
+    <TorontoLifePartnerBand band={bands.top} bandId="health-top" />
+
+    <div class="tl-prose">
+      <h2>OHIP 与等候期</h2>
+      <p>
+        新移民登陆后常需满足居住等条件后才可申领 OHIP；等候期内商业保险可填补门诊、急诊与药费风险。请通过 ServiceOntario 核对最新清单。
+      </p>
+      <p class="tl-inline-tip">
+        需要<strong>过渡险、留学生险或补充险</strong>比价的读者，可通过
+        <a href="/contact/?topic=toronto-life-referral&vertical=health">持牌合作经纪推荐通道</a>
+        获取方案说明（合作推广；承保以保险公司为准）。
+      </p>
+
+      <h2>家庭医生与 Walk-in</h2>
+      <p>
+        家庭医生「接受新病人」名单常变动；无家庭医生时可使用 Walk-in Clinic 或虚拟问诊（注意是否含于保险计划）。急症请拨打 911 或前往急诊。
+      </p>
+    </div>
+
+    <TorontoLifePartnerBand band={bands.mid} bandId="health-mid" />
+
+    <div class="tl-prose">
+      <h2>药房与处方药</h2>
+      <p>处方药通常需医生开具；部分保险计划含配药直付。非处方药可在连锁药房购买，药剂师可提供用药咨询。</p>
+    </div>
+
+    <TorontoLifePartnerBand band={bands.bottom} bandId="health-bottom" />
+
+    <p class="tl-back">
+      <a href="/guides/toronto-life/">← 返回总览</a>
+      ·
+      <a href="/category/toronto-life/">分类文章</a>
+    </p>
+
+    <aside class="tl-disclaimer" role="note">非医疗建议；诊疗决策请咨询执业医师。广告位所涉医疗机构须自行符合行业广告规范。</aside>
+  </div>
+</BaseLayout>
+
+<style>
+  .tl-inline-tip {
+    font-size: 14px;
+    line-height: 1.65;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: rgba(26, 86, 196, 0.06);
+    border-left: 3px solid rgba(26, 86, 196, 0.35);
+    color: rgba(26, 29, 35, 0.78);
+    margin: 16px 0;
+  }
+  .tl-inline-tip a {
+    color: #1a56c4;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .tl-inline-tip a:hover {
+    text-decoration: underline;
+  }
+  .tl-back {
+    font-size: 14px;
+    margin-top: 28px;
+  }
+  .tl-back a {
+    color: var(--red);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .tl-back a:hover {
+    text-decoration: underline;
+  }
+</style>

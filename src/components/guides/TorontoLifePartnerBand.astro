@@ -1,0 +1,130 @@
+---
+import type { TorontoLifePartnerBand as BandType } from "@/data/torontoLifeSponsors";
+import { partnerLinkAttrs } from "@/data/torontoLifeSponsors";
+
+type Props = { band: BandType; bandId: string };
+const { band, bandId } = Astro.props;
+---
+
+<section class="tl-partner-band" aria-labelledby={`tl-band-${bandId}`}>
+  <div class="tl-pb-head">
+    <h2 class="tl-pb-title" id={`tl-band-${bandId}`}>{band.bandTitle}</h2>
+    {band.bandIntro ? <p class="tl-pb-intro">{band.bandIntro}</p> : null}
+  </div>
+  <div class="tl-pb-grid">
+    {band.items.map((p) => {
+      const { href, rel, target } = partnerLinkAttrs(p);
+      const isLive = p.active && p.href;
+      return (
+        <a
+          class:list={["tl-pb-card", isLive && "tl-pb-card--live"]}
+          href={href}
+          rel={rel || undefined}
+          target={target || undefined}
+        >
+          <span class="tl-pb-cat">{p.categoryLabel}</span>
+          <span class="tl-pb-badge">{isLive ? "合作推广" : "虚位以待"}</span>
+          <span class="tl-pb-name">{p.name}</span>
+          <span class="tl-pb-tagline">{p.tagline}</span>
+          <span class="tl-pb-cta">{isLive ? "访问合作方网站 →" : "洽谈投放本位置 →"}</span>
+        </a>
+      );
+    })}
+  </div>
+</section>
+
+<style>
+  .tl-partner-band {
+    margin: 28px 0;
+    padding: 20px 18px 22px;
+    border-radius: 16px;
+    border: 1px dashed rgba(26, 29, 35, 0.16);
+    background: linear-gradient(165deg, rgba(217, 45, 32, 0.04), rgba(26, 86, 196, 0.04));
+  }
+  .tl-pb-head { margin-bottom: 14px; }
+  .tl-pb-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text);
+    margin: 0 0 6px;
+    letter-spacing: -0.02em;
+  }
+  .tl-pb-intro {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.65;
+    margin: 0;
+  }
+  .tl-pb-grid {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 560px) {
+    .tl-pb-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 900px) {
+    .tl-pb-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  .tl-pb-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 14px 14px 12px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: #fff;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.12s;
+  }
+  .tl-pb-card:hover {
+    border-color: rgba(217, 45, 32, 0.28);
+    box-shadow: 0 4px 14px rgba(26, 29, 35, 0.06);
+    text-decoration: none;
+    transform: translateY(-1px);
+  }
+  .tl-pb-card--live {
+    border-color: rgba(26, 86, 196, 0.22);
+    background: linear-gradient(180deg, #fff, rgba(26, 86, 196, 0.03));
+  }
+  .tl-pb-cat {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgba(26, 29, 35, 0.45);
+  }
+  .tl-pb-badge {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: rgba(26, 29, 35, 0.07);
+    color: rgba(26, 29, 35, 0.55);
+  }
+  .tl-pb-card--live .tl-pb-badge {
+    background: rgba(26, 86, 196, 0.12);
+    color: #1a56c4;
+  }
+  .tl-pb-name {
+    font-size: 14px;
+    font-weight: 750;
+    color: var(--text);
+    line-height: 1.35;
+  }
+  .tl-pb-tagline {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.55;
+    flex: 1;
+  }
+  .tl-pb-cta {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--red);
+    margin-top: 4px;
+  }
+  .tl-pb-card--live .tl-pb-cta { color: #1a56c4; }
+</style>

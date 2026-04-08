@@ -1,0 +1,299 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民项目", href: "/projects/" },
+  { name: "联邦技术移民（Express Entry）", href: "/projects/federal/" },
+];
+
+const streams = [
+  {
+    name: "联邦技术工人（FSW）",
+    anchor: "fsw",
+    desc: "适合有境外专业工作经验的申请人。需满足67分综合打分，通过CRS排名后获ITA邀请。",
+    key: "至少1年NOC TEER 0/1/2/3类全职工作经验（近10年内），语言成绩达CLB 7，学历满足最低要求",
+  },
+  {
+    name: "联邦技术工人（FSW）",
+    anchor: "cec",
+    name: "加拿大经验类（CEC）",
+    desc: "专为已在加拿大积累工作经验的人设计，通常比FSW更快获得ITA邀请。",
+    key: "近3年内在加拿大有至少12个月NOC TEER 0/1/2/3类工作经验，语言成绩达CLB 7（TEER 0/1）或CLB 5（TEER 2/3）",
+  },
+  {
+    name: "联邦技术工人（FSW）",
+    anchor: "fstp",
+    name: "联邦技术工匠（FSTP）",
+    desc: "针对经认证的技术工匠职业，要求有雇主offer或在魁北克以外省份的PR意向。",
+    key: "2年内至少2年NOC TEER 2/3类技术工匠工作经验，语言成绩达CLB 5，须有工作offer或省提名",
+  },
+];
+
+const faqItems = [
+  {
+    q: "EE打分（CRS）是怎么算的？",
+    a: "综合排名制度（CRS）满分1200分，主要由核心分（最高500分）和技能可转移性（最多100分）组成，还有省提名（600分）和加拿大工作offer（50或200分）的额外加分。核心分包括：年龄、语言成绩、学历、工作经验等。大多数主流通道的实际获邀分数在470–540分之间（视具体轮次）。"
+  },
+  {
+    q: "我的CRS分数不够高怎么办？",
+    a: "提高CRS有几个可行方向：提升语言成绩（雅思每提高一个band带来的分数提升很显著）；通过省提名获得额外600分直接跻身高分段；积累加拿大工作经验（PGWP后转CEC）；获得有效工作offer（TEER 0/1职位offer可加200分）。建议先做一次详细的分数评估，再针对性制定提分策略。"
+  },
+  {
+    q: "Express Entry需要先有工作offer吗？",
+    a: "不是必须的。FSW和CEC申请都不要求有工作offer，但有offer（特别是TEER 0/1的offer）会显著加分，让你更容易获得ITA邀请。FSTP类别中，如果申请人不住在魁北克，必须有工作offer或省提名。"
+  },
+  {
+    q: "建档（创建EE Profile）到收到邀请（ITA），一般需要多久？",
+    a: "这个无法保证——取决于你的CRS分数和IRCC每轮抽取的分数线。分数够高的话，最快几周就能收到ITA；分数处于中间段的话，可能需要数月甚至更长时间等待。提交PR申请后，IRCC目标处理时间是6个月以内。"
+  },
+  {
+    q: "语言成绩有多重要？",
+    a: "非常重要。首先是申请资格：FSW要求CLB 7（约雅思总分6.0，每项不低于5.5）。其次是CRS加分：CLB 9/10的语言成绩对应的CRS分数比CLB 7高出数十分，差距非常显著。如果你CRS分数不够高，提升语言成绩是最直接的提分方式之一。"
+  },
+  {
+    q: "学历评估（ECA）必须做吗？",
+    a: "如果你申请FSW或FSTP，且学历不是在加拿大获得的，就必须提供由IRCC认可机构（如WES）出具的学历认证（ECA）。ECA不是移民申请的一部分，需要在创建EE Profile之前自行完成，通常需要2–4个月（WES常规速度）。CEC申请如果是凭加拿大学历，不需要ECA。"
+  },
+  {
+    q: "我可以和配偶一起申请吗？谁当主申请人？",
+    a: "可以以家庭为单位申请，配偶作为随行家属（secondary applicant）。哪方当主申请人，取决于谁的CRS分数更高——系统会分别计算两人的分数，选择更高者作为主申请人。配偶的语言成绩和学历也会被计入主申请人的技能可转移性分数中。"
+  },
+  {
+    q: "PR获批后需要完成什么才能确认登陆？",
+    a: "收到COPR（确认永久居民文件）后，需要在有效期内（通常是EE PR批准后约1年）入境加拿大完成登陆（Landing）。登陆时CBSA会在COPR上盖章，之后你就成为正式PR。随后需要申请PR卡（约3–4周寄达）。如果你已经在加拿大境内，登陆手续可以在境内完成。"
+  },
+];
+
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((i) => ({
+    "@type": "Question",
+    name: i.q,
+    acceptedAnswer: { "@type": "Answer", text: i.a },
+  })),
+};
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+---
+<BaseLayout
+  title={withSiteTitle("加拿大联邦技术移民 Express Entry | FSW·CEC·FSTP申请指南")}
+  description="加拿大联邦技术移民（Express Entry）完整指南：FSW/CEC/FSTP三类别详解、CRS评分系统、语言要求、学历认证及8个高频问题解答。"
+  canonical="https://cachinavisa.com/projects/federal/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={faqLd} />
+  <Breadcrumbs items={breadcrumbs} />
+  <div class="grid" style="margin-top:16px">
+    <article class="content-card">
+      <div class="page-header">
+        <div class="page-kicker">联邦移民 · Express Entry</div>
+        <h1 class="page-h1">联邦技术移民（Express Entry）申请指南</h1>
+        <p class="page-intro">Express Entry是加拿大最主要的联邦技术移民系统，通过综合排名制度（CRS）对申请人进行评分，定期从候选池中发出邀请（ITA）。包含三个独立类别：联邦技术工人（FSW）、加拿大经验类（CEC）和联邦技术工匠（FSTP）。</p>
+      </div>
+
+      <div class="content-sections">
+
+        <div class="section-block">
+          <h2>三大申请类别</h2>
+          <div class="streams-grid">
+            {streams.map((s) => (
+              <div class="stream-card">
+                <div class="stream-name">{s.name}</div>
+                <p class="stream-desc">{s.desc}</p>
+                <div class="stream-key">
+                  <div class="stream-key-label">核心条件</div>
+                  <div class="stream-key-text">{s.key}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2>CRS综合排名：分数怎么来的？</h2>
+          <p>CRS满分1200分，你的得分由以下部分组成：</p>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-card-label">核心因素（最高500分）</div>
+              <div class="info-card-value">年龄 + 语言 + 学历 + 工作经验</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">技能可转移性（最高100分）</div>
+              <div class="info-card-value">语言 × 学历、工作经验 × 语言等组合</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">省提名加分</div>
+              <div class="info-card-value">+600分（实际上等于直通获邀）</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">有效工作Offer</div>
+              <div class="info-card-value">+50分（TEER 2/3）或 +200分（TEER 0/1）</div>
+            </div>
+          </div>
+          <div class="tip-box">近年来主流技术移民类别（FSW/CEC）的获邀CRS分数线通常在480–530之间波动，特定类别抽取（如医疗类、STEM类）分数线较低。实时邀请历史数据可在IRCC官网查到。</div>
+        </div>
+
+        <div class="section-block">
+          <h2>语言成绩要求</h2>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-card-label">FSW最低要求</div>
+              <div class="info-card-value">CLB 7（雅思约6.0各项不低于5.5）</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">CEC最低（TEER 0/1）</div>
+              <div class="info-card-value">CLB 7（雅思约6.0各项不低于5.5）</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">CEC最低（TEER 2/3）</div>
+              <div class="info-card-value">CLB 5（雅思约5.0各项不低于4.5）</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">获高CRS分建议</div>
+              <div class="info-card-value">CLB 9（雅思听说读写各7.5/7.0/7.0/7.0）</div>
+            </div>
+          </div>
+          <p style="margin-top:12px">英语考试（雅思IELTS/CELPIP）和法语考试（TEF/TCF）都被接受。如果你能达到法语CLB 7，还可以申请额外的魁北克或法语类别邀请。</p>
+        </div>
+
+        <div class="section-block">
+          <h2>申请流程</h2>
+          <ol class="step-list">
+            <li><span class="step-text"><strong>完成语言考试</strong>——雅思或CELPIP，确保成绩在有效期内（2年）</span></li>
+            <li><span class="step-text"><strong>进行学历认证（ECA）</strong>——境外学历须通过IRCC认可机构（如WES）认证，通常需2–4个月</span></li>
+            <li><span class="step-text"><strong>创建EE候选池档案</strong>——在IRCC官网填写EE Profile，系统自动计算CRS分数并进入候选池</span></li>
+            <li><span class="step-text"><strong>等待ITA邀请</strong>——IRCC定期（通常每2周）从候选池发出邀请（ITA），获邀后有60天提交PR申请</span></li>
+            <li><span class="step-text"><strong>提交PR申请（eAPR）</strong>——上传所有材料（警察证明、体检报告、学历/工作证明等）</span></li>
+            <li><span class="step-text"><strong>等待审批并完成登陆</strong>——IRCC目标处理时间为6个月内；获批后持COPR入境加拿大登陆</span></li>
+          </ol>
+        </div>
+
+        <div class="section-block">
+          <h2>哪种类别更适合你？</h2>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-card-label">在中国境内，有境外工作经验</div>
+              <div class="info-card-value">→ 考虑FSW，搭配提升语言成绩或等待省提名</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">已在加拿大，有工作经验</div>
+              <div class="info-card-value">→ 优先看CEC，通常门槛低、处理快</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">刚毕业，持PGWP</div>
+              <div class="info-card-value">→ 积累12个月工作经验后申请CEC，或同步寻找省提名机会</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">技术类职业（水电工/厨师等）</div>
+              <div class="info-card-value">→ 看FSTP，但需要雇主offer或省提名配合</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2>常见问题（FAQ）</h2>
+          {faqItems.map((item) => (
+            <details class="faq-item">
+              <summary class="faq-q">{item.q}</summary>
+              <p class="faq-a">{item.a}</p>
+            </details>
+          ))}
+        </div>
+
+      </div>
+
+      <div class="cta-inline">
+        <div class="cta-text">想知道你现在的CRS分数和最快的申请路径？</div>
+        <a class="cta-btn" href="/contact/">免费评估 →</a>
+      </div>
+    </article>
+
+    <aside class="sidebar-stack">
+      <ContactCard />
+      <div class="sidebar-nav-card">
+        <div class="snc-title">移民项目</div>
+        <div class="snc-links">
+          <a class="snc-link active" href="/projects/federal/">联邦技术移民（EE）</a>
+          <a class="snc-link" href="/projects/provincial-nomination/">省提名项目（PNP）</a>
+          <a class="snc-link" href="/projects/province/ontario/">安大略省移民</a>
+          <a class="snc-link" href="/projects/province/british-columbia/">不列颠哥伦比亚省</a>
+          <a class="snc-link" href="/projects/province/quebec/">魁北克省移民</a>
+          <a class="snc-link" href="/projects/">全部移民项目</a>
+        </div>
+      </div>
+      <div class="sidebar-nav-card">
+        <div class="snc-title">相关页面</div>
+        <div class="snc-links">
+          <a class="snc-link" href="/visa/work-permit/">工签如何积累经验</a>
+          <a class="snc-link" href="/visa/study-permit/">留学后申请PGWP</a>
+          <a class="snc-link" href="/inland/status-extension/">境内身份续签管理</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+.grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 920px) { .grid { grid-template-columns: 1fr 300px; align-items: start; } }
+.content-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 16px; overflow: hidden; }
+.page-header { padding: 28px 28px 24px; border-bottom: 1px solid rgba(26,29,35,0.08); background: linear-gradient(135deg, #fafbff, #fff); }
+.page-kicker { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #d92d20; margin-bottom: 8px; }
+.page-h1 { font-size: clamp(22px, 4vw, 30px); font-weight: 800; color: #1a1d23; margin: 0 0 12px; letter-spacing: -0.02em; }
+.page-intro { font-size: 15px; color: rgba(26,29,35,0.62); line-height: 1.7; margin: 0; }
+.content-sections { padding: 24px 28px; display: grid; gap: 32px; }
+.section-block h2 { font-size: 18px; font-weight: 750; color: #1a1d23; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 2px solid rgba(217,45,32,0.12); }
+.section-block p { font-size: 14px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0 0 12px; }
+.streams-grid { display: grid; gap: 12px; }
+.stream-card { padding: 16px 18px; background: rgba(26,29,35,0.025); border-radius: 12px; border: 1px solid rgba(26,29,35,0.07); }
+.stream-name { font-size: 15px; font-weight: 700; color: #1a1d23; margin-bottom: 6px; }
+.stream-desc { font-size: 13.5px; color: rgba(26,29,35,0.6); line-height: 1.6; margin: 0 0 10px; }
+.stream-key { background: rgba(217,45,32,0.05); border-radius: 8px; padding: 10px 12px; }
+.stream-key-label { font-size: 11px; font-weight: 700; color: #d92d20; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+.stream-key-text { font-size: 13px; color: rgba(26,29,35,0.7); line-height: 1.55; }
+.req-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.req-list li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; background: rgba(26,29,35,0.025); border-radius: 10px; font-size: 14px; color: rgba(26,29,35,0.75); line-height: 1.55; }
+.req-list li::before { content: "✓"; color: #d92d20; font-weight: 700; flex-shrink: 0; }
+.step-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; counter-reset: steps; }
+.step-list li { display: flex; gap: 14px; align-items: flex-start; counter-increment: steps; }
+.step-list li::before { content: counter(steps); display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #d92d20; color: #fff; font-weight: 700; font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+.step-text { font-size: 14px; color: rgba(26,29,35,0.75); line-height: 1.6; padding-top: 3px; }
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.info-card { padding: 14px 16px; background: rgba(26,29,35,0.03); border-radius: 12px; border: 1px solid rgba(26,29,35,0.07); }
+.info-card-label { font-size: 12px; color: rgba(26,29,35,0.45); margin-bottom: 4px; }
+.info-card-value { font-size: 14px; font-weight: 600; color: #1a1d23; }
+.tip-box { padding: 14px 16px; background: rgba(217,45,32,0.05); border-left: 3px solid #d92d20; border-radius: 0 10px 10px 0; font-size: 13px; color: rgba(26,29,35,0.7); line-height: 1.65; margin-top: 12px; }
+.faq-item { border: 1px solid rgba(26,29,35,0.09); border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+.faq-q { padding: 13px 16px; font-weight: 650; font-size: 14px; cursor: pointer; list-style: none; display: flex; justify-content: space-between; color: #1a1d23; }
+.faq-q::after { content: "+"; font-size: 18px; color: rgba(26,29,35,0.4); }
+details[open] .faq-q::after { content: "−"; }
+.faq-q::-webkit-details-marker { display: none; }
+.faq-a { padding: 0 16px 13px; font-size: 13.5px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0; }
+.cta-inline { margin: 0 28px 28px; padding: 20px 24px; background: linear-gradient(135deg, #0a1628, #0f1f38); border-radius: 14px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.cta-text { font-size: 15px; font-weight: 700; color: #fff; }
+.cta-btn { display: inline-flex; padding: 10px 20px; border-radius: 10px; background: #d92d20; color: #fff; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; }
+.cta-btn:hover { background: #b52418; text-decoration: none; }
+.sidebar-stack { display: grid; gap: 16px; position: sticky; top: 80px; }
+.sidebar-nav-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 14px; padding: 18px 20px; }
+.snc-title { font-size: 14px; font-weight: 700; color: #1a1d23; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(26,29,35,0.08); }
+.snc-links { display: flex; flex-direction: column; gap: 2px; }
+.snc-link { display: block; padding: 8px 10px; font-size: 13.5px; color: #374151; text-decoration: none; border-radius: 8px; }
+.snc-link:hover { background: rgba(217,45,32,0.06); color: #d92d20; text-decoration: none; }
+.snc-link.active { background: rgba(217,45,32,0.07); color: #d92d20; font-weight: 600; }
+</style>

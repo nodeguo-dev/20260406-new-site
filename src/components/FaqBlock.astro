@@ -1,0 +1,20 @@
+---
+type Item = { question: string; answer: string };
+type Props = { title?: string; items: Item[] };
+const { title = "常见问题", items } = Astro.props;
+---
+
+<section class="card">
+  <div class="card-inner">
+    <h2 class="h2">{title}</h2>
+    <div class="list">
+      {items.map((i) => (
+        <details class="list-item">
+          <summary style="cursor:pointer; font-weight:650">{i.question}</summary>
+          <div class="muted" style="margin-top:8px">{i.answer}</div>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+

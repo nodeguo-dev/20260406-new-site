@@ -1,0 +1,274 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PostCard from "@/components/PostCard.astro";
+import BlogInternalHub from "@/components/BlogInternalHub.astro";
+import Pagination from "@/components/Pagination.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import RelatedToolsCard from "@/components/RelatedToolsCard.astro";
+import { categoryMeta } from "@/data/categoryMeta";
+import { withSiteTitle } from "@/utils/seo";
+import { getAllPublishedPosts } from "@/utils/content";
+import { getPageSlice } from "@/utils/pagination";
+
+const PAGE_SIZE = 12;
+
+export async function getStaticPaths() {
+  const { getAllPublishedPosts } = await import("@/utils/content");
+  const { categoryMeta } = await import("@/data/categoryMeta");
+  const posts = await getAllPublishedPosts();
+  const fromPosts = [...new Set(posts.map((p) => p.data.category))];
+  const fromMeta = Object.keys(categoryMeta);
+  const slugs = [...new Set([...fromMeta, ...fromPosts])];
+  return slugs.map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const allPosts = await getAllPublishedPosts();
+const categoryPosts = allPosts.filter((p) => p.data.category === slug);
+const meta = categoryMeta[slug];
+const { items, totalPages } = getPageSlice(categoryPosts, 1, PAGE_SIZE);
+
+const allCategories = [...new Set(allPosts.map((p) => p.data.category))];
+const tagCounts = new Map<string, number>();
+for (const p of categoryPosts) {
+  for (const t of p.data.tags ?? []) {
+    tagCounts.set(t, (tagCounts.get(t) ?? 0) + 1);
+  }
+}
+const topTagsInCategory = [...tagCounts.entries()]
+  .sort((a, b) => b[1] - a[1])
+  .slice(0, 24)
+  .map(([t]) => t);
+---
+
+<BaseLayout
+  title={withSiteTitle(`${meta?.title ?? slug} | 移民资讯`)}
+  description={meta?.description ?? `浏览所有关于「${meta?.title ?? slug}」的文章。`}
+  canonical={`https://cachinavisa.com/category/${slug}/`}
+>
+  <div class="cat-layout">
+    <main>
+      <!-- Category hero -->
+      <div class="cat-hero">
+        <div class="cat-hero-kicker">文章分类</div>
+        <h1 class="cat-hero-title">{meta?.title ?? slug}</h1>
+        {meta?.description && <p class="cat-hero-desc">{meta.description}</p>}
+        <div class="cat-hero-meta">
+          <span class="chm-count">{categoryPosts.length} 篇文章</span>
+        </div>
+      </div>
+
+      <!-- Category filter pills -->
+      <div class="cat-filters">
+        <a class="cat-pill" href="/blog/">全部</a>
+        {allCategories.map((c) => (
+          <a
+            class={`cat-pill${c === slug ? ' active' : ''}`}
+            href={`/category/${c}/`}
+          >
+            {categoryMeta[c]?.title ?? c}
+          </a>
+        ))}
+      </div>
+
+      <!-- Posts -->
+      {items.length > 0 ? (
+        <div class="posts-list">
+          {items.map((p) => <PostCard post={p} variant="list" />)}
+        </div>
+      ) : (
+        <div class="empty-state">
+          <div class="es-icon">📭</div>
+          <div class="es-title">暂无文章</div>
+          <p class="es-desc">该分类下暂时没有已发布的文章，请稍后再来。</p>
+          <a href="/blog/" class="btn-soft">查看全部文章</a>
+        </div>
+      )}
+
+      <div class="pagination-wrap">
+        <Pagination base={`/category/${slug}/`} page={1} totalPages={totalPages} />
+      </div>
+
+      <section class="cat-hub-wrap" aria-labelledby={`cat-hub-${slug}`}>
+        <h2 id={`cat-hub-${slug}`} class="visually-hidden">站内导航与延伸阅读</h2>
+        <BlogInternalHub category={slug} />
+      </section>
+    </main>
+
+    <aside class="cat-sidebar">
+      <ContactCard />
+      <RelatedToolsCard
+        title="相关打分工具"
+        subtitle="分类页如果聚焦 CRS / 省提名，先对照对应计算器。"
+        items={[
+          { href: "/tools/crs-calculator/", label: "联邦 CRS 计算器", desc: "EE / CEC / FSW 的基础自测工具。" },
+          { href: "/tools/oinp-calculator/", label: "安省 OINP · EOI", desc: "安省雇主类 / 留学类常见入口。" },
+          { href: "/tools/bc-pnp-calculator/", label: "BC SIRS 计算器", desc: "BC 技术移民常用分值预估。" },
+          { href: "/tools/aaip-calculator/", label: "AAIP Worker EOI", desc: "阿省相关路径的分值自测。" },
+        ]}
+        footerHref="/tools/"
+        footerLabel="进入全部打分工具"
+      />
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">全部分类</div>
+        <div class="sidebar-cats">
+          {allCategories.map((c) => {
+            const count = allPosts.filter((p) => p.data.category === c).length;
+            return (
+              <a
+                class={`scat-item${c === slug ? ' active' : ''}`}
+                href={`/category/${c}/`}
+              >
+                <span>{categoryMeta[c]?.title ?? c}</span>
+                <span class="scat-count">{count}</span>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+      {topTagsInCategory.length > 0 && (
+        <div class="sidebar-card">
+          <div class="sidebar-card-title">本分类热门标签</div>
+          <div class="tag-cloud">
+            {topTagsInCategory.map((t) => (
+              <a class="tag-pill" href={`/tag/${encodeURIComponent(t)}/`}>#{t}</a>
+            ))}
+          </div>
+        </div>
+      )}
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">快速入口</div>
+        <div class="quick-links">
+          <a class="ql" href="/blog/">移民新闻首页</a>
+          <a class="ql" href="/tools/">打分工具</a>
+          <a class="ql" href="/projects/">移民项目</a>
+          <a class="ql" href="/visa/">签证服务</a>
+          <a class="ql" href="/visa/french-mobility-work-permit/">法语流动工签</a>
+          <a class="ql" href="/visa/c11-work-permit/">C11 重大利益工签</a>
+          <a class="ql" href="/contact/">免费咨询</a>
+        </div>
+      </div>
+      <div class="sidebar-card sidebar-card--hub">
+        <BlogInternalHub compact category={slug} heading="热门内链" />
+      </div>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+.cat-layout {
+  display: grid; grid-template-columns: 1fr;
+  gap: 24px; align-items: start;
+}
+@media (min-width: 960px) { .cat-layout { grid-template-columns: 1fr 280px; } }
+
+/* Hero */
+.cat-hero {
+  background: linear-gradient(135deg, #0a1628 0%, #0f2040 60%, #1a0828 100%);
+  border-radius: 18px; padding: 36px 32px; margin-bottom: 20px;
+  position: relative; overflow: hidden;
+}
+.cat-hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 70% at 90% 20%, rgba(217,45,32,0.15), transparent 65%);
+  pointer-events: none;
+}
+.cat-hero-kicker {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; color: rgba(217,45,32,0.8); margin-bottom: 10px;
+  position: relative; z-index: 1;
+}
+.cat-hero-title {
+  font-size: clamp(22px, 3.5vw, 32px); font-weight: 900; color: #fff;
+  margin: 0 0 10px; letter-spacing: -0.025em; line-height: 1.2;
+  position: relative; z-index: 1;
+}
+.cat-hero-desc {
+  font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.7;
+  margin: 0 0 14px; max-width: 600px; position: relative; z-index: 1;
+}
+.cat-hero-meta { position: relative; z-index: 1; }
+.chm-count {
+  display: inline-block; padding: 4px 12px; border-radius: 999px;
+  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.7); font-size: 12px; font-weight: 600;
+}
+
+/* Filters */
+.cat-filters {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.cat-pill {
+  display: inline-flex; align-items: center;
+  padding: 7px 14px; border-radius: 10px;
+  background: #fff; border: 1.5px solid rgba(13,17,23,0.1);
+  color: rgba(13,17,23,0.65); font-size: 13px; font-weight: 600;
+  text-decoration: none; transition: all 0.15s; white-space: nowrap;
+}
+.cat-pill:hover { border-color: rgba(217,45,32,0.3); color: #d92d20; text-decoration: none; }
+.cat-pill.active {
+  background: rgba(217,45,32,0.08); border-color: rgba(217,45,32,0.3);
+  color: #d92d20;
+}
+
+/* Posts */
+.posts-list { display: flex; flex-direction: column; gap: 10px; }
+.pagination-wrap { margin-top: 24px; }
+
+/* Empty */
+.empty-state {
+  text-align: center; padding: 60px 20px;
+  background: #fff; border: 1px solid rgba(13,17,23,0.08);
+  border-radius: 16px;
+}
+.es-icon  { font-size: 48px; margin-bottom: 16px; }
+.es-title { font-size: 18px; font-weight: 700; color: #0d1117; margin-bottom: 8px; }
+.es-desc  { font-size: 14px; color: rgba(13,17,23,0.55); line-height: 1.7; margin: 0 0 20px; }
+
+/* Sidebar */
+.cat-sidebar { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 88px; }
+.sidebar-card {
+  background: #fff; border: 1px solid rgba(13,17,23,0.09);
+  border-radius: 16px; overflow: hidden;
+}
+.sidebar-card-title {
+  font-size: 14px; font-weight: 700; color: #0d1117;
+  padding: 16px 20px 12px; border-bottom: 1px solid rgba(13,17,23,0.07);
+}
+.sidebar-cats { padding: 8px 0; }
+.scat-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 20px; font-size: 13.5px; color: rgba(13,17,23,0.7);
+  text-decoration: none; transition: background 0.12s, color 0.12s;
+}
+.scat-item:hover { background: rgba(217,45,32,0.04); color: #d92d20; text-decoration: none; }
+.scat-item.active { background: rgba(217,45,32,0.07); color: #d92d20; font-weight: 700; }
+.scat-count {
+  font-size: 12px; color: rgba(13,17,23,0.4);
+  background: rgba(13,17,23,0.05); padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.cat-hub-wrap { margin-top: 8px; }
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+.tag-cloud { display: flex; flex-wrap: wrap; gap: 6px; padding: 4px 0; }
+.tag-pill {
+  font-size: 12px; padding: 4px 10px; border-radius: 999px;
+  border: 1px solid rgba(13,17,23,0.12); color: #6b7280;
+  text-decoration: none;
+}
+.tag-pill:hover { border-color: #d92d20; color: #d92d20; text-decoration: none; }
+.quick-links { display: flex; flex-direction: column; gap: 4px; }
+.ql {
+  padding: 8px 4px; font-size: 13.5px; color: #374151;
+  text-decoration: none; border-radius: 8px;
+}
+.ql:hover { color: #d92d20; background: rgba(217,45,32,0.05); text-decoration: none; }
+.sidebar-card--hub { padding: 0; overflow: hidden; }
+.sidebar-card--hub :global(.bih) { border: none; border-radius: 0; margin: 0; }
+</style>

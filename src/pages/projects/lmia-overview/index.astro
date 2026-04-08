@@ -1,0 +1,265 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContactCard from "@/components/ContactCard.astro";
+import RelatedToolsCard from "@/components/RelatedToolsCard.astro";
+import ShareBar from "@/components/ShareBar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { site } from "@/config/site";
+import { withSiteTitle } from "@/utils/seo";
+
+const breadcrumbs = [
+  { name: "首页", href: "/" },
+  { name: "移民项目", href: "/projects/" },
+  { name: "联邦项目总览", href: "/projects/federal-programs/" },
+  { name: "LMIA 雇主担保", href: "/projects/lmia-overview/" },
+];
+
+const steps = [
+  { title: "雇主发起招聘广告", desc: "雇主必须先在加拿大本地进行为期至少4周的招聘（发布在Job Bank和其他主要招聘平台），证明找不到合适的加拿大本地公民/永久居民担任该职位。" },
+  { title: "雇主向ESDC递交LMIA申请", desc: "完成招聘记录后，雇主通过就业社会发展部（ESDC）网站提交LMIA申请，附上所有招聘记录、职位说明和雇主资质文件。" },
+  { title: "政府审核（约8–12周）", desc: "ESDC 审核申请，评估该职位是否真实存在、招聘是否合规，以及雇用外国工人是否会对劳工市场产生负面影响。审批时间视类别和当前队列而定。" },
+  { title: "获得 LMIA 批准函", desc: "批准函注明职位、工资、工作地点和有效期（通常1年）。拿到LMIA后，工人可据此申请工签或更新移民文件。" },
+  { title: "工人凭 LMIA 申请工签或 PR", desc: "LMIA 可用于支持工签申请（在境外申请或境内转换），也可作为 Express Entry 的额外加分材料，有效期内均可使用。" },
+];
+
+const categories = [
+  { name: "高技能职位（High-Wage）", noc: "NOC 0 / A / B", wage: "高于该省中位工资", timeline: "约 8–12 周", note: "最常见类别，工资达到或超过省中位线即为High-Wage。" },
+  { name: "低技能职位（Low-Wage）", noc: "NOC C / D", wage: "低于该省中位工资", timeline: "约 10–14 周", note: "受更多限制，部分行业和地区有配额上限。" },
+  { name: "农业类（Agriculture）", noc: "特定农业NOC", wage: "按季节劳工标准", timeline: "约 10 天（快速）", note: "季节性农业工人有专属快速通道。" },
+  { name: "全球人才流（GTS）", noc: "NOC 0/A（特定科技职位）", wage: "高于省中位工资", timeline: "2 周（快速）", note: "只适用于部分高需求IT和科技职位，审批极快。" },
+];
+
+const faqItems = [
+  {
+    q: "LMIA 是什么？",
+    a: "LMIA（Labour Market Impact Assessment，劳工市场影响评估）是加拿大雇主在雇用外国工人前，需要向就业社会发展部（ESDC）申请的一份政府许可文件，证明雇用该外国工人不会对加拿大劳工市场产生负面影响。LMIA批准后，外国工人才可凭此申请工签或用于加分申请PR。"
+  },
+  {
+    q: "LMIA 工签和普通工签有什么区别？",
+    a: "大多数封闭式工签（Closed Work Permit）需要LMIA支撑，即只能为特定雇主工作。而部分类别可以申请LMIA豁免（如CUSMA/USMCA、公司内部调动等），无需经过LMIA流程。拿到LMIA工签后，工人只能为该LMIA指定的雇主从事指定职位，变更工作需重新申请。"
+  },
+  {
+    q: "LMIA 对移民申请有什么帮助？",
+    a: "在Express Entry系统中，拥有加拿大雇主的有效工作offer（基于LMIA）可以获得额外的CRS加分：NOC 00类别加200分，其他NOC 0/A/B类别加50分。在CRS分数竞争激烈的情况下，50分对于能否获得ITA有很大影响，200分则几乎锁定下一轮邀请。"
+  },
+  {
+    q: "雇主需要付出什么成本？",
+    a: "雇主需支付LMIA申请费用（目前为每个职位1000加元），并承担招聘广告、材料准备等相关成本。此外，雇主需证明为外国工人提供的工资和工作条件不低于同类加拿大工人。整个过程一般需要专业顾问协助，确保材料和招聘记录合规。"
+  },
+  {
+    q: "LMIA 获批后多久有效？",
+    a: "LMIA批准函的有效期通常为6个月（部分类别可以更长）。工人需在有效期内提交工签或PR申请材料。如果未能在有效期内完成申请，可能需要雇主重新申请LMIA。"
+  },
+  {
+    q: "LMIA 会被拒绝吗？常见原因是什么？",
+    a: "LMIA可能被拒绝。常见原因包括：招聘广告不符合要求（时间不足、平台不够、没有证明找不到合适本地候选人）；工资低于该省同类职位标准；雇主有违规记录；申请材料不完整；雇主资质不符（如企业规模、运营历史等）。"
+  },
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbs.map((c, i) => ({
+    "@type": "ListItem", position: i + 1, name: c.name,
+    item: new URL(c.href, site.url).toString(),
+  })),
+};
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((i) => ({
+    "@type": "Question", name: i.q,
+    acceptedAnswer: { "@type": "Answer", text: i.a },
+  })),
+};
+---
+
+<BaseLayout
+  title={withSiteTitle("LMIA 雇主担保工签申请完整指南 | 条件·流程·类别")}
+  description="加拿大LMIA（劳工市场影响评估）完整解析：申请流程、高/低技能职位区别、全球人才流快速通道、对Express Entry的加分影响，以及常见问题解答。"
+  canonical="https://cachinavisa.com/projects/lmia-overview/"
+>
+  <JsonLd data={breadcrumbLd} />
+  <JsonLd data={faqLd} />
+  <Breadcrumbs items={breadcrumbs} />
+
+  <div class="grid" style="margin-top:16px">
+    <article class="content-card">
+      <div class="page-header">
+        <div class="page-kicker">工签 · 雇主担保 · LMIA</div>
+        <h1 class="page-h1">LMIA 雇主担保工签申请完整指南</h1>
+        <p class="page-intro">
+          LMIA（Labour Market Impact Assessment，劳工市场影响评估）是加拿大雇主聘用外国工人的核心许可文件。
+          对于许多在加拿大工作的外国人来说，LMIA 既是工签的申请依据，也是 Express Entry 申请中的重要加分手段。
+        </p>
+      </div>
+
+      <div class="content-sections">
+
+        <div class="section-block">
+          <h2>LMIA 申请流程（5步）</h2>
+          <ol class="step-list">
+            {steps.map((s) => (
+              <li>
+                <span class="step-text">
+                  <strong>{s.title}</strong>
+                  <span class="step-sub">{s.desc}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        <div class="section-block">
+          <h2>LMIA 主要类别对比</h2>
+          <div class="cat-table">
+            <div class="ct-header ct-row">
+              <div>类别</div>
+              <div>适用 NOC</div>
+              <div>工资要求</div>
+              <div>审批时间</div>
+            </div>
+            {categories.map((c) => (
+              <div class="ct-row">
+                <div>
+                  <div class="ct-name">{c.name}</div>
+                  <div class="ct-note">{c.note}</div>
+                </div>
+                <div>{c.noc}</div>
+                <div>{c.wage}</div>
+                <div>{c.timeline}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2>LMIA 对 Express Entry 的加分影响</h2>
+          <div class="score-boxes">
+            <div class="score-box red">
+              <div class="sb-val">+200 分</div>
+              <div class="sb-label">NOC 00（高管级职位）</div>
+              <div class="sb-desc">几乎确保下一轮 ITA，适用于 C-suite 和高级管理职位</div>
+            </div>
+            <div class="score-box blue">
+              <div class="sb-val">+50 分</div>
+              <div class="sb-label">NOC 0 / A / B</div>
+              <div class="sb-desc">在CRS竞争激烈时，50分可能决定是否被邀请</div>
+            </div>
+          </div>
+          <div class="tip-box">
+            💡 注意：有些公司内部调动（ICT）、CUSMA/USMCA 工签等类别可以豁免LMIA直接申请工签，但这类工签用于EE加分时需满足特定条件。详情请参考 <a href="/projects/lmia-exemptions/">LMIA 豁免类别</a>。
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2>常见问题（FAQ）</h2>
+          {faqItems.map((item) => (
+            <details class="faq-item">
+              <summary class="faq-q">{item.q}</summary>
+              <p class="faq-a">{item.a}</p>
+            </details>
+          ))}
+        </div>
+
+      </div>
+      <div class="page-share">
+        <ShareBar url="https://cachinavisa.com/projects/lmia-overview/" title={"LMIA 雇主担保工签申请完整指南 | 条件·流程·类别"} />
+      </div>
+
+
+      <div class="cta-inline">
+        <div class="cta-text">想了解 LMIA 申请流程或免费评估你的资格？</div>
+        <a class="cta-btn" href="/contact/">免费咨询 →</a>
+      </div>
+    </article>
+
+    <aside class="sidebar-stack">
+      <ContactCard />
+      <RelatedToolsCard
+        title="相关打分工具"
+        subtitle="LMIA 不只是工签文件，也可能直接影响 CRS 加分。"
+        items={[
+          { href: "/tools/crs-calculator/", label: "联邦 CRS 计算器", desc: "有 LMIA 支持的 offer 时尤其要算。" },
+          { href: "/tools/", label: "打分工具总览", desc: "把联邦和省提名的工具一起对照。" },
+          { href: "/projects/cec/", label: "CEC 转永居", desc: "工签积累经验后，常会衔接 CEC。" },
+        ]}
+        footerHref="/tools/crs-calculator/"
+        footerLabel="直接计算 CRS"
+      />
+      <div class="sidebar-nav-card">
+        <div class="snc-title">工签与雇主担保</div>
+        <div class="snc-links">
+          <a class="snc-link active" href="/projects/lmia-overview/">LMIA 雇主担保总览</a>
+          <a class="snc-link" href="/projects/lmia-exemptions/">LMIA 豁免类别</a>
+          <a class="snc-link" href="/visa/work-permit/">工签申请指南</a>
+          <a class="snc-link" href="/visa/french-mobility-work-permit/">法语流动工签</a>
+          <a class="snc-link" href="/visa/c11-work-permit/">C11 重大利益工签</a>
+          <a class="snc-link" href="/projects/cec/">CEC 转永居</a>
+          <a class="snc-link" href="/projects/federal-programs/">联邦项目总览</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+.grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 920px) { .grid { grid-template-columns: 1fr 300px; align-items: start; } }
+.content-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 16px; overflow: hidden; }
+.page-header { padding: 28px 28px 24px; border-bottom: 1px solid rgba(26,29,35,0.08); background: linear-gradient(135deg, #fafbff, #fff); }
+.page-kicker { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #d92d20; margin-bottom: 8px; }
+.page-h1 { font-size: clamp(20px, 3.5vw, 28px); font-weight: 800; color: #1a1d23; margin: 0 0 12px; letter-spacing: -0.02em; }
+.page-intro { font-size: 15px; color: rgba(26,29,35,0.62); line-height: 1.7; margin: 0; }
+.content-sections { padding: 24px 28px; display: grid; gap: 32px; }
+.section-block h2 { font-size: 18px; font-weight: 750; color: #1a1d23; margin: 0 0 14px; padding-bottom: 8px; border-bottom: 2px solid rgba(217,45,32,0.12); }
+
+.step-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; counter-reset: steps; }
+.step-list li { display: flex; gap: 14px; align-items: flex-start; counter-increment: steps; }
+.step-list li::before { content: counter(steps); display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; min-width: 28px; border-radius: 50%; background: #d92d20; color: #fff; font-weight: 700; font-size: 13px; margin-top: 2px; }
+.step-text { display: flex; flex-direction: column; gap: 5px; }
+.step-text strong { font-size: 14px; color: #1a1d23; }
+.step-sub { font-size: 13px; color: rgba(26,29,35,0.6); line-height: 1.65; }
+
+.cat-table { border: 1px solid rgba(26,29,35,0.09); border-radius: 12px; overflow: hidden; }
+.ct-row { display: grid; grid-template-columns: 1.8fr 1fr 1.2fr 0.8fr; border-bottom: 1px solid rgba(26,29,35,0.07); }
+.ct-row:last-child { border-bottom: none; }
+.ct-row > div { padding: 12px 14px; font-size: 13px; color: rgba(26,29,35,0.7); line-height: 1.5; border-right: 1px solid rgba(26,29,35,0.06); }
+.ct-row > div:last-child { border-right: none; }
+.ct-header { background: rgba(26,29,35,0.04); }
+.ct-header > div { font-weight: 700; color: #1a1d23; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+.ct-name { font-weight: 600; color: #1a1d23; margin-bottom: 3px; }
+.ct-note { font-size: 12px; color: rgba(26,29,35,0.45); line-height: 1.4; }
+
+.score-boxes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+.score-box { padding: 20px 18px; border-radius: 14px; text-align: center; }
+.score-box.red { background: rgba(217,45,32,0.06); border: 1.5px solid rgba(217,45,32,0.15); }
+.score-box.blue { background: rgba(26,86,196,0.05); border: 1.5px solid rgba(26,86,196,0.15); }
+.sb-val { font-size: 28px; font-weight: 900; color: #d92d20; margin-bottom: 6px; }
+.score-box.blue .sb-val { color: #1a56c4; }
+.sb-label { font-size: 13px; font-weight: 700; color: #1a1d23; margin-bottom: 6px; }
+.sb-desc { font-size: 12px; color: rgba(26,29,35,0.55); line-height: 1.5; }
+
+.tip-box { padding: 14px 16px; background: rgba(59,130,246,0.05); border-left: 3px solid rgba(59,130,246,0.4); border-radius: 0 10px 10px 0; font-size: 13.5px; color: rgba(26,29,35,0.7); line-height: 1.65; }
+.tip-box a { color: #d92d20; }
+
+.faq-item { border: 1px solid rgba(26,29,35,0.08); border-radius: 12px; overflow: hidden; margin-bottom: 8px; }
+.faq-q { padding: 14px 18px; font-size: 14px; font-weight: 600; color: #1a1d23; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.faq-q::after { content: '+'; font-size: 18px; color: #d92d20; font-weight: 400; flex-shrink: 0; }
+details[open] .faq-q::after { content: '−'; }
+.faq-a { padding: 12px 18px 14px; font-size: 13.5px; color: rgba(26,29,35,0.65); line-height: 1.75; margin: 0; border-top: 1px solid rgba(26,29,35,0.06); }
+
+.cta-inline { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 28px; background: linear-gradient(135deg, rgba(217,45,32,0.05), rgba(217,45,32,0.02)); border-top: 1px solid rgba(217,45,32,0.1); flex-wrap: wrap; }
+.cta-text { font-size: 15px; font-weight: 600; color: #1a1d23; }
+.cta-btn { padding: 10px 22px; background: #d92d20; color: #fff; border-radius: 10px; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; }
+.cta-btn:hover { background: #b52418; text-decoration: none; }
+
+.sidebar-stack { display: grid; gap: 16px; position: sticky; top: 80px; }
+.sidebar-nav-card { background: #fff; border: 1px solid rgba(26,29,35,0.09); border-radius: 14px; padding: 18px 20px; }
+.snc-title { font-size: 14px; font-weight: 700; color: #1a1d23; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(26,29,35,0.08); }
+.snc-links { display: flex; flex-direction: column; gap: 2px; }
+.snc-link { display: block; padding: 8px 10px; font-size: 13.5px; color: #374151; text-decoration: none; border-radius: 8px; }
+.snc-link:hover { background: rgba(217,45,32,0.06); color: #d92d20; text-decoration: none; }
+.snc-link.active { background: rgba(217,45,32,0.07); color: #d92d20; font-weight: 600; }
+</style>
