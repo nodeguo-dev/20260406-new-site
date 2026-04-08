@@ -3,6 +3,7 @@ import ContactCard from "@/components/ContactCard.astro";
 import RelatedToolsCard from "@/components/RelatedToolsCard.astro";
 import StatsStrip from "@/components/StatsStrip.astro";
 import HighlightsGrid from "@/components/HighlightsGrid.astro";
+import { encodeTagSlug } from "@/utils/tagRoutes";
 import { categoryMeta } from "@/data/categoryMeta";
 import type { CollectionEntry } from "astro:content";
 
@@ -73,7 +74,7 @@ const topTags = tags.slice(0, 12);
       <h2 class="h2">热门标签</h2>
       <div style="display:flex; flex-wrap:wrap; gap:8px">
         {topTags.map((tag) => (
-          <a class="pill" href={`/tag/${encodeURIComponent(tag)}/`}>{tag}</a>
+          <a class="pill" href={`/tag/${encodeTagSlug(tag)}/`}>{tag}</a>
         ))}
       </div>
     </div>

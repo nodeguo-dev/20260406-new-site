@@ -145,7 +145,10 @@ export async function buildSiteSearchDocs(): Promise<SearchDoc[]> {
 export function collectSiteTags(docs: SearchDoc[]): string[] {
   return Array.from(
     new Set(
-      docs.flatMap((doc) => doc.tags ?? []),
+      docs
+        .flatMap((doc) => doc.tags ?? [])
+        .map((tag) => tag.trim())
+        .filter((tag) => tag.length > 0),
     ),
   ).sort((a, b) => a.localeCompare(b, "zh-CN"));
 }
