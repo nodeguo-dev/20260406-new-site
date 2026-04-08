@@ -550,12 +550,13 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "22303",
-    "titleZh": "建筑估算师",
+    "titleZh": "施工估算师",
     "titleEn": "Construction estimators",
     "teer": "2",
     "family": "自然与应用科学",
     "summary": "这类岗位偏专业知识与技术交付，适合把资格证书、软件/工具栈、项目成果和行业关键词写清楚。",
     "commonTitles": [
+      "施工估算师",
       "建筑估算师",
       "Construction estimators"
     ],
@@ -2171,14 +2172,14 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "70010",
-    "titleZh": "建筑经理 / 施工经理",
+    "titleZh": "施工经理",
     "titleEn": "Construction managers",
     "teer": "0",
     "family": "技工、运输与设备操作",
     "summary": "这类岗位是施工项目管理岗，核心看你是否真的在统筹工期、预算、分包、材料和现场进度，而不是简单做体力工。",
     "commonTitles": [
-      "建筑经理",
       "施工经理",
+      "建筑经理",
       "Construction managers"
     ],
     "employerTips": [
