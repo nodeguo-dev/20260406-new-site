@@ -58,14 +58,6 @@ const levelSections = levelOrder.map((level) => ({
           <div class="noc-stat"><strong>{levelCounts[5]}</strong><span>具体职业</span></div>
         </div>
 
-        <div class="noc-level-nav">
-          {levelSections.map((section) => (
-            <a href={`#noc-level-${section.level}`}>
-              <strong>{section.label}</strong>
-              <span>{section.count} 项</span>
-            </a>
-          ))}
-        </div>
       </div>
 
       <div class="card-inner noc-list-wrap">
@@ -262,25 +254,6 @@ const levelSections = levelOrder.map((level) => ({
   }
   .noc-stat strong { font-size: 18px; color: #0d1117; }
   .noc-stat span { font-size: 12px; color: rgba(13,17,23,0.55); }
-  .noc-level-nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 8px;
-  }
-  .noc-level-nav a {
-    display: grid;
-    gap: 4px;
-    min-width: 120px;
-    padding: 11px 13px;
-    border-radius: 14px;
-    border: 1px solid rgba(13,17,23,0.08);
-    background: rgba(13,17,23,0.03);
-    text-decoration: none;
-    color: #0d1117;
-  }
-  .noc-level-nav strong { font-size: 14px; }
-  .noc-level-nav span { font-size: 12px; color: rgba(13,17,23,0.58); }
   .noc-section-head {
     display: flex;
     justify-content: space-between;
