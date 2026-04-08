@@ -1,4 +1,5 @@
 import { getCollection, type CollectionEntry } from "astro:content";
+import { mergeContentTags } from "@/utils/contentTags";
 
 export type FaqCategoryId = "entry" | "pr" | "work" | "study" | "family";
 
@@ -146,7 +147,14 @@ export async function getUnifiedFaqItems(): Promise<UnifiedFaqItem[]> {
         answer: it.answer,
         sourceLabel: `博客 · ${e.data.title}`,
         sourceHref: `/blog/${e.slug}/`,
-        tags: e.data.tags ?? [],
+        tags: mergeContentTags({
+          title: e.data.title,
+          slug: e.slug,
+          category: e.data.category,
+          description: e.data.description,
+          excerpt: e.data.excerpt,
+          tags: e.data.tags ?? [],
+        }),
         key: `blog:${e.slug}:${normQ(it.question)}`,
       });
     }
@@ -160,7 +168,14 @@ export async function getUnifiedFaqItems(): Promise<UnifiedFaqItem[]> {
         answer: it.answer,
         sourceLabel: `项目 · ${e.data.title}`,
         sourceHref: `/projects/${e.slug}/`,
-        tags: e.data.tags ?? [],
+        tags: mergeContentTags({
+          title: e.data.title,
+          slug: e.slug,
+          category: e.data.category,
+          description: e.data.description,
+          excerpt: e.data.excerpt,
+          tags: e.data.tags ?? [],
+        }),
         key: `project:${e.slug}:${normQ(it.question)}`,
       });
     }
@@ -174,7 +189,14 @@ export async function getUnifiedFaqItems(): Promise<UnifiedFaqItem[]> {
         answer: it.answer,
         sourceLabel: `服务 · ${e.data.title}`,
         sourceHref: `/services/${e.slug}/`,
-        tags: e.data.tags ?? [],
+        tags: mergeContentTags({
+          title: e.data.title,
+          slug: e.slug,
+          category: e.data.category,
+          description: e.data.description,
+          excerpt: e.data.excerpt,
+          tags: e.data.tags ?? [],
+        }),
         key: `service:${e.slug}:${normQ(it.question)}`,
       });
     }
@@ -188,7 +210,14 @@ export async function getUnifiedFaqItems(): Promise<UnifiedFaqItem[]> {
         answer: it.answer,
         sourceLabel: `百科 · ${e.data.title}`,
         sourceHref: `/baike/${e.slug}/`,
-        tags: e.data.tags ?? [],
+        tags: mergeContentTags({
+          title: e.data.title,
+          slug: e.slug,
+          category: e.data.category,
+          description: e.data.description,
+          excerpt: e.data.excerpt,
+          tags: e.data.tags ?? [],
+        }),
         key: `baike:${e.slug}:${normQ(it.question)}`,
       });
     }
@@ -202,7 +231,14 @@ export async function getUnifiedFaqItems(): Promise<UnifiedFaqItem[]> {
         answer: it.answer,
         sourceLabel: `院校 · ${e.data.title}`,
         sourceHref: `/school/${e.slug}/`,
-        tags: e.data.tags ?? [],
+        tags: mergeContentTags({
+          title: e.data.title,
+          slug: e.slug,
+          category: e.data.category,
+          description: e.data.description,
+          excerpt: e.data.excerpt,
+          tags: e.data.tags ?? [],
+        }),
         key: `school:${e.slug}:${normQ(it.question)}`,
       });
     }

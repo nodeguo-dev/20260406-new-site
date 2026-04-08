@@ -7,6 +7,7 @@ import {
 } from "@/utils/content";
 import { categoryMeta } from "@/data/categoryMeta";
 import { nocLibrary } from "@/data/nocLibrary";
+import { mergeContentTags } from "@/utils/contentTags";
 
 export async function GET() {
   const [posts, services, projects, baike, schools] = await Promise.all([
@@ -27,7 +28,14 @@ export async function GET() {
       excerpt: p.data.excerpt,
       category: categoryMeta[p.data.category]?.title ?? p.data.category,
       kind: "博客",
-      tags: p.data.tags ?? [],
+      tags: mergeContentTags({
+        title: p.data.title,
+        slug: p.slug,
+        category: p.data.category,
+        description: p.data.description,
+        excerpt: p.data.excerpt,
+        tags: p.data.tags ?? [],
+      }),
       publishDate: new Date(p.data.publishDate).toISOString(),
     })),
     ...services.map((p) => ({
@@ -39,7 +47,14 @@ export async function GET() {
       excerpt: p.data.excerpt,
       category: "服务",
       kind: "服务",
-      tags: p.data.tags ?? [],
+      tags: mergeContentTags({
+        title: p.data.title,
+        slug: p.slug,
+        category: p.data.category,
+        description: p.data.description,
+        excerpt: p.data.excerpt,
+        tags: p.data.tags ?? [],
+      }),
       publishDate: new Date(p.data.publishDate).toISOString(),
     })),
     ...projects.map((p) => ({
@@ -51,7 +66,14 @@ export async function GET() {
       excerpt: p.data.excerpt,
       category: "项目",
       kind: "项目",
-      tags: p.data.tags ?? [],
+      tags: mergeContentTags({
+        title: p.data.title,
+        slug: p.slug,
+        category: p.data.category,
+        description: p.data.description,
+        excerpt: p.data.excerpt,
+        tags: p.data.tags ?? [],
+      }),
       publishDate: new Date(p.data.publishDate).toISOString(),
     })),
     ...baike.map((p) => ({
@@ -63,7 +85,14 @@ export async function GET() {
       excerpt: p.data.excerpt,
       category: "百科",
       kind: "百科",
-      tags: p.data.tags ?? [],
+      tags: mergeContentTags({
+        title: p.data.title,
+        slug: p.slug,
+        category: p.data.category,
+        description: p.data.description,
+        excerpt: p.data.excerpt,
+        tags: p.data.tags ?? [],
+      }),
       publishDate: new Date(p.data.publishDate).toISOString(),
     })),
     ...schools.map((p) => ({
@@ -75,7 +104,14 @@ export async function GET() {
       excerpt: p.data.excerpt,
       category: "院校",
       kind: "院校",
-      tags: p.data.tags ?? [],
+      tags: mergeContentTags({
+        title: p.data.title,
+        slug: p.slug,
+        category: p.data.category,
+        description: p.data.description,
+        excerpt: p.data.excerpt,
+        tags: p.data.tags ?? [],
+      }),
       publishDate: p.data.publishDate ? new Date(p.data.publishDate).toISOString() : "",
     })),
     ...nocLibrary.map((entry) => ({

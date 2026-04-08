@@ -178,7 +178,7 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "00015",
-    "titleZh": "建筑、运输、生产和公用事业高级管理人员",
+    "titleZh": "建筑、运输、生产及公用事业高级管理人员",
     "titleEn": "Senior managers - construction, transportation, production and utilities",
     "teer": "0",
     "family": "高管与管理",
@@ -974,7 +974,7 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "32102",
-    "titleZh": "辅助医疗职业",
+    "titleZh": "医疗辅助人员",
     "titleEn": "Paramedical occupations",
     "teer": "2",
     "family": "医疗健康",
@@ -1709,7 +1709,7 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "41301",
-    "titleZh": "咨询及专科治疗师",
+    "titleZh": "咨询与专科治疗师",
     "titleEn": "Therapists in counselling and related specialized therapies",
     "teer": "1",
     "family": "教育、法律与社区服务",
@@ -1969,7 +1969,7 @@ const nocCatalogBase: Omit<NocEntry, "searchBlob">[] = [
   },
   {
     "code": "43100",
-    "titleZh": "小学和中学教师助理",
+    "titleZh": "中小学教师助理",
     "titleEn": "Elementary and secondary school teacher assistants",
     "teer": "3",
     "family": "教育、法律与社区服务",
