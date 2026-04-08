@@ -133,6 +133,19 @@ const childEntries = (nocLibraryChildren[entry.code] || [])
           </div>
         </section>
 
+        <section class="noc-panel">
+          <h2 class="h2">中文岗位解释</h2>
+          <p class="panel-copy">{entry.chineseExplanation}</p>
+        </section>
+
+        <section class="noc-panel">
+          <h2 class="h2">Job Bank 写法示例</h2>
+          <div class="jobbank-box">
+            <div class="jobbank-title">{entry.jobBankTitleSuggestion}</div>
+            <p>{entry.jobBankExample}</p>
+          </div>
+        </section>
+
         {childEntries.length > 0 && (
           <section class="noc-panel">
             <h2 class="h2">下级职业 / 相关分组</h2>
@@ -405,6 +418,29 @@ const childEntries = (nocLibraryChildren[entry.code] || [])
   .bullet-list {
     margin: 0;
     padding-left: 18px;
+    color: rgba(13,17,23,0.72);
+    line-height: 1.8;
+  }
+  .panel-copy {
+    margin: 0;
+    color: rgba(13,17,23,0.72);
+    line-height: 1.8;
+  }
+  .jobbank-box {
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(13,17,23,0.08);
+    background: linear-gradient(180deg, rgba(217,45,32,0.04), rgba(13,17,23,0.02));
+    display: grid;
+    gap: 10px;
+  }
+  .jobbank-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: #b52418;
+  }
+  .jobbank-box p {
+    margin: 0;
     color: rgba(13,17,23,0.72);
     line-height: 1.8;
   }

@@ -5,6 +5,9 @@ export type NocLibraryEntry = NocStructureEntry & {
   titleZh: string;
   family: string;
   summary: string;
+  chineseExplanation: string;
+  jobBankExample: string;
+  jobBankTitleSuggestion: string;
   commonTitles: string[];
   employerTips: string[];
   applicantTips: string[];
@@ -59,6 +62,62 @@ function buildSummary(entry: NocStructureEntry, titleZh: string, familyZh: strin
     default:
       return `这是具体职业单元，最适合对照 Job Bank 广告、雇主职责、工资单、工时和 EE/PNP 申请材料。`;
   }
+}
+
+function getDomainTheme(entry: NocStructureEntry) {
+  const top = getTopCode(entry);
+  if (top === "0") return "management";
+  if (top === "1") return "admin";
+  if (top === "2") return "tech";
+  if (top === "3") return "health";
+  if (top === "4") return "education";
+  if (top === "5") return "arts";
+  if (top === "6") return "service";
+  if (top === "7") return "trades";
+  if (top === "8") return "resources";
+  return "manufacturing";
+}
+
+function buildChineseExplanation(entry: NocStructureEntry, titleZh: string, familyZh: string) {
+  const scope = levelLabelZh[entry.level];
+  if (entry.level === 5) {
+    return `中文里通常可直接理解为「${titleZh}」。它属于 ${familyZh} 里的 ${scope}，最适合拿来对照 Job Bank 广告、雇主职责、工资单和移民申请材料。`;
+  }
+  return `这是 ${familyZh} 的 ${scope} 层级，用来先判断职业方向，再继续往下查更细的岗位。中文用户通常把它当作“职业分类目录”来用。`;
+}
+
+function buildJobBankTitleSuggestion(entry: NocStructureEntry, titleEn: string, titleZh: string) {
+  if (entry.level !== 5) {
+    return `Job Bank 不建议只发这个层级；更适合先下钻到具体职业单元，再写广告标题与职责。`;
+  }
+  return `标题建议优先使用 ${titleEn}，如果面向中文候选人，可以在括号中补充 ${titleZh}。`;
+}
+
+function buildJobBankExample(entry: NocStructureEntry, titleZh: string, titleEn: string) {
+  const theme = getDomainTheme(entry);
+  const examples: Record<string, string> = {
+    management:
+      `Job Bank 示例：We are hiring a ${titleEn}. The role includes team coordination, budget oversight, reporting, and performance tracking. Please include scope of responsibility, reporting line, and project or department size in the advertisement.`,
+    admin:
+      `Job Bank 示例：We are hiring a ${titleEn}. The role includes handling administrative workflows, coordination across teams, documentation, scheduling, and internal support. Please clearly list systems used, reporting line, and the range of daily duties.`,
+    tech:
+      `Job Bank 示例：We are hiring a ${titleEn}. The role includes technical analysis, design, development, testing, troubleshooting, and documentation. Please include tools, platforms, technical scope, and any certification or education requirements.`,
+    health:
+      `Job Bank 示例：We are hiring a ${titleEn}. The role includes patient care, clinical support, safety compliance, and regulated practice as required. Please clearly state licensure, scope of practice, shift pattern, and supervision requirements.`,
+    education:
+      `Job Bank 示例：We are hiring a ${titleEn}. The role includes instruction, assessment, student support, and program delivery. Please state the audience served, teaching context, credentials required, and any regulatory or certification expectations.`,
+    arts:
+      `Job Bank 示例：We are hiring a ${titleEn}. The role includes creative production, media or performance delivery, portfolio review, and collaboration with clients or teams. Please describe deliverables, software or tools, and expected output clearly.`,
+    service:
+      `Job Bank 示例：We are hiring a ${titleEn}. The role includes customer service, scheduling, communication, operations support, and shift-based work. Please include language expectations, hours, customer-facing duties, and workplace conditions.`,
+    trades:
+      `Job Bank 示例：We are hiring a ${titleEn}. The role includes on-site work, tools or equipment, blueprint or task interpretation, safety procedures, and trade-specific tasks. Please state materials used, duties on site, supervision level, and certification or apprenticeship expectations.`,
+    resources:
+      `Job Bank 示例：We are hiring a ${titleEn}. The role includes field operations, machinery, production tasks, and safety compliance. Please clearly describe the worksite, equipment, shift pattern, and any physical or environmental requirements.`,
+    manufacturing:
+      `Job Bank 示例：We are hiring a ${titleEn}. The role includes production, inspection, machine operation, maintenance, and quality control. Please state the line or equipment involved, hours, supervision, and any certification or training needs.`,
+  };
+  return examples[theme];
 }
 
 function buildCommonTitles(entry: NocStructureEntry, titleZh: string, titleEn: string) {
@@ -215,6 +274,11 @@ export const nocLibrary: NocLibraryEntry[] = nocStructure.map((entry) => {
   const titleZh = curated?.titleZh || entry.titleEn;
   const family = getFamilyZh(entry, curated?.family);
   const summary = curated?.summary || buildSummary(entry, titleZh, family);
+  const chineseExplanation = curated?.summary
+    ? buildChineseExplanation(entry, titleZh, family)
+    : buildChineseExplanation(entry, titleZh, family);
+  const jobBankTitleSuggestion = buildJobBankTitleSuggestion(entry, titleEn, titleZh);
+  const jobBankExample = buildJobBankExample(entry, titleZh, titleEn);
 
   return {
     ...entry,
@@ -222,6 +286,9 @@ export const nocLibrary: NocLibraryEntry[] = nocStructure.map((entry) => {
     titleZh,
     family,
     summary,
+    chineseExplanation,
+    jobBankExample,
+    jobBankTitleSuggestion,
     searchBlob: buildSearchBlob(entry, titleZh, titleEn, family, summary),
     commonTitles: curated?.commonTitles?.length ? curated.commonTitles : buildCommonTitles(entry, titleZh, titleEn),
     employerTips: curated?.employerTips?.length ? curated.employerTips : buildEmployerTips(entry, titleZh),
