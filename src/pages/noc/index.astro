@@ -49,15 +49,6 @@ const levelSections = levelOrder.map((level) => ({
           <a href="/projects/ee-trades/">EE 技工类定向</a>
         </div>
 
-        <div class="noc-stats">
-          <div class="noc-stat"><strong>{nocLibrary.length}</strong><span>NOC 条目</span></div>
-          <div class="noc-stat"><strong>{nocStructure.filter((item) => item.level === 1).length}</strong><span>大类</span></div>
-          <div class="noc-stat"><strong>{levelCounts[2]}</strong><span>大组</span></div>
-          <div class="noc-stat"><strong>{levelCounts[3]}</strong><span>子大组</span></div>
-          <div class="noc-stat"><strong>{levelCounts[4]}</strong><span>小组</span></div>
-          <div class="noc-stat"><strong>{levelCounts[5]}</strong><span>具体职业</span></div>
-        </div>
-
       </div>
 
       <div class="card-inner noc-list-wrap">
@@ -238,22 +229,6 @@ const levelSections = levelOrder.map((level) => ({
     font-weight: 700;
     text-decoration: none;
   }
-  .noc-stats {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px;
-    margin-top: 4px;
-  }
-  .noc-stat {
-    padding: 12px;
-    border-radius: 14px;
-    border: 1px solid rgba(13,17,23,0.08);
-    background: rgba(13,17,23,0.03);
-    display: grid;
-    gap: 4px;
-  }
-  .noc-stat strong { font-size: 18px; color: #0d1117; }
-  .noc-stat span { font-size: 12px; color: rgba(13,17,23,0.55); }
   .noc-section-head {
     display: flex;
     justify-content: space-between;
