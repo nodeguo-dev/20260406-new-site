@@ -6,7 +6,7 @@ import { nocLibrary, getNocLevelLabel } from "@/data/nocLibrary";
 import { nocStructure } from "@/data/nocStructure";
 import { withSiteTitle } from "@/utils/seo";
 
-const levelOrder = [1, 2, 3, 4, 5] as const;
+const levelOrder = [5, 4, 3, 2, 1] as const;
 const levelMeta = {
   1: { label: "大类", desc: "10 个 broad categories" },
   2: { label: "大组", desc: "45 个 major groups" },
@@ -62,12 +62,16 @@ const levelSections = levelOrder.map((level) => ({
 
         <div class="noc-browser-toolbar">
           <div class="noc-browser-chips">
-            <button type="button" class="noc-chip is-active" data-filter-level="all">全部</button>
             {levelSections.map((section) => (
-              <button type="button" class="noc-chip" data-filter-level={String(section.level)}>
+              <button
+                type="button"
+                class={`noc-chip ${section.level === 5 ? "is-active" : ""}`}
+                data-filter-level={String(section.level)}
+              >
                 {section.label}
               </button>
             ))}
+            <button type="button" class="noc-chip" data-filter-level="all">全部</button>
           </div>
           <div class="noc-browser-count" id="nocBrowserCount">{nocLibrary.length} 项可浏览</div>
         </div>
@@ -137,7 +141,7 @@ const levelSections = levelOrder.map((level) => ({
     const list = document.getElementById("nocList");
     const countEl = document.getElementById("nocBrowserCount");
     const chips = Array.from(document.querySelectorAll("[data-filter-level]"));
-    let activeLevel = "all";
+    let activeLevel = "5";
 
     const applyFilter = () => {
       if (!input || !list) return;
