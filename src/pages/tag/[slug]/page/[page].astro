@@ -1,26 +1,24 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import PostCard from "@/components/PostCard.astro";
 import BlogInternalHub from "@/components/BlogInternalHub.astro";
 import Pagination from "@/components/Pagination.astro";
 import ContactCard from "@/components/ContactCard.astro";
 import RelatedToolsCard from "@/components/RelatedToolsCard.astro";
-import { categoryMeta } from "@/data/categoryMeta";
 import { withSiteTitle } from "@/utils/seo";
-import { getAllPublishedPosts, getAllTags } from "@/utils/content";
+import { buildSiteSearchDocs, collectSiteTags, sortDocsByDateDesc } from "@/utils/siteSearchDocs";
 import { getPageSlice } from "@/utils/pagination";
+import SiteDocCard from "@/components/SiteDocCard.astro";
 
 const PAGE_SIZE = 12;
 
 export async function getStaticPaths() {
-  const { getAllPublishedPosts, getAllTags } = await import("@/utils/content");
   const { getPageSlice } = await import("@/utils/pagination");
-  const posts = await getAllPublishedPosts();
-  const tags = getAllTags(posts);
+  const docs = await buildSiteSearchDocs();
+  const tags = collectSiteTags(docs);
   const paths = [];
   for (const tag of tags) {
-    const tagPosts = posts.filter((p) => p.data.tags?.includes(tag));
-    const { totalPages } = getPageSlice(tagPosts, 1, 12);
+    const tagDocs = docs.filter((doc) => doc.tags?.includes(tag));
+    const { totalPages } = getPageSlice(tagDocs, 1, 12);
     for (let page = 2; page <= totalPages; page += 1) {
       paths.push({ params: { slug: tag, page: String(page) } });
     }
@@ -31,28 +29,34 @@ export async function getStaticPaths() {
 const { slug, page } = Astro.params;
 const tag = slug;
 const pageNum = Number(page);
-const allPosts = await getAllPublishedPosts();
-const tagPosts = allPosts.filter((p) => p.data.tags?.includes(tag));
-const { items, totalPages } = getPageSlice(tagPosts, pageNum, PAGE_SIZE);
+const allDocs = await buildSiteSearchDocs();
+const tagDocs = sortDocsByDateDesc(allDocs.filter((doc) => doc.tags?.includes(tag)));
+const { items, totalPages } = getPageSlice(tagDocs, pageNum, PAGE_SIZE);
 
-const allTags = getAllTags(allPosts);
+const allTags = collectSiteTags(allDocs);
 const tagCounts = allTags
   .map((t) => ({
     tag: t,
-    count: allPosts.filter((p) => p.data.tags?.includes(t)).length,
+    count: allDocs.filter((doc) => doc.tags?.includes(t)).length,
   }))
   .sort((a, b) => b.count - a.count)
   .slice(0, 30);
 
-const relatedCategories = [...new Set(tagPosts.map((p) => p.data.category))];
-const allCategories = [...new Set(allPosts.map((p) => p.data.category))].sort((a, b) =>
-  a.localeCompare(b, "zh-CN"),
-);
+const kindMeta: Record<string, { label: string; href: string }> = {
+  博客: { label: "博客", href: "/blog/" },
+  服务: { label: "服务页", href: "/services/" },
+  项目: { label: "项目页", href: "/projects/" },
+  百科: { label: "百科", href: "/baike/" },
+  院校: { label: "院校", href: "/school/" },
+  职业库: { label: "NOC 职业库", href: "/noc/" },
+};
+const relatedKinds = [...new Set(tagDocs.map((doc) => doc.kind).filter(Boolean))];
+const allKinds = [...new Set(allDocs.map((doc) => doc.kind).filter(Boolean))];
 ---
 
 <BaseLayout
-  title={withSiteTitle(`#${tag} | 标签文章 - 第 ${pageNum} 页`)}
-  description={`浏览所有带有标签「${tag}」的移民签证相关文章，第 ${pageNum} 页，共 ${totalPages} 页。`}
+  title={withSiteTitle(`#${tag} | 站内内容 - 第 ${pageNum} 页`)}
+  description={`浏览所有带有标签「${tag}」的站内内容，第 ${pageNum} 页，共 ${totalPages} 页。`}
   canonical={`https://cachinavisa.com/tag/${encodeURIComponent(slug)}/page/${pageNum}/`}
 >
   <div class="tag-layout">
@@ -63,11 +67,11 @@ const allCategories = [...new Set(allPosts.map((p) => p.data.category))].sort((a
           <span class="tag-hash">#</span>{tag} <span class="tag-page">第 {pageNum} 页</span>
         </h1>
         <div class="tag-hero-meta">
-          <span class="thm-count">{tagPosts.length} 篇文章</span>
-          {relatedCategories.length > 0 && <span class="thm-sep">·</span>}
-          {relatedCategories.map((c) => (
-            <a class="thm-cat" href={`/category/${c}/`}>
-              {categoryMeta[c]?.title ?? c}
+          <span class="thm-count">{tagDocs.length} 条内容</span>
+          {relatedKinds.length > 0 && <span class="thm-sep">·</span>}
+          {relatedKinds.map((kind) => (
+            <a class="thm-cat" href={kindMeta[kind]?.href ?? "/search/"}>
+              {kindMeta[kind]?.label ?? kind}
             </a>
           ))}
         </div>
@@ -75,14 +79,14 @@ const allCategories = [...new Set(allPosts.map((p) => p.data.category))].sort((a
 
       {items.length > 0 ? (
         <div class="posts-list">
-          {items.map((p) => <PostCard post={p} variant="list" />)}
+          {items.map((doc) => <SiteDocCard doc={doc} />)}
         </div>
       ) : (
         <div class="empty-state">
           <div class="es-icon">🏷️</div>
           <div class="es-title">暂无文章</div>
-          <p class="es-desc">该标签下暂时没有已发布的文章，请稍后再来。</p>
-          <a href="/blog/" class="btn-soft">查看全部文章</a>
+          <p class="es-desc">该标签下暂时没有已发布的内容，请稍后再来。</p>
+          <a href="/search/" class="btn-soft">查看站内搜索</a>
         </div>
       )}
 
@@ -125,24 +129,24 @@ const allCategories = [...new Set(allPosts.map((p) => p.data.category))].sort((a
         </div>
       </div>
       <div class="sidebar-card">
-        <div class="sidebar-card-title">相关分类</div>
+        <div class="sidebar-card-title">相关内容类型</div>
         <div class="sidebar-cats">
-          {relatedCategories.map((c) => (
-            <a class="scat-item" href={`/category/${c}/`}>
-              {categoryMeta[c]?.title ?? c}
+          {relatedKinds.map((kind) => (
+            <a class="scat-item" href={kindMeta[kind]?.href ?? "/search/"}>
+              {kindMeta[kind]?.label ?? kind}
             </a>
           ))}
-          {relatedCategories.length === 0 && (
-            <div style="padding:12px 20px; font-size:13px; color:rgba(13,17,23,0.4)">暂无相关分类</div>
+          {relatedKinds.length === 0 && (
+            <div style="padding:12px 20px; font-size:13px; color:rgba(13,17,23,0.4)">暂无相关内容类型</div>
           )}
         </div>
       </div>
       <div class="sidebar-card">
-        <div class="sidebar-card-title">全部文章频道</div>
+        <div class="sidebar-card-title">全部内容频道</div>
         <div class="sidebar-cats">
-          {allCategories.map((c) => (
-            <a class="scat-item" href={`/category/${c}/`}>
-              {categoryMeta[c]?.title ?? c}
+          {allKinds.map((kind) => (
+            <a class="scat-item" href={kindMeta[kind]?.href ?? "/search/"}>
+              {kindMeta[kind]?.label ?? kind}
             </a>
           ))}
         </div>
