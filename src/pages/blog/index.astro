@@ -9,6 +9,7 @@ import { categoryMeta } from "@/data/categoryMeta";
 import { withSiteTitle } from "@/utils/seo";
 import { getAllPublishedPosts, getAllCategories } from "@/utils/content";
 import { getPageSlice } from "@/utils/pagination";
+import { encodeTagSlug } from "@/utils/tagRoutes";
 
 const PAGE_SIZE = 12;
 const posts = await getAllPublishedPosts();
@@ -121,7 +122,7 @@ const gridItems = items.slice(0, PAGE_SIZE);
         <div class="sidebar-card-title">热门标签</div>
         <div class="tag-cloud">
           {Array.from(new Set(posts.flatMap(p => p.data.tags ?? []))).slice(0, 48).map((tag) => (
-            <a class="sidebar-tag" href={`/tag/${encodeURIComponent(tag)}/`}>#{tag}</a>
+            <a class="sidebar-tag" href={`/tag/${encodeTagSlug(tag)}/`}>#{tag}</a>
           ))}
         </div>
       </div>
