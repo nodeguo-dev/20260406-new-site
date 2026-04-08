@@ -8,7 +8,7 @@ import { withSiteTitle } from "@/utils/seo";
 import { buildSiteSearchDocs, collectSiteTags, sortDocsByDateDesc } from "@/utils/siteSearchDocs";
 import { getPageSlice } from "@/utils/pagination";
 import SiteDocCard from "@/components/SiteDocCard.astro";
-import { decodeTagSlug, encodeTagSlug } from "@/utils/tagRoutes";
+import { encodeTagSlug, resolveTagFromSlug } from "@/utils/tagRoutes";
 
 const PAGE_SIZE = 12;
 
@@ -18,9 +18,9 @@ export async function getStaticPaths() {
   return tags.map((tag) => ({ params: { slug: encodeTagSlug(tag) } }));
 }
 
-const { slug } = Astro.params;
-const tag = decodeTagSlug(slug);
 const allDocs = await buildSiteSearchDocs();
+const { slug } = Astro.params;
+const tag = resolveTagFromSlug(slug, collectSiteTags(allDocs));
 const tagDocs = sortDocsByDateDesc(allDocs.filter((doc) => doc.tags?.includes(tag)));
 const { items, totalPages } = getPageSlice(tagDocs, 1, PAGE_SIZE);
 
