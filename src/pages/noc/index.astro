@@ -53,9 +53,6 @@ const levelSections = levelOrder.map((level) => ({
       </div>
 
       <div class="card-inner noc-list-wrap">
-        <div class="page-share noc-share">
-          <ShareBar url="https://cachinavisa.com/noc/" title="加拿大 NOC 职业库 | 职业分类、Job Bank 与 EE 对照" />
-        </div>
         <div class="noc-section-head">
           <div>
             <div class="kicker">全库浏览</div>
@@ -111,6 +108,10 @@ const levelSections = levelOrder.map((level) => ({
               </div>
             </section>
           ))}
+        </div>
+
+        <div class="page-share noc-share noc-share--bottom">
+          <ShareBar url="https://cachinavisa.com/noc/" title="加拿大 NOC 职业库 | 职业分类、Job Bank 与 EE 对照" />
         </div>
       </div>
     </main>
@@ -199,7 +200,8 @@ const levelSections = levelOrder.map((level) => ({
 
 <style>
   .noc-hero { display: grid; gap: 14px; }
-  .noc-share { margin-bottom: 18px; }
+  .noc-share { margin-top: 24px; }
+  .noc-share--bottom { margin-bottom: 4px; }
   .noc-search {
     position: relative;
     margin-top: 8px;

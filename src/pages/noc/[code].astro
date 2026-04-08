@@ -54,9 +54,6 @@ const childEntries = (nocLibraryChildren[entry.code] || [])
   <div class="grid">
     <main class="card">
       <div class="card-inner noc-detail">
-        <div class="page-share noc-share">
-          <ShareBar url={`https://cachinavisa.com/noc/${entry.code}/`} title={`NOC ${entry.code} ${entry.titleZh} | 加拿大 NOC 职业库`} />
-        </div>
         <div class="noc-detail-top">
           <div>
             <div class="kicker">NOC {entry.code}</div>
@@ -236,6 +233,10 @@ const childEntries = (nocLibraryChildren[entry.code] || [])
             ))}
           </div>
         </section>
+
+        <div class="page-share noc-share noc-share--bottom">
+          <ShareBar url={`https://cachinavisa.com/noc/${entry.code}/`} title={`NOC ${entry.code} ${entry.titleZh} | 加拿大 NOC 职业库`} />
+        </div>
       </div>
     </main>
 
@@ -393,6 +394,8 @@ const childEntries = (nocLibraryChildren[entry.code] || [])
   }
   .nd-badge.red { background: rgba(217,45,32,0.08); color: #d92d20; }
   .nd-badge.navy { background: rgba(26,86,196,0.08); color: #1a56c4; }
+  .noc-share { margin-top: 24px; }
+  .noc-share--bottom { margin-bottom: 4px; }
   .noc-detail-links {
     display: flex;
     flex-wrap: wrap;
