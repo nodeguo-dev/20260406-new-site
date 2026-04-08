@@ -1,4 +1,5 @@
 import { nocCatalog, type NocRelatedLink } from "@/data/nocCatalog";
+import { nocTitleZhOverrides } from "@/data/nocTitleZhOverrides";
 import { nocStructure, nocStructureChildren, nocStructureMap, type NocStructureEntry } from "@/data/nocStructure";
 
 export type NocLibraryEntry = NocStructureEntry & {
@@ -704,7 +705,8 @@ function buildSearchBlob(entry: NocStructureEntry, titleZh: string, titleEn: str
 export const nocLibrary: NocLibraryEntry[] = nocStructure.map((entry) => {
   const curated = curatedByCode.get(entry.code);
   const titleEn = curated?.titleEn || entry.titleEn;
-  const titleZh = curated?.titleZh || translateTitleEn(entry.titleEn, entry);
+  const translatedTitle = nocTitleZhOverrides[entry.code] || curated?.titleZh || translateTitleEn(entry.titleEn, entry);
+  const titleZh = /[A-Za-z]/.test(translatedTitle) ? translateTitleEn(entry.titleEn, entry) : translatedTitle;
   const family = getFamilyZh(entry, curated?.family);
   const summary = curated?.summary || buildSummary(entry, titleZh, family);
   const chineseExplanation = curated?.summary
