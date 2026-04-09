@@ -57,6 +57,10 @@ const testimonials = [
 <!-- ═══════════════════════ HERO ═══════════════════════════════════ -->
 <section class="hero">
   <div class="hero-noise"></div>
+  <div class="hero-visual" aria-hidden="true">
+    <img src="/assets/toronto.webp" alt="" loading="eager" decoding="async" />
+  </div>
+  <div class="hero-visual-overlay" aria-hidden="true"></div>
   <div class="hero-orb hero-orb-1"></div>
   <div class="hero-orb hero-orb-2"></div>
   <div class="hero-orb hero-orb-3"></div>
@@ -345,32 +349,74 @@ const testimonials = [
 /* ── HERO ─────────────────────────────────────────────────────────── */
 .hero {
   position: relative;
-  background: linear-gradient(135deg, #0a1628 0%, #0f2040 50%, #1a1040 100%);
+  background: #07101d;
   overflow: hidden;
-  padding: 80px 0 100px;
+  padding: 34px 0 88px;
+}
+.hero-visual {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.hero-visual img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  transform: scale(1.03);
+  animation: hero-visual-drift 24s ease-in-out infinite alternate;
+  will-change: transform;
+  filter: saturate(1.02) contrast(1.02);
+}
+.hero-visual-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 90% at 92% 45%,
+      rgba(6, 14, 28, 0.82) 0%,
+      rgba(6, 14, 28, 0.72) 32%,
+      rgba(6, 14, 28, 0.48) 66%,
+      rgba(6, 14, 28, 0.14) 100%),
+    linear-gradient(90deg,
+      rgba(6, 14, 28, 0.76) 0%,
+      rgba(6, 14, 28, 0.68) 26%,
+      rgba(6, 14, 28, 0.58) 52%,
+      rgba(6, 14, 28, 0.48) 76%,
+      rgba(6, 14, 28, 0.36) 100%),
+    linear-gradient(180deg,
+      rgba(7, 16, 29, 0.22) 0%,
+      rgba(7, 16, 29, 0.48) 100%);
 }
 .hero-noise {
   position: absolute; inset: 0;
+  z-index: 1;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-  opacity: 0.3;
+  opacity: 0.2;
 }
 .hero-orb {
   position: absolute; border-radius: 50%;
   filter: blur(80px); pointer-events: none;
+  z-index: 1;
 }
-.hero-orb-1 { width: 500px; height: 500px; background: rgba(217,45,32,0.15); top: -100px; right: -100px; animation: float 8s ease-in-out infinite; }
-.hero-orb-2 { width: 300px; height: 300px; background: rgba(26,86,196,0.12); bottom: -50px; left: 10%; animation: float 10s ease-in-out infinite reverse; }
-.hero-orb-3 { width: 200px; height: 200px; background: rgba(124,58,237,0.1); top: 30%; left: 40%; animation: float 12s ease-in-out infinite 2s; }
+.hero-orb-1 { width: 480px; height: 480px; background: rgba(217,45,32,0.10); top: -120px; right: -120px; animation: float 8s ease-in-out infinite; }
+.hero-orb-2 { width: 280px; height: 280px; background: rgba(26,86,196,0.08); bottom: -60px; left: 8%; animation: float 10s ease-in-out infinite reverse; }
+.hero-orb-3 { width: 180px; height: 180px; background: rgba(124,58,237,0.06); top: 34%; left: 42%; animation: float 12s ease-in-out infinite 2s; }
 
 .hero-layout {
   position: relative; z-index: 2;
   display: grid; grid-template-columns: 1fr;
-  gap: 48px; align-items: center;
+  gap: 28px; align-items: start;
 }
-@media (min-width: 960px) { .hero-layout { grid-template-columns: 1.2fr 1fr; gap: 60px; } }
+@media (min-width: 960px) { .hero-layout { grid-template-columns: 1.15fr 0.95fr; gap: 54px; } }
 
 /* Hero copy */
-.hero-badges { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+.hero-copy { padding-top: 18px; }
+.hero-badges { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
 .hbadge {
   display: inline-flex; align-items: center; gap: 7px;
   padding: 6px 14px; border-radius: 999px;
@@ -422,6 +468,7 @@ const testimonials = [
 .hero-stats {
   display: grid; grid-template-columns: 1fr 1fr;
   gap: 12px;
+  padding-top: 18px;
 }
 .hero-stat-card {
   background: rgba(255,255,255,0.06);
@@ -454,6 +501,33 @@ const testimonials = [
   background: rgba(16,185,129,0.2); color: #10b981;
   display: inline-flex; align-items: center; justify-content: center;
   font-size: 11px; font-weight: 800; flex-shrink: 0;
+}
+
+@keyframes hero-visual-drift {
+  0% { transform: scale(1.03) translate3d(0, 0, 0); }
+  100% { transform: scale(1.06) translate3d(-1.5%, -0.8%, 0); }
+}
+
+@media (max-width: 959px) {
+  .hero-visual {
+    inset: 0;
+  }
+  .hero-visual-overlay {
+    background:
+      radial-gradient(ellipse 80% 95% at 90% 48%,
+        rgba(6, 14, 28, 0.78) 0%,
+        rgba(6, 14, 28, 0.68) 34%,
+        rgba(6, 14, 28, 0.52) 70%,
+        rgba(6, 14, 28, 0.18) 100%),
+      linear-gradient(180deg,
+        rgba(7, 16, 29, 0.72) 0%,
+        rgba(7, 16, 29, 0.84) 48%,
+        rgba(7, 16, 29, 0.90) 100%);
+  }
+  .hero-copy,
+  .hero-stats {
+    padding-top: 8px;
+  }
 }
 
 /* ── PATHWAY STRIP ───────────────────────────────────────────────── */
