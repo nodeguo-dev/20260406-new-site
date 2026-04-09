@@ -41,7 +41,7 @@ const tradeJobs = [
   { noc: "73113", name: "地板铺设工", en: "Floor covering installers", license: false, note: "装修行业常见职位" },
   { noc: "82021", name: "石油钻探承包商及主管", en: "Oil and gas drilling contractors", license: false, note: "阿省、BC省能源行业" },
   { noc: "22303", name: "建筑估算师", en: "Construction estimators", license: false, note: "文职+技术结合岗位" },
-  { noc: "63200", name: "厨师", en: "Cooks", license: false, note: "2026年新增！餐饮业极易找工作" },
+  { noc: "63201", name: "零售/批发肉贩", en: "Butchers - retail and wholesale", license: false, note: "2026年新增！官方技工 CBS 名单新增职业" },
 ];
 
 const noLicenseJobs = tradeJobs.filter(j => !j.license);
@@ -57,15 +57,15 @@ const latestRound = {
 /* ─── 零经验快速入行岗位（短期培训即可上岗）─── */
 const quickStartJobs = [
   {
-    noc: "63200",
-    name: "厨师",
-    en: "Cooks",
-    trainTime: "短则 1–3 个月实际操作学习",
-    salary: "$18–$26/小时",
-    demand: "极高",
-    howToStart: "直接去餐厅/快餐店/工厂厨房应聘 Kitchen Helper 或 Prep Cook，边工作边晋升厨师职位，大多数华人餐厅/亚裔餐厅无语言障碍。",
+    noc: "63201",
+    name: "零售/批发肉贩",
+    en: "Butchers - retail and wholesale",
+    trainTime: "短则 1–3 个月在岗学习",
+    salary: "$18–$28/小时",
+    demand: "高",
+    howToStart: "可从肉铺助手、超市肉类部门助手、批发肉类加工或包装岗位入行，边做边学习分割、修整、包装和食品安全流程；华人超市、连锁超市和肉类批发企业都可能是起点。",
     license: false,
-    highlight: "2026年新加入技工 CBS 名单，餐饮业人手极度短缺，最容易找到工作",
+    highlight: "IRCC 2026 官方技工 CBS 名单新增职业，适合食品零售、超市和批发加工方向求职者",
   },
   {
     noc: "73110",
@@ -141,7 +141,7 @@ const pathSteps = [
     num: "1",
     title: "确定目标职业（NOC）",
     desc: "从上方职业列表中选出 1–2 个最符合你背景或最容易就业的 NOC 类别。重点考量：本地就业市场需求、是否需要执照（电工/管道工有执照要求）、你的学习成本。",
-    tips: ["焊工、木工、HVAC、油漆工、屋顶工是门槛较低且容易找工作的职位", "厨师（NOC 63200）2026年新加入，餐饮业工作机会多，英语要求相对低"],
+    tips: ["焊工、木工、HVAC、油漆工、屋顶工是门槛较低且容易找工作的职位", "零售/批发肉贩（NOC 63201）是 2026 年官方新增技工 CBS 职业，适合走超市、肉铺或批发加工路线"],
   },
   {
     num: "2",
@@ -199,12 +199,12 @@ const faqs = [
     a: "需要执照的职位（如电工/管道工）在就业和移民上都有更强的竞争力——持牌电工/管道工工资更高、雇主愿意担保、移民路径也更明确。但取得执照需要完成学徒期（通常 4–5 年），适合长期规划的申请人。如果希望快速积累 12 个月经验拿定向 ITA，建议优先选择不需要执照的职业（如焊工、HVAC、木工等），速度更快。"
   },
   {
-    q: "厨师（NOC 63200）2026年新加入，真的能移民吗？",
-    a: "可以。厨师是 2026 年 IRCC 新增进入技工类 CBS 名单的职位，只要在过去 3 年内累计从事厨师工作 ≥ 12 个月，就符合技工类定向邀请的职业条件。加拿大餐饮业缺人严重，厨师工作机会多、找工作相对容易，对英语要求也不像白领职位那么高，是很多人选择的务实路线。"
+    q: "2026 年新增进入技工 CBS 名单的到底是不是厨师？",
+    a: "不是。根据 IRCC 官方 category-based selection 页面，截至 2026 年 4 月，新增进入技工类 Trade occupations 名单的是 Butchers - retail and wholesale，NOC 63201，TEER 3；官网页面并没有把 Cooks（厨师，NOC 63200）列入当前技工类别。准备职业路径和申请材料时，一定要以官方职业清单为准。"
   },
   {
     q: "技工类工作工资如何？能满足移民申请的经济要求吗？",
-    a: "加拿大技工类职位工资普遍较高，以下是参考范围（因省份和经验有差异）：木工 $25–38/小时、焊工 $28–42/小时、电工 $35–50/小时、HVAC 技师 $30–45/小时、厨师 $18–28/小时。PR 申请本身没有最低工资要求，只要是合法全职工作（NOC TEER 0–3 类）均可计入经验。"
+    a: "加拿大技工类职位工资普遍较高，以下是参考范围（因省份和经验有差异）：木工 $25–38/小时、焊工 $28–42/小时、电工 $35–50/小时、HVAC 技师 $30–45/小时、零售/批发肉贩约 $18–28/小时。PR 申请本身没有固定最低工资要求，关键是合法、真实、可证明的全职工作经验。"
   },
   {
     q: "我同时符合技工类 CBS 和医护类 CBS，应该选哪个？",
@@ -231,8 +231,8 @@ const faqLd = {
 ---
 
 <BaseLayout
-  title={withSiteTitle("EE 技工类定向移民完整指南 | 25个职业 · 无需执照路径 · 厨师新增")}
-  description="2026年 Express Entry 技工类定向邀请（Trade Occupations CBS）详解：25个覆盖职业、哪些无需执照、如何在加拿大找到技工工作、积累1年经验进入EE候选池，历史邀请分数 390–450 分。"
+  title={withSiteTitle("EE 技工类定向移民完整指南 | 25个职业 · 无需执照路径 · 肉贩新增")}
+  description="2026年 Express Entry 技工类定向邀请（Trade Occupations CBS）详解：25个覆盖职业、哪些无需执照、如何在加拿大找到技工工作、积累1年经验进入EE候选池。注意：官方新增职业是 Butchers - retail and wholesale（NOC 63201），不是 Cooks。"
   canonical="https://cachinavisa.com/projects/ee-trades/"
 >
   <JsonLd data={breadcrumbLd} />
@@ -253,7 +253,7 @@ const faqLd = {
             已具备极大概率在下一轮被邀请。
           </div>
           <div class="ra-insight">
-            💡 <strong>对还没工作经验的人的启发：</strong>找一份技工类岗位，哪怕是门槛最低的（厨师、油漆工、屋顶工、木工助手），
+            💡 <strong>对还没工作经验的人的启发：</strong>找一份技工类岗位，哪怕是门槛最低的（零售/批发肉贩、油漆工、屋顶工、木工助手），
             累计 12 个月经验进入 EE 候选池，就可以等待下一次 477 分左右的定向邀请——
             这个分数对于有加拿大学历或一定工作经验的人是完全可以达到的。
           </div>
@@ -278,7 +278,7 @@ const faqLd = {
           <span class="htag green">历史邀请分：390–450分</span>
           <span class="htag orange">25个覆盖职业</span>
           <span class="htag blue">多数无需执照</span>
-          <span class="htag red">厨师 2026 新增</span>
+          <span class="htag red">63201 官方新增</span>
         </div>
       </div>
 
@@ -289,7 +289,7 @@ const faqLd = {
           <div class="why-item">
             <div class="wi-icon">🔑</div>
             <div class="wi-title">大多数无需执照</div>
-            <div class="wi-desc">25 个覆盖职业中，焊工、木工、HVAC、屋顶工、厨师等大多数职位只需要雇主认可你的能力，无需政府颁发的省级执照。相比医护类的注册认证流程，入行门槛低很多。</div>
+            <div class="wi-desc">25 个覆盖职业中，焊工、木工、HVAC、屋顶工、零售/批发肉贩等大多数职位只需要雇主认可你的能力，无需政府颁发的省级执照。相比医护类的注册认证流程，入行门槛低很多。</div>
           </div>
           <div class="why-item">
             <div class="wi-icon">📉</div>
@@ -349,6 +349,9 @@ const faqLd = {
           🎯 <strong>策略建议：</strong>现在找不到白领工作的人，可以先考虑以上任意一个职位——
           入行难度低、工资不差、工作机会多，最重要的是：每工作一个月，就离 EE 技工定向 ITA 近一步。
           拿到 PR 身份之后，再转行或进修都不受工签限制，反而更自由。
+        </div>
+        <div class="tip-box" style="margin-top:12px">
+          📌 <strong>官方更正：</strong>截至 2026 年 4 月，IRCC 官方技工类名单新增的是 <strong>Butchers - retail and wholesale（NOC 63201，TEER 3）</strong>，不是 <strong>Cooks（NOC 63200）</strong>。
         </div>
       </div>
 
@@ -416,7 +419,7 @@ const faqLd = {
       <!-- College recommendation -->
       <div class="content-card">
         <h2 class="cc-title">推荐的 College 技工项目（从零学起）</h2>
-        <p class="cc-desc">以下 College 提供与技工类 CBS 对口的职业技术课程，完成后可申请 PGWP 工签在加拿大工作积累经验。</p>
+        <p class="cc-desc">以下 College 提供与技工类 CBS 对口的职业技术课程，完成后可申请 PGWP 工签在加拿大工作积累经验。需要注意的是，食品零售/肉类加工类路径不一定都依赖 College，也可以从超市、肉铺、批发加工岗位直接积累经验。</p>
         <div class="college-grid">
           <div class="college-card">
             <div class="cc-province">安大略省 Ontario</div>
@@ -553,7 +556,7 @@ const faqLd = {
   </div>
 
       <div class="page-share">
-        <ShareBar url="https://cachinavisa.com/projects/ee-trades/" title={"EE 技工类定向移民完整指南 | 25个职业 · 无需执照路径 · 厨师新增"} />
+        <ShareBar url="https://cachinavisa.com/projects/ee-trades/" title={"EE 技工类定向移民完整指南 | 25个职业 · 无需执照路径 · 肉贩新增"} />
       </div>
 </BaseLayout>
 

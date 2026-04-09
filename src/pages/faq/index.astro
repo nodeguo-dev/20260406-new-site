@@ -19,6 +19,7 @@ import {
 import { mergeContentTags } from "@/utils/contentTags";
 import { nocLibrary } from "@/data/nocLibrary";
 import { withSiteTitle } from "@/utils/seo";
+import { resolveTagHref } from "@/utils/tagRoutes";
 
 type DiscoveryContent = {
   href: string;
@@ -230,13 +231,103 @@ const { tagHints, categoryHints } = buildFaqDiscoveryHints(
 
 const filterRows = buildFaqFilterRows(unified);
 
+const FAQ_TAG_ALLOW = new Set(["EE", "NOC", "雇主招聘", "PNP", "学签"].map((tag) => tag.toLowerCase()));
+const FAQ_TAG_ALIAS = new Map<string, string>([
+  ["ee定向", "EE"],
+  ["ee定向快速移民", "EE"],
+  ["ee技工移民", "EE"],
+  ["noc职业库", "NOC"],
+  ["job bank", "雇主招聘"],
+  ["雇主", "雇主招聘"],
+  ["省提名", "PNP"],
+]);
+
+function normalizeFaqTag(tag: string): string {
+  return tag.trim().toLowerCase();
+}
+
+function displayFaqTag(tag: string): string | null {
+  const normalized = normalizeFaqTag(tag);
+  const display = FAQ_TAG_ALIAS.get(normalized) ?? tag.trim();
+  if (!FAQ_TAG_ALLOW.has(display.toLowerCase())) return null;
+  return display;
+}
+
+function curatedFaqTags(tags: string[]): string[] {
+  const out: string[] = [];
+  const seen = new Set<string>();
+  for (const tag of tags) {
+    const display = displayFaqTag(tag);
+    if (!display) continue;
+    const key = normalizeFaqTag(display);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(display);
+  }
+  return out;
+}
+
+function mergeTagHints(
+  hints: { label: string; href: string; searchBlob: string; count: number }[],
+) {
+  const merged = new Map<string, { label: string; href: string; searchBlob: string; count: number }>();
+  for (const hint of hints) {
+    const display = displayFaqTag(hint.label);
+    if (!display) continue;
+    const key = normalizeFaqTag(display);
+    const cur = merged.get(key) ?? {
+      label: display,
+      href: hint.href,
+      searchBlob: "",
+      count: 0,
+    };
+    cur.count += hint.count;
+    cur.searchBlob = `${cur.searchBlob} ${hint.searchBlob}`.trim();
+    if (cur.href !== hint.href && cur.href.includes("/tag/") && !hint.href.includes("/tag/")) {
+      cur.href = hint.href;
+    }
+    merged.set(key, cur);
+  }
+  return [...merged.values()]
+    .map((hint) => ({
+      ...hint,
+      searchBlob: hint.searchBlob.toLowerCase(),
+    }))
+    .sort((a, b) => b.count - a.count);
+}
+
+const FAQ_HOT_TAG_ORDER = ["EE", "NOC", "雇主招聘", "PNP", "学签"] as const;
+const FAQ_HOT_TAG_HREF_OVERRIDES = new Map<string, string>([
+  ["noc", "/noc/"],
+  ["雇主招聘", "/services/ee-pathway-job-match/"],
+  ["pnp", "/projects/provincial-nomination/"],
+  ["学签", "/visa/study-permit/"],
+]);
+
+function buildHotFaqTags(
+  hints: { label: string; href: string; searchBlob: string; count: number }[],
+) {
+  const byLabel = new Map(hints.map((hint) => [normalizeFaqTag(hint.label), hint] as const));
+  return FAQ_HOT_TAG_ORDER.flatMap((label) => {
+    const hint = byLabel.get(normalizeFaqTag(label));
+    if (!hint) return [];
+    const overrideHref = FAQ_HOT_TAG_HREF_OVERRIDES.get(normalizeFaqTag(hint.label));
+    return [
+      {
+        ...hint,
+        label,
+        href: overrideHref ?? hint.href,
+      },
+    ];
+  });
+}
+
 const staticHubs = [
   { label: "移民项目总览", href: "/projects/" },
+  { label: "EE 定向总览", href: "/projects/ee-category/" },
+  { label: "雇主招聘", href: "/services/ee-pathway-job-match/" },
   { label: "签证服务", href: "/visa/" },
   { label: "移民打分工具", href: "/tools/" },
-  { label: "加拿大NOC职业库", href: "/noc/" },
-  { label: "EE 定向 / 找工匹配", href: "/services/ee-pathway-job-match/" },
-  { label: "EE 技工类定向", href: "/projects/ee-trades/" },
   { label: "新手必读", href: "/immigration/guide/" },
   { label: "移民资讯聚合", href: "/immigration/" },
   { label: "免费申请学校", href: "/school/" },
@@ -244,7 +335,8 @@ const staticHubs = [
 
 const clientPayload = {
   rows: filterRows,
-  tagHints: tagHints.slice(0, 80),
+  tagHints: mergeTagHints(tagHints).slice(0, 80),
+  hotTags: buildHotFaqTags(mergeTagHints(tagHints)),
   categoryHints,
   staticHubs,
   contentItems,
@@ -401,14 +493,14 @@ const payloadJson = JSON.stringify(clientPayload).replace(/</g, "\\u003c");
                     <a class="faq-source-action" href={item.sourceHref}>查看原文 →</a>
                   </div>
                 ) : null}
-                {item.tags.length > 0 ? (
-                  <div class="faq-item-tags" aria-label="相关标签">
-                    {item.tags.map((t) => (
-                      <a class="faq-tag-pill" href={`/tag/${encodeURIComponent(t)}/`}>
+              {item.tags.length > 0 ? (
+                <div class="faq-item-tags" aria-label="相关标签">
+                    {curatedFaqTags(item.tags).map((t) => (
+                      <a class="faq-tag-pill" href={resolveTagHref(t)}>
                         #{t}
                       </a>
                     ))}
-                  </div>
+                </div>
                 ) : null}
               </div>
             </details>
@@ -471,7 +563,7 @@ const payloadJson = JSON.stringify(clientPayload).replace(/</g, "\\u003c");
     const el = document.getElementById("faq-client-payload");
     const payload = el?.textContent
       ? JSON.parse(el.textContent)
-      : { rows: [], tagHints: [], categoryHints: [], staticHubs: [], contentItems: [] };
+      : { rows: [], tagHints: [], hotTags: [], categoryHints: [], staticHubs: [], contentItems: [] };
 
     const search = document.getElementById("faqSearch");
     const noResult = document.getElementById("faqNoResults");
@@ -521,7 +613,7 @@ const payloadJson = JSON.stringify(clientPayload).replace(/</g, "\\u003c");
 
       if (!hasQ) {
         fddLabel.textContent = "热门标签与常用入口";
-        const topTags = payload.tagHints.slice(0, 14);
+        const topTags = payload.hotTags?.length ? payload.hotTags : payload.tagHints.slice(0, 14);
         for (const t of topTags) {
           appendChip(fddChips, t.href, "#" + t.label, String(t.count) + " 篇");
         }

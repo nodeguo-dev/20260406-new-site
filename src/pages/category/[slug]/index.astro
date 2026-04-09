@@ -9,6 +9,7 @@ import { categoryMeta } from "@/data/categoryMeta";
 import { withSiteTitle } from "@/utils/seo";
 import { getAllPublishedPosts } from "@/utils/content";
 import { getPageSlice } from "@/utils/pagination";
+import { resolveTagHref } from "@/utils/tagRoutes";
 
 const PAGE_SIZE = 12;
 
@@ -131,7 +132,7 @@ const topTagsInCategory = [...tagCounts.entries()]
           <div class="sidebar-card-title">本分类热门标签</div>
           <div class="tag-cloud">
             {topTagsInCategory.map((t) => (
-              <a class="tag-pill" href={`/tag/${encodeURIComponent(t)}/`}>#{t}</a>
+              <a class="tag-pill" href={resolveTagHref(t)}>#{t}</a>
             ))}
           </div>
         </div>
