@@ -9,7 +9,7 @@ import { categoryMeta } from "@/data/categoryMeta";
 import { withSiteTitle } from "@/utils/seo";
 import { getAllPublishedPosts, getAllCategories } from "@/utils/content";
 import { getPageSlice } from "@/utils/pagination";
-import { encodeTagSlug } from "@/utils/tagRoutes";
+import { resolveTagHref } from "@/utils/tagRoutes";
 
 const PAGE_SIZE = 12;
 
@@ -103,7 +103,7 @@ const tagRanked = [...tagCounts.entries()]
         <div class="sidebar-card-title">热门标签</div>
         <div class="tag-cloud">
           {tagRanked.map((tag) => (
-            <a class="sidebar-tag" href={`/tag/${encodeTagSlug(tag)}/`}>#{tag}</a>
+            <a class="sidebar-tag" href={resolveTagHref(tag)}>#{tag}</a>
           ))}
         </div>
       </div>

@@ -19,6 +19,7 @@ import {
 import { mergeContentTags } from "@/utils/contentTags";
 import { nocLibrary } from "@/data/nocLibrary";
 import { withSiteTitle } from "@/utils/seo";
+import { resolveTagHref } from "@/utils/tagRoutes";
 
 type DiscoveryContent = {
   href: string;
@@ -404,7 +405,7 @@ const payloadJson = JSON.stringify(clientPayload).replace(/</g, "\\u003c");
                 {item.tags.length > 0 ? (
                   <div class="faq-item-tags" aria-label="相关标签">
                     {item.tags.map((t) => (
-                      <a class="faq-tag-pill" href={`/tag/${encodeURIComponent(t)}/`}>
+                      <a class="faq-tag-pill" href={resolveTagHref(t)}>
                         #{t}
                       </a>
                     ))}

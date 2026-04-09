@@ -8,7 +8,7 @@ import { withSiteTitle } from "@/utils/seo";
 import { buildSiteSearchDocs, collectSiteTags, sortDocsByDateDesc } from "@/utils/siteSearchDocs";
 import { getPageSlice } from "@/utils/pagination";
 import SiteDocCard from "@/components/SiteDocCard.astro";
-import { encodeTagSlug, resolveTagFromSlug } from "@/utils/tagRoutes";
+import { encodeTagSlug, isNocHubTag, resolveTagFromSlug, resolveTagHref } from "@/utils/tagRoutes";
 
 const PAGE_SIZE = 12;
 
@@ -21,6 +21,9 @@ export async function getStaticPaths() {
 const allDocs = await buildSiteSearchDocs();
 const { slug } = Astro.params;
 const tag = resolveTagFromSlug(slug, collectSiteTags(allDocs));
+if (isNocHubTag(tag)) {
+  return Astro.redirect("/noc/");
+}
 const tagDocs = sortDocsByDateDesc(allDocs.filter((doc) => doc.tags?.includes(tag)));
 const { items, totalPages } = getPageSlice(tagDocs, 1, PAGE_SIZE);
 
@@ -110,7 +113,7 @@ const allKinds = [...new Set(allDocs.map((doc) => doc.kind).filter(Boolean))];
           {tagCounts.map(({ tag: t, count }) => (
             <a
               class={`tag-cloud-item${t === tag ? ' active' : ''}`}
-              href={`/tag/${encodeTagSlug(t)}/`}
+              href={resolveTagHref(t)}
             >
               <span>#{t}</span>
               <span class="tc-count">{count}</span>

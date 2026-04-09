@@ -14,6 +14,7 @@ import { categoryMeta } from "@/data/categoryMeta";
 import { formatDateCN } from "@/utils/dates";
 import { withSiteTitle } from "@/utils/seo";
 import { getAllPublishedPosts, findPrevNext, getRelatedPosts } from "@/utils/content";
+import { resolveTagHref } from "@/utils/tagRoutes";
 
 export async function getStaticPaths() {
   const posts = await getAllPublishedPosts();
@@ -117,7 +118,7 @@ const faqLd =
         <div class="article-meta-bottom">
           <span class="article-author">✍️ {post.data.author}</span>
           {post.data.tags?.map((t) => (
-            <a class="article-tag" href={`/tag/${encodeURIComponent(t)}/`}>#{t}</a>
+            <a class="article-tag" href={resolveTagHref(t)}>#{t}</a>
           ))}
         </div>
       </header>
@@ -209,7 +210,7 @@ const faqLd =
           <div class="sidebar-card-title">本文标签 · 更多文章</div>
           <div class="sidebar-tag-row">
             {tagNeighbors.map((t) => (
-              <a class="sidebar-taglink" href={`/tag/${encodeURIComponent(t)}/`}>#{t}</a>
+              <a class="sidebar-taglink" href={resolveTagHref(t)}>#{t}</a>
             ))}
           </div>
         </div>

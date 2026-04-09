@@ -1,5 +1,5 @@
 ---
-import { encodeTagSlug } from "@/utils/tagRoutes";
+import { resolveTagHref } from "@/utils/tagRoutes";
 import { formatDateCN } from "@/utils/dates";
 import type { SearchDoc } from "@/utils/siteSearchDocs";
 
@@ -33,7 +33,7 @@ const publishDateText = hasValidDate ? formatDateCN(publishDate as Date) : "";
   <div class="site-doc-card__footer">
     <div class="site-doc-card__tags">
       {(doc.tags || []).slice(0, 6).map((tag) => (
-        <a class="site-doc-card__tag" href={`/tag/${encodeTagSlug(tag)}/`}>
+        <a class="site-doc-card__tag" href={resolveTagHref(tag)}>
           #{tag}
         </a>
       ))}

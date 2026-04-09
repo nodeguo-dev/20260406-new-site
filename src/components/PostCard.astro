@@ -2,6 +2,7 @@
 import { formatDateCN } from "@/utils/dates";
 import type { CollectionEntry } from "astro:content";
 import { categoryMeta } from "@/data/categoryMeta";
+import { resolveTagHref } from "@/utils/tagRoutes";
 
 type Props = {
   post: CollectionEntry<"blog">;
@@ -24,7 +25,7 @@ const categorySlug = post.data.category;
     <p class="post-card-excerpt">{post.data.excerpt}</p>
     <div class="post-card-footer">
       {post.data.tags?.slice(0, 5).map((t) => (
-        <a class="post-tag" href={`/tag/${encodeURIComponent(t)}/`}>#{t}</a>
+        <a class="post-tag" href={resolveTagHref(t)}>#{t}</a>
       ))}
       <a class="post-read-more" href={`/blog/${post.slug}/`}>阅读全文 →</a>
     </div>
@@ -40,7 +41,7 @@ const categorySlug = post.data.category;
     <div class="post-list-footer">
       <div class="post-tags">
         {post.data.tags?.slice(0, 6).map((t) => (
-          <a class="post-tag" href={`/tag/${encodeURIComponent(t)}/`}>#{t}</a>
+          <a class="post-tag" href={resolveTagHref(t)}>#{t}</a>
         ))}
       </div>
       <a class="post-read-more" href={`/blog/${post.slug}/`}>阅读全文 →</a>
